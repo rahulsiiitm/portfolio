@@ -1,1 +1,159 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Brush+Script&display=swap');
 @import "tailwindcss";
+
+/* Custom Scrollbar Styles */
+body::-webkit-scrollbar {
+    width: 8px;
+    /* Width of the vertical scrollbar */
+}
+
+body::-webkit-scrollbar-track {
+    background: transparent;
+    /* Color of the scrollbar track */
+}
+
+body::-webkit-scrollbar-thumb {
+    background: #383738;
+    /* Color of the scrollbar thumb (the draggable part) */
+    border-radius: 4px;
+    /* Rounded corners for the thumb */
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background: #FF4500;
+    /* Color of the thumb on hover */
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px) scale(0.85);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(0.85);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideUpSubtle {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideLeft {
+    from {
+        opacity: 0;
+        transform: translateX(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes driftIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px) translateY(200px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0) translateY(200px);
+    }
+}
+
+@keyframes breathe {
+
+    0%,
+    100% {
+        opacity: 0.5;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+.animate-slide-down {
+    animation: slideDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+}
+
+.animate-fade-up {
+    animation: fadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+}
+
+.animate-slide-up-subtle {
+    animation: slideUpSubtle 0.5s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-slide-left {
+    animation: slideLeft 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-drift-in {
+    animation: driftIn 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+.animate-breathe {
+    animation: breathe 6s ease-in-out infinite;
+}
