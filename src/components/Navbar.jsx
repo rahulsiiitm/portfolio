@@ -9,20 +9,13 @@ function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); 
   const [isScrolled, setIsScrolled] = useState(false);
 
-  // Handle scroll effect with delay
+  // Handle scroll effect
   useEffect(() => {
-    let scrollTimeout;
     const handleScroll = () => {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(() => {
-        setIsScrolled(window.scrollY > 150);
-      }, 200);
+      setIsScrolled(window.scrollY > 50);
     };
     window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      clearTimeout(scrollTimeout);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const toggleMobileMenu = () => {
@@ -38,11 +31,11 @@ function Navbar() {
 
   return (
     <header className={`
-      flex items-center pl-8 pr-0 border-b-2 relative z-20 overflow-hidden
-      transition-all duration-400 ease-out
+      h-[88px] flex items-center pl-8 pr-0 border-b-2 relative z-20 overflow-hidden
+      transition-all duration-500 ease-out
       ${isScrolled 
-        ? 'h-[79px] bg-black/90 backdrop-blur-lg border-[#9D9D9D]/70 shadow-lg' 
-        : 'h-[88px] bg-black/10 backdrop-blur-md border-[#9D9D9D]/55'
+        ? 'bg-black/80 backdrop-blur-lg border-[#9D9D9D]/70' 
+        : 'bg-black/10 backdrop-blur-md border-[#9D9D9D]/55'
       }
       animate-slide-down
     `}>
