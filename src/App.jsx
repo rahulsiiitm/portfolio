@@ -27,11 +27,11 @@ function App() {
         />
 
         {/* Background Text */}
-        <div className="absolute bottom-0 left-0 w-full h-full flex items-end justify-start pointer-events-none z-0 animate-drift-in" style={{ transform: 'translateY(200px)', animationDelay: '1.6s' }}>
+        {/* <div className="absolute bottom-0 left-0 w-full h-full flex items-end justify-start pointer-events-none z-0 animate-drift-in" style={{ transform: 'translateY(200px)', animationDelay: '1.6s' }}>
           <div className="origin-bottom-left rotate-[-14.84deg] opacity-50 justify-start text-zinc-800 text-[700px] font-normal font-['Kolker_Brush'] animate-breathe">
             Rhysk
           </div>
-        </div>
+        </div> */}
 
         <RightSidebar />
       </div>
