@@ -1,5 +1,6 @@
 // src/components/HeroSection.jsx
 import React from 'react';
+import '../index.css'; // Ensure your styles are imported
 
 function HeroSection() {
   return (
@@ -32,7 +33,7 @@ function HeroSection() {
           {/* Enhanced Call-to-Action Buttons - Updated with "Fill Left, Exit Right" effect */}
           <div className="flex flex-col sm:flex-row gap-4 mb-12 animate-slide-up-subtle" style={{ animationDelay: '1.2s' }}>
             {/* Get in Touch Button */}
-            <button className="group px-8 py-4 bg-zinc-950 rounded-lg outline outline-1 outline-offset-[-1px] outline-orange-400 inline-flex justify-center items-center gap-3 transition-all duration-400 transform hover:scale-[1.01] hover:-translate-y-0.5 relative overflow-hidden">
+            <button className="group px-8 py-4 bg-zinc-950 rounded-lg outline outline-offset-[-1px] outline-orange-400 inline-flex justify-center items-center gap-3 transition-all duration-400 transform hover:scale-[1.01] hover:-translate-y-0.5 relative overflow-hidden">
               {/* Sliding background layer - Starts from right, fills from left on hover. On hover out, it collapses to the right. */}
               <div className="absolute inset-0 bg-[#FF4500] transform scale-x-0 origin-right group-hover:scale-x-100 group-hover:origin-left transition-transform duration-300 ease-out z-0"></div>
               {/* Content wrapped in a div with higher z-index and new scale effect */}

@@ -4,7 +4,7 @@
 
 @font-face {
   font-family: 'Lufga';
-  src: url('/fonts/Lufga-Regular.ttf') format('truetype');
+  src: url('/fonts/LufgaRegular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -12,12 +12,24 @@
 
 @font-face {
   font-family: 'Lufga';
-  src: url('/fonts/Lufga-Bold.ttf') format('truetype');
+  src: url('/fonts/LufgaBold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
+@font-face {
+  font-family: 'Lufga';
+  src: url('/fonts/LufgaSemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+    font-family: 'kolker';
+    src: url('/fonts/KolkerBrush-Regular.ttf') format('truetype');
+}
 
 /* Custom Scrollbar Styles */
 body::-webkit-scrollbar {
