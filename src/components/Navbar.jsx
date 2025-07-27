@@ -46,7 +46,7 @@ function Navbar() {
       </div>
 
       {/* Right box */}
-      <div className="w-[106px] h-full bg-[#333333] ml-[15px] flex items-center flex-shrink-0 justify-center group relative overflow-hidden hidden md:flex">
+      <div className="w-[106px] h-full bg-[#333333] ml-[15px] flex items-center flex-shrink-0 justify-center group relative overflow-hidden md:flex">
         <img src={Y22Logo} alt="Navigation Icon" className="h-[13px] relative z-10 group-hover:scale-110 transition-transform duration-300" /> 
         <div className="absolute inset-0 bg-[#FF4500] transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300 ease-out z-0"></div>
       </div>

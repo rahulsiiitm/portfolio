@@ -1,0 +1,28 @@
+/* src/components/Loader.css */
+
+/* Define the pulsation animation */
+@keyframes pulse-loader {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+}
+
+/* Apply the animation */
+.animate-pulse-loader {
+  animation: pulse-loader 1.5s infinite ease-in-out;
+}
+
+/* For the fade-out effect controlled by React state */
+.loader-fade-out {
+  /* This class will be removed by React to trigger actual fade-out */
+  /* The transition property is handled by Tailwind utilities on a parent element when opacity changes */
+}
