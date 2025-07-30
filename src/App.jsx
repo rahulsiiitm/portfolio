@@ -11,10 +11,6 @@ function App() {
       {/* This div contains all your sticky content */}
       <div className="fixed inset-0 bg-[#1A1A1A] text-white flex flex-col overflow-hidden z-10"> 
         {/* Navbar is now a direct child */}
-        {/* Removed: <div className="relative z-20 animate-slide-down"> */}
-          <Navbar /> 
-        {/* Removed: </div> */}
-
         {/* Hero Section Content */}
         <HeroSection />
 
@@ -26,16 +22,11 @@ function App() {
           style={{ animationDelay: '0.2s' }}
         />
 
-        {/* Background Text */}
-        {/* <div className="absolute bottom-0 left-0 w-full h-full flex items-end justify-start pointer-events-none z-0 animate-drift-in" style={{ transform: 'translateY(200px)', animationDelay: '1.6s' }}>
-          <div className="origin-bottom-left rotate-[-14.84deg] opacity-50 justify-start text-zinc-800 text-[700px] font-normal font-['Kolker_Brush'] animate-breathe">
-            Rhysk
-          </div>
-        </div> */}
-
-        <RightSidebar />
+        
       </div>
 
+      <Navbar /> 
+      <RightSidebar />
       {/* Placeholder for the next section that will scroll over */}
       <div className="relative z-20 mt-[1080px] bg-gray-700 text-white min-h-screen p-16"> 
         <h2 className="text-5xl mb-4">Next Section Title</h2>
