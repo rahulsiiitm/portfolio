@@ -64,7 +64,8 @@ function RightSidebar() {
   };
 
   return (
-    <div className="fixed right-0 top-1/2 -translate-y-1/2 flex flex-col items-center justify-center space-y-8 h-full w-[106px] border-l-2 border-[#9D9D9D]/30 bg-gradient-to-b from-black/20 via-black/10 to-black/20 backdrop-blur-sm z-10">
+    // Added fixed right-0 top-1/2 -translate-y-1/2 z-40
+    <div className="fixed right-0 top-1/2 -translate-y-1/2 flex flex-col items-center justify-center space-y-8 h-full w-[106px] border-l-2 border-[#9D9D9D]/30 bg-gradient-to-b from-black/20 via-black/10 to-black/20 backdrop-blur-sm z-40">
 
       {/* Scroll to Top Button */}
       <button

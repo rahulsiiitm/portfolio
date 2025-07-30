@@ -30,8 +30,9 @@ function Navbar() {
   };
 
   return (
+    // Changed class to fixed top-0 left-0 w-full z-50 for always on top
     <header className={`
-      h-[88px] flex items-center pl-8 pr-0 border-b-2 relative z-20 overflow-hidden
+      fixed top-0 left-0 w-full h-[88px] flex items-center pl-8 pr-0 border-b-2 overflow-hidden z-50
       transition-all duration-500 ease-out
       ${isScrolled
         ? 'bg-black/80 backdrop-blur-lg border-[#9D9D9D]/70'
@@ -49,15 +50,15 @@ function Navbar() {
             href={`#${item.toLowerCase()}`}
             onClick={() => setActiveLink(item)}
             className={`
-              text-[15px] font-[Poppins] font-medium relative group 
+              text-[15px] font-[Poppins] font-medium relative group
               transition-colors duration-300 ease-out
               ${activeLink === item ? 'text-[#FF4500]' : 'text-white hover:text-[#FF4500]'}
             `}
           >
             {item}
             <span className={`
-              absolute bottom-0 left-0 w-full h-[2px] bg-[#FF4500] 
-              transform origin-left 
+              absolute bottom-0 left-0 w-full h-[2px] bg-[#FF4500]
+              transform origin-left
               transition-transform duration-500 ease-in-out delay-100
               ${activeLink === item ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}
             `}></span>

@@ -4,7 +4,7 @@ import '../index.css'; // Ensure your styles are imported
 
 function HeroSection() {
   return (
-    <div className="relative z-10 flex flex-col justify-center px-8 md:px-[60px] py-8 flex-grow ml-8 md:ml-16 -mt-8 md:-mt-12">
+    <div className="relative z-10 flex flex-col justify-center px-8 md:px-[60px] py-8 flex-grow ml-8 md:ml-16 -mt-8 md:mt-8">
 
       {/* Hero Text Section - unchanged */}
       <div className="max-w-4xl animate-fade-up" style={{ transform: 'scale(0.85)', transformOrigin: 'left center', animationDelay: '0.3s' }}>
