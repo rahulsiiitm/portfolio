@@ -2,7 +2,8 @@
 import React from 'react';
 import Navbar from './components/Navbar';
 import RightSidebar from './components/RightSidebar'; 
-import HeroSection from './components/HeroSection'; 
+import HeroSection from './components/HeroSection';
+import AboutMeIntro from './components/AboutMeIntro';
 import './index.css'; 
 
 function App() {
@@ -28,15 +29,8 @@ function App() {
       <Navbar /> 
       <RightSidebar />
       {/* Placeholder for the next section that will scroll over */}
-      <div className="relative z-20 mt-[1080px] bg-gray-700 text-white min-h-screen p-16"> 
-        <h2 className="text-5xl mb-4">Next Section Title</h2>
-        <p className="text-lg">
-          This content will appear as you scroll down, covering the hero section.
-          You can add more content here to test the scroll.
-        </p>
-        <p className="text-lg mt-4">
-          Scroll down further to see how it works!
-        </p>
+      <div className="relative z-20 mt-[100vh] min-h-screen"> 
+        <AboutMeIntro></AboutMeIntro>
       </div>
 
       {/* NEW SECTION ADDED BELOW */}
