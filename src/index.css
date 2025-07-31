@@ -31,28 +31,20 @@
     src: url('/fonts/KolkerBrush-Regular.ttf') format('truetype');
 }
 
-/* Custom Scrollbar Styles */
-body::-webkit-scrollbar {
-    width: 8px;
-    /* Width of the vertical scrollbar */
+/* index.css or any imported css */
+::-webkit-scrollbar {
+  width: 1px;
 }
 
-body::-webkit-scrollbar-track {
-    background: transparent;
-    /* Color of the scrollbar track */
+::-webkit-scrollbar-track {
+  background: gray;
 }
 
-body::-webkit-scrollbar-thumb {
-    background: #383738;
-    /* Color of the scrollbar thumb (the draggable part) */
-    border-radius: 4px;
-    /* Rounded corners for the thumb */
+::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
 }
 
-body::-webkit-scrollbar-thumb:hover {
-    background: #FF4500;
-    /* Color of the thumb on hover */
-}
 
 @keyframes slideDown {
     from {
