@@ -30,17 +30,18 @@ function Navbar() {
   };
 
   return (
-    // Changed class to fixed top-0 left-0 w-full z-50 for always on top
     <header className={`
-      fixed top-0 left-0 w-full h-[88px] flex items-center pl-8 pr-0 border-b-2 overflow-hidden z-50
-      transition-all duration-500 ease-out
-      ${isScrolled
-        ? 'bg-black/80 backdrop-blur-lg border-[#9D9D9D]/70'
-        : 'bg-black/10 backdrop-blur-md border-[#9D9D9D]/55'
-      }
+      fixed top-0 left-0 w-full z-50 border-b-2 overflow-hidden flex items-center pl-8 pr-0
+      transition-all duration-300 ease-in-out
+      ${isScrolled ? 'h-[64px] bg-black/80 backdrop-blur-lg border-[#9D9D9D]/70' : 'h-[88px] bg-black/10 backdrop-blur-md border-[#9D9D9D]/55'}
       animate-slide-down
     `}>
-      <img src={Y21Logo} alt="Main Portfolio Logo" className="h-[35px]" />
+      <img
+        src={Y21Logo}
+        alt="Main Portfolio Logo"
+        className={`transition-all duration-300 ${isScrolled ? 'h-[28px]' : 'h-[35px]'}`}
+      />
+
 
       {/* Desktop Navigation Links */}
       <nav className="ml-auto space-x-[71px] hidden md:flex items-center">

@@ -39,7 +39,7 @@ function AboutMeIntro() {
       id="about-intro" // Unique ID for navigation
       ref={sectionRef}
       // Add a substantial height for it to be a distinct scrollable section
-      className="min-h-screen bg-gradient-to-br from-black via-zinc-950 to-zinc-900 px-8 md:px-[60px] py-20 relative overflow-hidden flex items-center justify-center"
+      className="min-h-screen bg-transparent px-8 md:px-[60px] py-20 relative overflow-hidden flex items-center justify-center"
     >
       {/* Background Effects (copied from AboutSection) */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-900/20 via-transparent to-transparent"></div>
