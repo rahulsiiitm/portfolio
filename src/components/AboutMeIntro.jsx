@@ -58,7 +58,7 @@ function AboutMeIntro() {
             <div className={`lg:col-span-2 flex flex-col items-center ${isVisible ? 'animate-fade-in' : 'opacity-0'}`} style={{ animationDelay: '0.3s' }}>
               <div className="w-64 h-80 md:w-80 md:h-96 rounded-2xl overflow-hidden bg-zinc-900/50 border border-zinc-700/50 shadow-2xl flex items-center justify-center mb-6">
                 <span className="text-stone-400 text-lg">
-                  <img src="../src/assets/My_photo.jpg" alt="Rahul Sharma" className="w-full h-full object-cover align-top" />
+                  <img src="../My_photo.jpg" alt="Rahul Sharma" className="w-full h-full object-cover align-top" />
                 </span>
               </div>
               
