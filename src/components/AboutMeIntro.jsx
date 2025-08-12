@@ -51,25 +51,19 @@ function AboutMeIntro() {
         <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 md:p-12">
           
           {/* Header Section - Inside Card */}
-          <div className={`text-center mb-12 ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}>
-            <div className="text-stone-300 text-4xl md:text-5xl font-normal font-['Dancing_Script'] mb-2">
-              About
-            </div>
-            <div className="text-[#ff470f] text-5xl md:text-7xl font-semibold font-['Lufga'] leading-tight tracking-[2px] [text-shadow:_4px_4px_19px_rgb(0_0_0_/_1.00)] mb-6">
-              <div className="hover:tracking-[4px] transition-all duration-700 ease-out">Me</div>
-            </div>
-            <div className="w-24 h-1 bg-gradient-to-r from-[#FF4500] to-[#FF6B35] rounded-full mx-auto"></div>
-          </div>
-          <div className="grid lg:grid-cols-5 gap-12 items-start">
+          
+        <div className="grid lg:grid-cols-5 gap-12 items-start">
             
             {/* Left Column - Profile Image */}
             <div className={`lg:col-span-2 flex flex-col items-center ${isVisible ? 'animate-fade-in' : 'opacity-0'}`} style={{ animationDelay: '0.3s' }}>
-              <div className="w-64 h-64 md:w-80 md:h-80 rounded-2xl overflow-hidden bg-zinc-900/50 border border-zinc-700/50 shadow-2xl flex items-center justify-center mb-6">
-                <span className="text-stone-400 text-lg">Your Photo Here</span>
+              <div className="w-64 h-80 md:w-80 md:h-96 rounded-2xl overflow-hidden bg-zinc-900/50 border border-zinc-700/50 shadow-2xl flex items-center justify-center mb-6">
+                <span className="text-stone-400 text-lg">
+                  <img src="../src/assets/My_photo.jpg" alt="Rahul Sharma" className="w-full h-full object-cover align-top" />
+                </span>
               </div>
               
               {/* Personal Stats - Below Image */}
-              <div className="grid grid-cols-2 gap-4 w-full max-w-sm">
+              <div className="grid grid-cols-2 gap-4 w-full max-w-sm font-['Montserrat']">
                 {personalStats.map((stat, index) => (
                   <div key={index} className="text-center p-4 bg-black/20 rounded-xl border border-white/5 group hover:scale-105 transition-transform duration-300">
                     <div className="text-2xl font-bold text-[#FF4500] mb-1 group-hover:text-[#FF6B35] transition-colors">
@@ -85,30 +79,41 @@ function AboutMeIntro() {
 
             {/* Right Column - About Content */}
             <div className={`lg:col-span-3 ${isVisible ? 'animate-fade-in' : 'opacity-0'}`} style={{ animationDelay: '0.6s' }}>
+              <div className={`text-center mb-12 ${isVisible ? 'animate-fade-in' : 'opacity-0'}`}>
+            <div className="flex justify-center items-center gap-2">
+              <div className="text-stone-300 text-4xl md:text-5xl font-normal font-['Dancing_Script']">
+                About
+              </div>
+              <div className="text-[#ff470f] text-5xl md:text-7xl font-semibold font-['Lufga'] leading-tight tracking-[2px] [text-shadow:_4px_4px_19px_rgb(0_0_0_/_1.00)]">
+                <div className="hover:tracking-[4px] transition-all duration-700 ease-out">Me</div>
+              </div>
+            </div>
+            <div className="w-24 h-1 bg-gradient-to-r from-[#FF4500] to-[#FF6B35] rounded-full mx-auto mt-4"></div>
+          </div>
               
               {/* Tagline */}
               <div className="mb-8">
-                <h3 className="text-stone-300 text-2xl md:text-3xl font-normal font-['Nanum_Brush_Script'] leading-relaxed">
+                <h3 className="text-stone-300 text-2xl md:text-4xl font-normal font-['Nanum_Brush_Script'] leading-relaxed">
                   Passionate about bridging AI and human experience
                 </h3>
               </div>
               
               {/* Main Content */}
-              <div className="space-y-6">
+              <div className="space-y-4 font-['Montserrat']">
                 <div className="prose prose-lg prose-invert max-w-none">
-                  <p className="text-stone-300 text-lg leading-relaxed mb-6">
+                  <p className="text-stone-300 text-base leading-relaxed mb-4">
                     I'm a creative technologist who thrives at the intersection of artificial intelligence and user experience design. 
                     With over 5 years of experience, I've helped organizations transform complex data into intelligent, 
                     user-friendly solutions.
                   </p>
                   
-                  <p className="text-stone-400 leading-relaxed mb-6">
+                  <p className="text-stone-400 text-sm leading-relaxed mb-4">
                     My journey began with a fascination for how machines can learn and adapt, which led me to pursue advanced studies 
                     in AI. Along the way, I discovered that the most powerful technology means nothing without thoughtful design 
                     that puts humans first.
                   </p>
                   
-                  <p className="text-stone-400 leading-relaxed">
+                  <p className="text-stone-400 text-sm leading-relaxed">
                     When I'm not training neural networks or crafting user interfaces, you'll find me exploring new coffee shops, 
                     hiking mountain trails, or experimenting with generative art. I believe the best innovations come from 
                     diverse experiences and fresh perspectives.
@@ -116,11 +121,11 @@ function AboutMeIntro() {
                 </div>
 
                 {/* Skills/Expertise Tags */}
-                <div className="mt-8 pt-6 border-t border-white/10">
-                  <h4 className="text-stone-300 text-lg font-medium mb-4">Core Expertise</h4>
-                  <div className="flex flex-wrap gap-3">
+                <div className="mt-6 pt-4 border-t border-white/10">
+                  <h4 className="text-stone-300 text-base font-medium mb-3">Core Expertise</h4>
+                  <div className="flex flex-wrap gap-2">
                     {['Artificial Intelligence', 'UX Design', 'Machine Learning', 'React Development', 'Data Visualization', 'Product Strategy'].map((skill, index) => (
-                      <span key={index} className="px-4 py-2 bg-gradient-to-r from-[#FF4500]/20 to-[#FF6B35]/20 border border-[#FF4500]/30 rounded-full text-sm text-stone-300 hover:border-[#FF4500]/50 transition-colors duration-300">
+                      <span key={index} className="px-3 py-1.5 bg-gradient-to-r from-[#FF4500]/20 to-[#FF6B35]/20 border border-[#FF4500]/30 rounded-full text-xs text-stone-300 hover:border-[#FF4500]/50 transition-colors duration-300">
                         {skill}
                       </span>
                     ))}
@@ -134,5 +139,6 @@ function AboutMeIntro() {
     </section>
   );
 }
+
 
 export default AboutMeIntro;
