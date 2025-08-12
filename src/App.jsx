@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import RightSidebar from './components/RightSidebar'; 
 import HeroSection from './components/HeroSection';
 import AboutMeIntro from './components/AboutMeIntro';
+import Experience from './components/ExperienceSection';
 import './index.css'; 
 
 function App() {
@@ -58,14 +59,9 @@ useEffect(() => {
         <AboutMeIntro />
       </div>
 
-      <div className="relative z-20 bg-gray-900 text-white min-h-screen p-16">
-        <h2 className="text-5xl mb-4">Second Section Title</h2>
-        <p className="text-lg">
-          This is the second section, appearing after the first scroll-over section.
-        </p>
-        <p className="text-lg mt-4">
-          Keep scrolling for more!
-        </p>
+
+      <div className="relative z-20 bg-black text-white min-h-screen p-16">
+                <Experience />
       </div>
     </>
   );

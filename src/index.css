@@ -178,3 +178,8 @@
 .animate-breathe {
     animation: breathe 6s ease-in-out infinite;
 }
+
+.experience-item {
+  position: sticky;
+  top: 100px; /* Adjust this value to where you want the card to stick */
+}

@@ -6,7 +6,8 @@ import {
   FaTwitter,
   FaPinterestP,
   FaChevronUp,
-  FaShare
+  FaShare,
+  FaGithub
 } from 'react-icons/fa';
 
 function RightSidebar() {
@@ -143,7 +144,7 @@ function RightSidebar() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <FaFacebookF />
+          <FaGithub />
         </a>
         <a
           href="https://twitter.com/<YOUR_TWITTER_HANDLE>"

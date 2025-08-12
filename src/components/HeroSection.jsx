@@ -1,17 +1,35 @@
 // src/components/HeroSection.jsx
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import '../index.css'; // Ensure your styles are imported
 
 function HeroSection() {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Simple fade out effect
+  const opacity = Math.max(0, 1 - scrollY / 400);
+
   return (
-    <div className="relative z-10 flex flex-col justify-center px-8 md:px-[60px] py-8 flex-grow ml-8 md:ml-16 -mt-8 md:mt-8">
+    <div 
+      className="relative z-10 flex flex-col justify-center px-8 md:px-[60px] py-8 flex-grow ml-8 md:ml-16 -mt-8 md:mt-8"
+      style={{
+        opacity: opacity
+      }}
+    >
 
       {/* Hero Text Section - unchanged */}
       <div className="max-w-4xl animate-fade-up" style={{ transform: 'scale(0.85)', transformOrigin: 'left center', animationDelay: '0.3s' }}>
         <div className="text-stone-300 text-5xl md:text-7xl font-normal font-['Dancing_Script'] mb-4 animate-fade-in" style={{ animationDelay: '0.6s' }}>
           I'm
         </div>
-
 
         <div className="mb-6">
           <div className="text-[#ff470f] text-6xl md:text-8xl font-semibold font-['Lufga'] leading-tight md:leading-[117.45px] tracking-[2px] md:tracking-[3.66px] [text-shadow:_4px_4px_19px_rgb(0_0_0_/_1.00)] animate-scale-in" style={{ animationDelay: '0.8s' }}>
