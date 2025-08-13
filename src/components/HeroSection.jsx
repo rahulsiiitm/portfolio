@@ -17,6 +17,13 @@ function HeroSection() {
   // Simple fade out effect
   const opacity = Math.max(0, 1 - scrollY / 400);
 
+    const downloadResume = () => {
+    const link = document.createElement('a');
+    link.href = '/Rahul_Resume (1).pdf';
+    link.download = 'Rahul_Resume (1).pdf';
+    link.click();
+  };
+
   return (
     <div 
       className="relative z-10 flex flex-col justify-center px-8 md:px-[60px] py-8 flex-grow ml-8 md:ml-16 -mt-8 md:mt-8"
@@ -69,7 +76,9 @@ function HeroSection() {
           </button>
 
           {/* Download CV Button */}
-          <button className="group px-8 py-4 bg-transparent rounded-lg border-2 border-orange-400 inline-flex justify-center items-center gap-3 transition-all duration-400 transform hover:scale-[1.01] hover:-translate-y-0.5 relative overflow-hidden">
+          <button 
+          onClick={downloadResume}
+          className="group px-8 py-4 bg-transparent rounded-lg border-2 border-orange-400 inline-flex justify-center items-center gap-3 transition-all duration-400 transform hover:scale-[1.01] hover:-translate-y-0.5 relative overflow-hidden">
             {/* Sliding background layer - Starts from right, fills from left on hover. On hover out, it collapses to the right. */}
             <div className="absolute inset-0 bg-[#FF4500] transform scale-x-0 origin-right group-hover:scale-x-100 group-hover:origin-left transition-transform duration-300 ease-out z-0"></div>
             {/* Content wrapped in a div with higher z-index and new scale effect */}

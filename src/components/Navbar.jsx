@@ -2,12 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import Y21Logo from '../assets/Y21.svg';
 import Y22Logo from '../assets/Y22.svg';
-import { FaBars, FaTimes, FaDownload } from 'react-icons/fa';
+import { FaDownload, FaBars, FaTimes } from 'react-icons/fa';
 
-function Navbar() {
+function Navbar({ onToggleSidebar, isSidebarOpen }) {
   const [activeLink, setActiveLink] = useState("Home");
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   // Handle scroll effect
   useEffect(() => {
@@ -18,15 +18,28 @@ function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  // Check if mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const downloadResume = () => {
     const link = document.createElement('a');
-    link.href = '/path-to-your-resume.pdf';
-    link.download = 'Your_Name_Resume.pdf';
+    link.href = '/Rahul_Resume (1).pdf';
+    link.download = 'Rahul_Resume (1).pdf';
     link.click();
+  };
+
+  const handleRightBoxClick = () => {
+    if (isMobile && onToggleSidebar) {
+      onToggleSidebar();
+    }
   };
 
   return (
@@ -41,7 +54,6 @@ function Navbar() {
         alt="Main Portfolio Logo"
         className={`transition-all duration-300 ${isScrolled ? 'h-[28px]' : 'h-[35px]'}`}
       />
-
 
       {/* Desktop Navigation Links */}
       <nav className="ml-auto space-x-[71px] hidden md:flex items-center">
@@ -78,47 +90,58 @@ function Navbar() {
         </button>
       </div>
 
-      {/* Hamburger Menu Icon */}
-      <div className="md:hidden ml-auto text-2xl text-white cursor-pointer mr-6" onClick={toggleMobileMenu}>
-        {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
-      </div>
-
-      {/* Right box */}
-      <div className="w-[106px] h-full bg-[#333333] ml-[15px] flex items-center flex-shrink-0 justify-center group relative overflow-hidden">
-        <img src={Y22Logo} alt="Navigation Icon" className="h-[13px] relative z-10 group-hover:scale-110 transition-transform duration-300" />
-        <div className="absolute inset-0 bg-[#FF4500] transform scale-x-0 origin-left group-hover:scale-x-100 transition-transform duration-300 ease-out z-0"></div>
-      </div>
-
-      {/* Mobile Menu Overlay */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden absolute top-[88px] left-0 w-full h-[calc(100vh-88px)] bg-[#070707] flex flex-col items-center justify-center space-y-8 z-50">
-          {['Home', 'About', 'Projects', 'Contact'].map((item) => (
-            <a
-              key={item}
-              href={`#${item.toLowerCase()}`}
-              className="text-white text-2xl font-[Poppins] hover:text-[#FF4500] transition-colors"
-              onClick={() => {
-                setActiveLink(item);
-                toggleMobileMenu();
-              }}
+      {/* Mobile Navigation Links */}
+      <nav className="md:hidden ml-auto flex items-center space-x-4 mr-4">
+        {[].map((item) => (
+          <a
+            
             >
-              {item}
-            </a>
-          ))}
+            {item}
+            <span className={`
+              absolute bottom-0 left-0 w-full h-[1px] bg-[#FF4500]
+              transform origin-left
+              transition-transform duration-500 ease-in-out delay-100
+              ${activeLink === item ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}
+            `}></span>
+          </a>
+        ))}
+      </nav>
 
-          {/* Mobile Resume Button */}
-          <button
-            onClick={() => {
-              downloadResume();
-              toggleMobileMenu();
-            }}
-            className="flex items-center space-x-3 px-6 py-3 bg-[#FF4500] text-white rounded-full hover:bg-[#FF6B35] transition-colors duration-300 mt-4"
-          >
-            <FaDownload />
-            <span>Download Resume</span>
-          </button>
-        </div>
-      )}
+      {/* Right box - Toggle sidebar on mobile, decorative on desktop */}
+      <div 
+        className={`
+          w-[106px] h-full bg-[#333333] ml-[15px] flex items-center flex-shrink-0 justify-center 
+          group relative overflow-hidden
+          ${isMobile ? 'cursor-pointer' : 'cursor-default'}
+          transition-all duration-300
+        `}
+        onClick={handleRightBoxClick}
+      >
+        {isMobile ? (
+          // Mobile: Show hamburger/close icon
+          <div className="relative z-10 text-white group-hover:text-[#FF4500] transition-colors duration-300">
+            {isSidebarOpen ? (
+              <FaTimes className="text-lg transition-transform duration-300 group-hover:scale-110" />
+            ) : (
+              <FaBars className="text-lg transition-transform duration-300 group-hover:scale-110" />
+            )}
+          </div>
+        ) : (
+          // Desktop: Show original logo
+          <img 
+            src={Y22Logo} 
+            alt="Navigation Icon" 
+            className="h-[13px] relative z-10 group-hover:scale-110 transition-transform duration-300" 
+          />
+        )}
+        
+        {/* Background animation */}
+        <div className={`
+          absolute inset-0 transform origin-left transition-transform duration-300 ease-out z-0
+          ${isMobile ? 'bg-[#FF4500]' : 'bg-[#FF4500]'}
+          ${(isMobile && isSidebarOpen) ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'}
+        `}></div>
+      </div>
     </header>
   );
 }
