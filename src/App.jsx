@@ -6,6 +6,7 @@ import MobileSidebar from './components/MobileSidebar';
 import HeroSection from './components/HeroSection';
 import AboutMeIntro from './components/AboutMeIntro';
 import Experience from './components/ExperienceSection';
+import ProjectsSection from './components/ProjectsSection';
 import './index.css'; 
 
 function App() {
@@ -82,6 +83,11 @@ function App() {
 
       <div className="relative z-20 bg-[#16191e] opacity-80 text-white min-h-screen p-8 md:p-16">
         <Experience />
+      </div>
+
+      {/* Projects Section */}
+      <div className="relative z-20">
+        <ProjectsSection />
       </div>
     </>
   );
