@@ -1,8 +1,7 @@
-// src/components/ContactSection.jsx
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { Send, Mail, Linkedin, Github, Twitter, CheckCircle } from 'lucide-react';
 
-// Using the stable CSS 3D Cube to prevent page crashes
+// Using the stable CSS 3D Cube
 const Css3dCube = () => {
   return (
     <div className="cube-container">
@@ -62,7 +61,11 @@ const ContactSection = () => {
       observer.observe(sectionRef.current);
     }
 
-    return () => observer.disconnect();
+    return () => {
+        if(sectionRef.current) {
+            observer.unobserve(sectionRef.current)
+        }
+    };
   }, []);
 
   const handleInputChange = (e) => {
@@ -90,7 +93,8 @@ const ContactSection = () => {
   const customStyles = `
     .interactive-card {
         position: relative;
-        background: #1D1D1D;
+        background: rgba(29, 29, 29, 0.7);
+        backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 0.5rem;
         padding: 1.5rem;
@@ -114,7 +118,6 @@ const ContactSection = () => {
     .interactive-card:hover::before {
         opacity: 1;
     }
-    
     .cube-container {
         width: 100%;
         height: 100%;
@@ -124,33 +127,33 @@ const ContactSection = () => {
         perspective: 1000px;
     }
     .cube {
-        width: 140px;
-        height: 140px;
+        width: 100px;
+        height: 100px;
         position: relative;
         transform-style: preserve-3d;
         animation: rotate 20s infinite linear;
     }
     .face {
         position: absolute;
-        width: 140px;
-        height: 140px;
+        width: 100px;
+        height: 100px;
         background: rgba(255, 71, 15, 0.1);
         border: 1px solid #ff470f;
         color: #ff470f;
         font-family: 'Montserrat', sans-serif;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: 600;
         display: flex;
         align-items: center;
         justify-content: center;
         box-shadow: 0 0 20px rgba(255, 71, 15, 0.2);
     }
-    .front  { transform: rotateY(0deg) translateZ(70px); }
-    .back   { transform: rotateY(180deg) translateZ(70px); }
-    .right  { transform: rotateY(90deg) translateZ(70px); }
-    .left   { transform: rotateY(-90deg) translateZ(70px); }
-    .top    { transform: rotateX(90deg) translateZ(70px); }
-    .bottom { transform: rotateX(-90deg) translateZ(70px); }
+    .front  { transform: rotateY(0deg) translateZ(50px); }
+    .back   { transform: rotateY(180deg) translateZ(50px); }
+    .right  { transform: rotateY(90deg) translateZ(50px); }
+    .left   { transform: rotateY(-90deg) translateZ(50px); }
+    .top    { transform: rotateX(90deg) translateZ(50px); }
+    .bottom { transform: rotateX(-90deg) translateZ(50px); }
 
     @keyframes rotate {
       from { transform: rotateX(0deg) rotateY(0deg); }
@@ -162,8 +165,10 @@ const ContactSection = () => {
     <section 
       ref={sectionRef} 
       id="contact" 
-      className="bg-[#1A1A1A] relative overflow-hidden py-16 md:py-24 px-4 sm:px-6 lg:px-8"
+      className="relative overflow-hidden pt-16 md:pt-24 pb-8 md:pb-12 px-4 sm:px-6 lg:px-8 bg-no-repeat bg-cover bg-center"
+      style={{ backgroundImage: `url('/image.png')` }}
     >
+      <div className="absolute inset-0 bg-black/50 z-0"></div>
       <style>{customStyles}</style>
       <div className="max-w-7xl mx-auto relative z-10">
         <div className={`text-center mb-12 md:mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
@@ -171,7 +176,7 @@ const ContactSection = () => {
             <div className="text-stone-300 text-4xl md:text-5xl font-normal font-['Dancing_Script']">
               Get in
             </div>
-            <div className="text-[#ff470f] text-5xl md:text-7xl font-semibold font-['Lufga'] leading-tight tracking-[2px] [text-shadow:_4px_4px_19px_rgb(0_0_0_/_1.00)]">
+            <div className="text-[#ff470f] text-5xl md:text-7xl font-semibold font-['Lufga'] leading-tight tracking-[2px]" style={{textShadow: '4px 4px 19px rgba(0,0,0,1)'}}>
               <div className="hover:tracking-[4px] transition-all duration-700 ease-out">Touch</div>
             </div>
           </div>
@@ -180,7 +185,7 @@ const ContactSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start max-w-4xl mx-auto">
           <div 
             className={`lg:col-span-1 transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
             style={{ transitionDelay: `150ms` }}
@@ -223,14 +228,9 @@ const ContactSection = () => {
                 )}
              </InteractiveCard>
           </div>
-
-          {/* CSS 3D Cube in the middle */}
-          <div className="relative hidden lg:block h-64 w-full">
-            <Css3dCube />
-          </div>
-
+          
           <div 
-            className={`flex flex-col gap-8 lg:col-span-1 transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
+            className={`flex flex-col gap-4 lg:col-span-1 transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
             style={{ transitionDelay: `300ms` }}
           >
             <InteractiveCard>
@@ -240,7 +240,7 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h3 className="text-stone-200 font-semibold font-['Lufga']">Email</h3>
-                  <p className="text-stone-400 font-['Montserrat'] text-sm">rahulsharma.hps@gmail.com</p>
+                  <p className="text-stone-400 font-['Montserrat'] text-sm">rahul@iiitmanipur.ac.in</p>
                   <a href="mailto:rahul@iiitmanipur.ac.in" className="text-[#FF4500] text-sm font-medium hover:underline font-['Montserrat'] mt-1 inline-block">Send an email</a>
                 </div>
               </div>
@@ -263,6 +263,9 @@ const ContactSection = () => {
                 </div>
               </div>
             </InteractiveCard>
+            <div className="relative h-32 w-full mt-4">
+              <Css3dCube />
+            </div>
           </div>
         </div>
       </div>
