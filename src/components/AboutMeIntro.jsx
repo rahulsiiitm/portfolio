@@ -48,9 +48,7 @@ function AboutMeIntro() {
       <div className="relative z-10 w-full max-w-7xl mx-auto">
         
         {/* Main Content Grid */}
-        <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-8 md:p-12">
-          
-          {/* Header Section - Inside Card */}
+        <div className="bg-white/5 backdrop-blur-md border border-t-white/50 border-l-white/50 rounded-t-2xl p-8 md:p-12">
           
         <div className="grid lg:grid-cols-5 gap-12 items-start">
             

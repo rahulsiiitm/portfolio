@@ -1,13 +1,15 @@
 // src/App.jsx
 import React, { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
-import RightSidebar from './components/RightSidebar'; 
+import RightSidebar from './components/RightSidebar';
 import MobileSidebar from './components/MobileSidebar';
 import HeroSection from './components/HeroSection';
 import AboutMeIntro from './components/AboutMeIntro';
 import Experience from './components/ExperienceSection';
 import ProjectsSection from './components/ProjectsSection';
-import './index.css'; 
+import SkillsSection from './components/SkillsSection';
+import ContactSection from './components/ContactSection';
+import './index.css';
 
 function App() {
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -52,7 +54,7 @@ function App() {
   return (
     <>
       {/* Fixed Hero Section */}
-      <div className="fixed inset-0 bg-[#1A1A1A] text-white flex flex-col overflow-hidden z-10"> 
+      <div className="fixed inset-0 bg-[#1A1A1A] text-white flex flex-col overflow-hidden z-10">
         <HeroSection />
         <img
           src="/bg.png"
@@ -62,16 +64,16 @@ function App() {
         />
       </div>
 
-      <Navbar 
-        onToggleSidebar={toggleMobileSidebar} 
+      <Navbar
+        onToggleSidebar={toggleMobileSidebar}
         isSidebarOpen={isMobileSidebarOpen}
-      /> 
-      
+      />
+
       {/* Desktop Sidebar */}
       <RightSidebar />
-      
+
       {/* Mobile Sidebar */}
-      <MobileSidebar 
+      <MobileSidebar
         isOpen={isMobileSidebarOpen}
         onClose={closeMobileSidebar}
       />
@@ -85,10 +87,19 @@ function App() {
         <Experience />
       </div>
 
+      <div className="relative z-20">
+        <SkillsSection />
+      </div>
+
       {/* Projects Section */}
       <div className="relative z-20">
         <ProjectsSection />
       </div>
+
+      <div className='relative z-20'>
+        <ContactSection />
+      </div>
+
     </>
   );
 }

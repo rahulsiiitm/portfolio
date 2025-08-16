@@ -1,141 +1,214 @@
-// src/components/ProjectsSection.jsx
-import React from 'react';
-import { ExternalLink, Github, Brain, Eye, MessageSquare, BarChart3, Cpu, Database } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { ExternalLink, Github, Brain, Eye, MessageSquare, BarChart3, Sparkles, Code2 } from 'lucide-react';
 
 const ProjectsSection = () => {
+  const sectionRef = useRef(null);
+  const [isVisible, setIsVisible] = useState(false);
+  const [hoveredProject, setHoveredProject] = useState(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, []);
+
   const projects = [
     {
       id: 1,
       title: "Computer Vision Model",
-      description: "Deep learning model for real-time object detection and classification using YOLO architecture. Built with custom preprocessing pipeline and optimized inference.",
+      description: "A deep learning model for real-time object detection and classification using the YOLO architecture with custom training pipeline.",
       tech: ["Python", "PyTorch", "OpenCV", "CUDA"],
-      metrics: "94.2% accuracy, 45 FPS",
       icon: <Eye className="w-5 h-5" />,
       github: "#",
-      demo: "#"
+      demo: "#",
+      image: "Agri.png",
+      featured: true,
+      gradient: "from-blue-500/20 via-purple-500/20 to-pink-500/20",
+      color: "#3b82f6"
     },
     {
       id: 2,
-      title: "NLP Sentiment Analyzer", 
-      description: "Transformer-based model for multi-class sentiment analysis with custom preprocessing pipeline. Handles multiple languages and emotional nuances.",
+      title: "NLP Sentiment Analyzer",
+      description: "Transformer-based model for multi-class sentiment analysis with custom preprocessing pipeline and real-time inference.",
       tech: ["Python", "Transformers", "BERT", "FastAPI"],
-      metrics: "91.8% accuracy, 0.89 F1-score",
       icon: <MessageSquare className="w-5 h-5" />,
       github: "#",
-      demo: "#"
+      demo: "#",
+      image: "https://via.placeholder.com/500x300/1e293b/FFFFFF?text=Project+Image",
+      gradient: "from-green-500/20 via-emerald-500/20 to-teal-500/20",
+      color: "#10b981"
     },
     {
       id: 3,
       title: "Predictive Analytics Dashboard",
-      description: "ML-powered forecasting system with interactive dashboard for business metrics prediction. Real-time data processing and visualization.",
-      tech: ["Python", "Scikit-learn", "React", "D3.js"],
-      metrics: "2.3% MAE, 0.94 R²-score",
+      description: "ML-powered forecasting system with interactive dashboard for business metrics and predictive insights.",
+      tech: ["Scikit-learn", "React", "D3.js", "MongoDB"],
       icon: <BarChart3 className="w-5 h-5" />,
       github: "#",
-      demo: "#"
+      demo: "#",
+      image: "https://via.placeholder.com/500x300/1e293b/FFFFFF?text=Project+Image",
+      gradient: "from-yellow-500/20 via-orange-500/20 to-red-500/20",
+      color: "#f59e0b"
     },
     {
       id: 4,
       title: "Neural Network Framework",
-      description: "Custom deep learning framework built from scratch with automatic differentiation. Supports multiple layer types and optimization algorithms.",
-      tech: ["Python", "NumPy", "Cython", "CUDA"],
-      metrics: "15+ layer types, 10K ops/sec",
+      description: "Custom deep learning framework built from scratch with automatic differentiation and optimized computational graph.",
+      tech: ["Python", "NumPy", "Cython", "LLVM"],
       icon: <Brain className="w-5 h-5" />,
       github: "#",
-      demo: "#"
+      demo: "#",
+      image: "https://via.placeholder.com/500x300/1e293b/FFFFFF?text=Project+Image",
+      gradient: "from-purple-500/20 via-indigo-500/20 to-blue-500/20",
+      color: "#8b5cf6"
     }
   ];
 
-  return (
-    <div className="bg-[#16191e] text-white min-h-screen p-8 md:p-16">
-      <div className="max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="text-[#ff6b35]">AI/ML</span> Projects
-          </h2>
-          <p className="text-gray-400 text-lg max-w-2xl">
-            Building intelligent solutions that solve real-world problems through machine learning and data science.
-          </p>
+  const animationStyles = `
+    @keyframes gentle-float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-2px); }
+    }
+    @keyframes subtle-glow {
+      0%, 100% { box-shadow: 0 4px 20px rgba(255,71,15,0.05); }
+      50% { box-shadow: 0 6px 25px rgba(255,71,15,0.08); }
+    }
+    .project-card {
+      animation: gentle-float 6s ease-in-out infinite, subtle-glow 4s ease-in-out infinite;
+    }
+    .project-card:nth-child(2n) {
+      animation-delay: -2s, -1s;
+    }
+    .project-card:nth-child(3n) {
+      animation-delay: -3s, -2s;
+    }
+    .project-card:hover {
+      transform: translateY(-4px);
+    }
+  `;
+
+  // Simplified ProjectCard component
+  const ProjectCard = ({ project, index }) => (
+    <div 
+      className={`
+        project-card relative group p-5 sm:p-6 lg:p-8
+        bg-black/[0.1] backdrop-blur-sm border border-white/[0.08] rounded-2xl
+        hover:bg-white/[0.06] hover:border-white/[0.15] transition-all duration-500
+        overflow-hidden cursor-pointer
+        ${project.featured ? 'col-span-1 md:col-span-2 row-span-1 md:row-span-2' : 'col-span-1 row-span-1'}
+        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}
+      `}
+      style={{ 
+        transitionDelay: `${index * 150}ms`
+      }}
+      onMouseEnter={() => setHoveredProject(project.id)}
+      onMouseLeave={() => setHoveredProject(null)}
+    >
+      {/* Content Layer */}
+      <div className="relative z-10 flex flex-col h-full">
+        <div className="flex items-center gap-4 mb-4">
+          <div className="p-3 bg-zinc-800/60 rounded-xl text-[#FF4500] border border-transparent group-hover:border-[#FF4500]/30 transition-all duration-300">
+            <div className="group-hover:scale-110 transition-transform duration-300">
+              {project.icon}
+            </div>
+          </div>
+          <h3 className="text-[#FF4500] text-base sm:text-lg font-semibold group-hover:text-[#FF6B35] transition-colors duration-300 font-['Lufga'] leading-tight">
+            {project.title}
+          </h3>
         </div>
 
-        {/* Projects List */}
-        <div className="space-y-8">
-          {projects.map((project, index) => (
-            <div 
-              key={project.id}
-              className="border-l-2 border-gray-700 pl-8 pb-8 relative group hover:border-[#ff6b35] transition-colors duration-300"
+        <p className="text-stone-400 leading-relaxed my-4 group-hover:text-stone-300 transition-colors duration-300 font-['Montserrat'] text-xs sm:text-sm flex-1">
+          {project.description}
+        </p>
+
+        <div className="flex flex-wrap gap-2 mb-6">
+          {project.tech.map((tech) => (
+            <span 
+              key={tech} 
+              className="px-3 py-1.5 bg-zinc-800/40 border border-[#FF4500]/20 rounded-full text-xs text-stone-300 font-medium font-['Montserrat'] group-hover:bg-zinc-800/60 group-hover:text-white transition-all duration-300"
             >
-              {/* Project Number */}
-              <div className="absolute -left-3 top-0 w-6 h-6 bg-[#16191e] border-2 border-gray-700 rounded-full flex items-center justify-center group-hover:border-[#ff6b35] group-hover:bg-[#ff6b35] transition-all duration-300">
-                <span className="text-xs font-bold text-gray-400 group-hover:text-white">
-                  {String(index + 1).padStart(2, '0')}
-                </span>
-              </div>
-
-              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
-                {/* Content */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="p-2 bg-gray-800 rounded-lg text-[#ff6b35] group-hover:bg-[#ff6b35] group-hover:text-white transition-all duration-300">
-                      {project.icon}
-                    </div>
-                    <h3 className="text-2xl font-bold group-hover:text-[#ff6b35] transition-colors duration-300">
-                      {project.title}
-                    </h3>
-                  </div>
-                  
-                  <p className="text-gray-300 mb-4 leading-relaxed">
-                    {project.description}
-                  </p>
-
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {project.tech.map((tech) => (
-                      <span 
-                        key={tech}
-                        className="px-3 py-1 bg-gray-800 text-gray-300 rounded-md text-sm font-medium"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-
-                  <p className="text-[#ff6b35] font-medium text-sm">
-                    {project.metrics}
-                  </p>
-                </div>
-
-                {/* Links */}
-                <div className="flex gap-3">
-                  <a 
-                    href={project.github}
-                    className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors duration-200 text-sm"
-                  >
-                    <Github className="w-4 h-4" />
-                    Code
-                  </a>
-                  <a 
-                    href={project.demo}
-                    className="flex items-center gap-2 px-4 py-2 bg-[#ff6b35] hover:bg-[#e55a2b] rounded-lg transition-colors duration-200 text-sm font-medium"
-                  >
-                    <ExternalLink className="w-4 h-4" />
-                    Demo
-                  </a>
-                </div>
-              </div>
-            </div>
+              {tech}
+            </span>
           ))}
         </div>
 
-        {/* Bottom Section */}
-        <div className="mt-16 pt-8 border-t border-gray-700">
-          <div className="text-center">
-            <p className="text-gray-400 mb-6">
-              Want to see more projects or discuss collaboration?
-            </p>
-            <button className="bg-[#ff6b35] hover:bg-[#e55a2b] text-white px-8 py-3 rounded-lg font-medium transition-colors duration-200">
-              View All Projects
-            </button>
+        <div className="flex gap-3 mt-auto">
+          <a 
+            href={project.github} 
+            className="flex items-center gap-2 px-4 py-2.5 bg-zinc-800/60 hover:bg-zinc-700/60 border border-white/[0.1] rounded-xl transition-all duration-300 text-sm font-['Montserrat'] text-stone-300 hover:text-white"
+          >
+            <Github className="w-4 h-4" /> 
+            Code
+          </a>
+          <a 
+            href={project.demo} 
+            className="flex items-center gap-2 px-4 py-2.5 bg-[#FF4500] hover:bg-[#e03d00] rounded-xl transition-all duration-300 text-sm font-medium font-['Montserrat'] text-white hover:scale-105"
+          >
+            <ExternalLink className="w-4 h-4" /> 
+            Demo
+          </a>
+        </div>
+      </div>
+
+      {/* Background Image Layer */}
+      {project.image && (
+        <img
+          src={project.image}
+          alt={project.title}
+          className="absolute inset-0 w-full h-full object-cover rounded-2xl z-0 opacity-5 group-hover:opacity-10 transition-opacity duration-500"
+        />
+      )}
+    </div>
+  );
+
+  return (
+    <div ref={sectionRef} className="bg-[#16191e] relative overflow-hidden py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+      <style>{animationStyles}</style>
+      
+      {/* Enhanced Background Effects */}
+      <div className="absolute top-0 left-0 w-96 h-96 bg-orange-600/5 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#ff470f]/5 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDelay: '2s' }}></div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-radial from-[#ff470f]/3 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+
+      <div className="max-w-7xl mx-auto relative z-10">
+        {/* Simplified Header */}
+        <div className={`text-center mb-12 md:mb-16 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-semibold font-['Lufga'] text-stone-200 leading-tight tracking-wide mb-3">
+            <span className="text-[#ff470f] [text-shadow:_2px_2px_10px_rgb(255_71_15_/_0.5)] hover:tracking-[2px] transition-all duration-700">
+              AI/ML
+            </span> Projects
+          </h2>
+          <div className="w-16 lg:w-20 h-0.5 bg-gradient-to-r from-[#FF4500] to-[#FF6B35] rounded-full mx-auto mb-4"></div>
+          <p className="text-stone-400 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto font-['Montserrat']">
+            A selection of my projects, showcasing my skills in building intelligent and practical applications.
+          </p>
+        </div>
+
+        {/* Enhanced Bento Grid Layout */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {projects.map((project, index) => (
+            <ProjectCard key={project.id} project={project} index={index} />
+          ))}
+        </div>
+
+        {/* Floating Action Elements */}
+        <div className="mt-12 text-center">
+          <div className={`inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#ff470f] to-[#ff6b35] rounded-full text-white font-medium transition-all duration-500 hover:scale-105 hover:shadow-lg cursor-pointer ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{ transitionDelay: '800ms' }}>
+            <Github className="w-5 h-5" />
+            <span>View All Projects</span>
+            <ExternalLink className="w-4 h-4" />
           </div>
         </div>
       </div>
