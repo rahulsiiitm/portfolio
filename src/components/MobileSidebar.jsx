@@ -6,7 +6,11 @@ import {
   FaPinterestP,
   FaGithub,
   FaDownload,
-  FaTimes
+  FaTimes,
+  FaHome,
+  FaUser,
+  FaProjectDiagram,
+  FaEnvelope
 } from 'react-icons/fa';
 
 function MobileSidebar({ isOpen, onClose }) {
@@ -17,17 +21,23 @@ function MobileSidebar({ isOpen, onClose }) {
     { name: 'Pinterest', url: 'https://www.pinterest.com/rahulsharmahps', icon: FaPinterestP, color: '#E60023' }
   ];
 
+  const navigationItems = [
+    { name: 'Home', icon: FaHome, id: 'home' },
+    { name: 'About', icon: FaUser, id: 'about' },
+    { name: 'Experience', icon: FaProjectDiagram, id: 'experience' },
+    { name: 'Contact', icon: FaEnvelope, id: 'contact' }
+  ];
+
   const downloadResume = () => {
     const link = document.createElement('a');
-    link.href = '/path-to-your-resume.pdf';
-    link.download = 'Rahul_Sharma_Resume.pdf';
+    link.href = '/Rahul_Resume (1).pdf';
+    link.download = 'Rahul_Resume (1).pdf';
     link.click();
     onClose();
   };
 
-  const handleNavClick = (item) => {
-    // Smooth scroll to section
-    const element = document.getElementById(item.toLowerCase());
+  const handleNavClick = (id) => {
+    const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
@@ -39,7 +49,7 @@ function MobileSidebar({ isOpen, onClose }) {
       {/* Overlay */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 md:hidden"
+          className="fixed inset-0 bg-black/80 backdrop-blur-sm z-40 md:hidden"
           onClick={onClose}
         />
       )}
@@ -47,19 +57,19 @@ function MobileSidebar({ isOpen, onClose }) {
       {/* Sidebar */}
       <aside className={`
         fixed right-0 top-0 h-full w-80 max-w-[85vw] 
-        bg-gradient-to-b from-[#1A1A1A] via-[#1A1A1A] to-[#0F0F0F]
-        border-l border-[#9D9D9D]/30 z-50 md:hidden
+        bg-gradient-to-b from-zinc-900/95 via-zinc-900/98 to-black/95
+        backdrop-blur-xl border-l border-white/10 z-50 md:hidden
         transform transition-transform duration-300 ease-in-out
         ${isOpen ? 'translate-x-0' : 'translate-x-full'}
-        flex flex-col overflow-hidden
+        flex flex-col overflow-hidden shadow-2xl
       `}>
         
         {/* Header */}
-        <div className="flex-shrink-0 flex items-center justify-between p-4 sm:p-6 border-b border-[#9D9D9D]/20">
-          <h2 className="text-white text-lg font-semibold font-[Poppins]">Menu</h2>
+        <div className="flex-shrink-0 flex items-center justify-between p-4 sm:p-6 border-b border-white/10">
+          <h2 className="text-stone-200 text-xl font-semibold font-['Lufga'] tracking-wide">Menu</h2>
           <button
             onClick={onClose}
-            className="text-white/70 hover:text-[#FF4500] transition-colors duration-300 text-xl p-2 hover:bg-white/5 rounded-lg"
+            className="text-stone-400 hover:text-[#ff470f] transition-colors duration-300 text-xl p-2 hover:bg-white/5 rounded-lg hover:scale-110 transform"
             aria-label="Close sidebar"
           >
             <FaTimes />
@@ -71,27 +81,31 @@ function MobileSidebar({ isOpen, onClose }) {
           <nav className="py-6">
             {/* Navigation Links */}
             <div className="mb-8">
-              <h3 className="text-white/60 text-xs uppercase tracking-wider font-medium mb-4">Navigation</h3>
+              <h3 className="text-stone-400 text-xs uppercase tracking-wider font-medium mb-6 font-['Montserrat']">Navigation</h3>
               <ul className="space-y-2">
-                {['Home', 'About', 'Projects', 'Contact'].map((item) => (
-                  <li key={item}>
-                    <button
-                      onClick={() => handleNavClick(item)}
-                      className="w-full text-left text-white hover:text-[#FF4500] transition-colors duration-300 text-lg font-medium py-3 px-2 rounded-lg hover:bg-white/5"
-                    >
-                      {item}
-                    </button>
-                  </li>
-                ))}
+                {navigationItems.map((item) => {
+                  const IconComponent = item.icon;
+                  return (
+                    <li key={item.name}>
+                      <button
+                        onClick={() => handleNavClick(item.id)}
+                        className="w-full text-left flex items-center gap-4 text-stone-300 hover:text-[#ff470f] transition-all duration-300 text-lg font-medium py-3 px-4 rounded-xl hover:bg-white/5 hover:translate-x-1 group font-['Montserrat']"
+                      >
+                        <IconComponent className="text-base group-hover:scale-110 transition-transform duration-300" />
+                        <span>{item.name}</span>
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
 
             {/* Resume Download */}
-            <div className="mb-8 pt-2 border-t border-[#9D9D9D]/20">
-              <h3 className="text-white/60 text-xs uppercase tracking-wider font-medium mb-4">Resume</h3>
+            <div className="mb-8 pt-4 border-t border-white/10">
+              <h3 className="text-stone-400 text-xs uppercase tracking-wider font-medium mb-6 font-['Montserrat']">Resume</h3>
               <button
                 onClick={downloadResume}
-                className="w-full flex items-center justify-center space-x-3 px-4 py-3 bg-[#FF4500] text-white rounded-xl hover:bg-[#FF6B35] transition-all duration-300 font-medium hover:shadow-lg hover:shadow-[#FF4500]/25"
+                className="w-full flex items-center justify-center space-x-3 px-6 py-4 bg-gradient-to-r from-[#ff470f] to-[#ff470f] text-white rounded-xl hover:from-[#ff470f]/90 hover:to-[#ff470f]/90 transition-all duration-300 font-medium hover:shadow-lg hover:shadow-[#ff470f]/25 font-['Montserrat'] hover:scale-[1.02] transform"
               >
                 <FaDownload className="text-sm" />
                 <span>Download Resume</span>
@@ -99,8 +113,8 @@ function MobileSidebar({ isOpen, onClose }) {
             </div>
 
             {/* Social Links */}
-            <div className="pt-2 border-t border-[#9D9D9D]/20">
-              <h3 className="text-white/60 text-xs uppercase tracking-wider font-medium mb-4">Connect</h3>
+            <div className="pt-4 border-t border-white/10">
+              <h3 className="text-stone-400 text-xs uppercase tracking-wider font-medium mb-6 font-['Montserrat']">Connect</h3>
               <div className="grid grid-cols-2 gap-3">
                 {socialLinks.map((link) => {
                   const IconComponent = link.icon;
@@ -110,34 +124,46 @@ function MobileSidebar({ isOpen, onClose }) {
                       href={link.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center p-4 bg-white/5 hover:bg-white/10 rounded-xl transition-all duration-300 group border border-white/10 hover:border-white/20 hover:shadow-md"
+                      className="flex flex-col items-center justify-center p-4 bg-white/5 hover:bg-white/10 rounded-xl transition-all duration-300 group border border-white/10 hover:border-[#ff470f]/30 hover:shadow-md hover:scale-105 transform"
                       title={`Connect on ${link.name}`}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.borderColor = link.color + '60';
-                        e.currentTarget.style.backgroundColor = link.color + '10';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.borderColor = '';
-                        e.currentTarget.style.backgroundColor = '';
-                      }}
                     >
                       <IconComponent 
-                        className="text-xl text-white/70 group-hover:text-white transition-colors duration-300" 
-                        style={{ color: 'inherit' }}
+                        className="text-xl text-stone-300 group-hover:text-[#ff470f] transition-colors duration-300 mb-2" 
                       />
+                      <span className="text-xs text-stone-400 group-hover:text-stone-200 transition-colors duration-300 font-['Montserrat']">
+                        {link.name}
+                      </span>
                     </a>
                   );
                 })}
+              </div>
+
+              {/* Additional Contact Info */}
+              <div className="mt-6 p-4 bg-gradient-to-br from-[#ff470f]/10 to-[#ff470f]/5 rounded-xl border border-[#ff470f]/20">
+                <div className="text-center">
+                  <h4 className="text-stone-200 font-medium mb-2 font-['Lufga']">Get in Touch</h4>
+                  <p className="text-stone-400 text-sm leading-relaxed font-['Montserrat']">
+                    Ready to collaborate on your next project? Let's create something amazing together.
+                  </p>
+                  <div className="mt-3 flex items-center justify-center">
+                    <div className="w-12 h-0.5 bg-gradient-to-r from-transparent via-[#ff470f] to-transparent rounded-full"></div>
+                  </div>
+                </div>
               </div>
             </div>
           </nav>
         </div>
 
         {/* Footer */}
-        <div className="flex-shrink-0 p-4 sm:p-6 border-t border-[#9D9D9D]/20">
-          <p className="text-white/40 text-xs text-center font-light">
-            © 2024 Rahul Sharma. All rights reserved.
-          </p>
+        <div className="flex-shrink-0 p-4 sm:p-6 border-t border-white/10 bg-black/20">
+          <div className="text-center">
+            <div className="flex items-center justify-center mb-2">
+              <div className="text-[#ff470f] font-bold text-lg font-['Lufga'] tracking-wide">RS</div>
+            </div>
+            <p className="text-stone-400 text-xs font-light font-['Montserrat']">
+              © 2024 Rahul Sharma. All rights reserved.
+            </p>
+          </div>
         </div>
       </aside>
     </>

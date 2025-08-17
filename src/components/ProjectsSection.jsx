@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { ExternalLink, Github, Brain, Eye, MessageSquare, BarChart3, Sparkles, Code2 } from 'lucide-react';
+import { ExternalLink, Github, Brain, Eye, MessageSquare, BarChart3, Sparkles, Code2, Sprout, Laptop, Smartphone } from 'lucide-react';
+
 
 const ProjectsSection = () => {
   const sectionRef = useRef(null);
@@ -25,56 +26,57 @@ const ProjectsSection = () => {
   }, []);
 
   const projects = [
-    {
-      id: 1,
-      title: "Computer Vision Model",
-      description: "A deep learning model for real-time object detection and classification using the YOLO architecture with custom training pipeline.",
-      tech: ["Python", "PyTorch", "OpenCV", "CUDA"],
-      icon: <Eye className="w-5 h-5" />,
-      github: "#",
-      demo: "#",
-      image: "Agri.png",
-      featured: true,
-      gradient: "from-blue-500/20 via-purple-500/20 to-pink-500/20",
-      color: "#3b82f6"
-    },
-    {
-      id: 2,
-      title: "NLP Sentiment Analyzer",
-      description: "Transformer-based model for multi-class sentiment analysis with custom preprocessing pipeline and real-time inference.",
-      tech: ["Python", "Transformers", "BERT", "FastAPI"],
-      icon: <MessageSquare className="w-5 h-5" />,
-      github: "#",
-      demo: "#",
-      image: "https://via.placeholder.com/500x300/1e293b/FFFFFF?text=Project+Image",
-      gradient: "from-green-500/20 via-emerald-500/20 to-teal-500/20",
-      color: "#10b981"
-    },
-    {
-      id: 3,
-      title: "Predictive Analytics Dashboard",
-      description: "ML-powered forecasting system with interactive dashboard for business metrics and predictive insights.",
-      tech: ["Scikit-learn", "React", "D3.js", "MongoDB"],
-      icon: <BarChart3 className="w-5 h-5" />,
-      github: "#",
-      demo: "#",
-      image: "https://via.placeholder.com/500x300/1e293b/FFFFFF?text=Project+Image",
-      gradient: "from-yellow-500/20 via-orange-500/20 to-red-500/20",
-      color: "#f59e0b"
-    },
-    {
-      id: 4,
-      title: "Neural Network Framework",
-      description: "Custom deep learning framework built from scratch with automatic differentiation and optimized computational graph.",
-      tech: ["Python", "NumPy", "Cython", "LLVM"],
-      icon: <Brain className="w-5 h-5" />,
-      github: "#",
-      demo: "#",
-      image: "https://via.placeholder.com/500x300/1e293b/FFFFFF?text=Project+Image",
-      gradient: "from-purple-500/20 via-indigo-500/20 to-blue-500/20",
-      color: "#8b5cf6"
-    }
-  ];
+  {
+    id: 1,
+    title: "AgriHive",
+    description: "A multilingual AI-powered farming assistant that provides crop insights, weather info, and smart recommendations for farmers.",
+    tech: ["Flutter", "TensorFlow Lite", "Firebase", "Gemini API"],
+    icon: <Sprout className="w-5 h-5" />,
+    github: "#",
+    demo: "#",
+    image: "Agri.png",
+    featured: true,
+    gradient: "from-green-500/20 via-emerald-500/20 to-teal-500/20",
+    color: "#22c55e"
+  },
+  {
+    id: 2,
+    title: "Guidance Bot",
+    description: "An AI chatbot that helps users make better product choices by analyzing features, reviews, and preferences.",
+    tech: ["Python", "FastAPI", "LangChain", "React"],
+    icon: <MessageSquare className="w-5 h-5" />,
+    github: "#",
+    demo: "#",
+    image: "guidance.png",
+    gradient: "from-blue-500/20 via-cyan-500/20 to-indigo-500/20",
+    color: "#3b82f6"
+  },
+  {
+    id: 3,
+    title: "Personal Portfolio",
+    description: "My interactive portfolio showcasing projects, skills, and experiments with creative web design.",
+    tech: ["React", "Tailwind CSS", "Framer Motion"],
+    icon: <Laptop className="w-5 h-5" />,
+    github: "#",
+    demo: "#",
+    image: "portfolio.png",
+    gradient: "from-purple-500/20 via-pink-500/20 to-red-500/20",
+    color: "#a855f7"
+  },
+  {
+    id: 4,
+    title: "Flutter Experiments",
+    description: "Prototypes and apps built with Flutter, integrating Firebase authentication, cloud storage, and real-time databases.",
+    tech: ["Flutter", "Dart", "Firebase"],
+    icon: <Smartphone className="w-5 h-5" />,
+    github: "#",
+    demo: "#",
+    image: "flutter.png",
+    gradient: "from-orange-500/20 via-red-500/20 to-pink-500/20",
+    color: "#f97316"
+  }
+];
+
 
   const animationStyles = `
     @keyframes gentle-float {

@@ -180,7 +180,7 @@ const ContactSection = () => {
               <div className="hover:tracking-[4px] transition-all duration-700 ease-out">Touch</div>
             </div>
           </div>
-          <p className="text-stone-400 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto font-['Montserrat'] mt-4">
+          <p className="text-white text-sm sm:text-base lg:text-lg max-w-2xl mx-auto font-['Montserrat'] mt-4">
             Have a project in mind or just want to say hello? Feel free to reach out.
           </p>
         </div>
@@ -240,8 +240,8 @@ const ContactSection = () => {
                 </div>
                 <div>
                   <h3 className="text-stone-200 font-semibold font-['Lufga']">Email</h3>
-                  <p className="text-stone-400 font-['Montserrat'] text-sm">rahul@iiitmanipur.ac.in</p>
-                  <a href="mailto:rahul@iiitmanipur.ac.in" className="text-[#FF4500] text-sm font-medium hover:underline font-['Montserrat'] mt-1 inline-block">Send an email</a>
+                  <p className="text-stone-400 font-['Montserrat'] text-sm">rahulsharma.hps@gmail.com</p>
+                  <a href="mailto:rahulsharma.hps@gmail.com" className="text-[#FF4500] text-sm font-medium hover:underline font-['Montserrat'] mt-1 inline-block">Send an email</a>
                 </div>
               </div>
             </InteractiveCard>

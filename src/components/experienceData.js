@@ -2,7 +2,7 @@ export const experiences = [
   {
     title: "UI/UX Designer Intern",
     company: "AliveHire",
-    period: "June 2025 – Present",
+    period: "June 2025 – August 2025",
     location: "Remote",
     description: "Designing user-friendly and visually appealing interfaces for recruitment and HR platforms. Collaborating closely with developers and product managers to deliver seamless user experiences.",
     achievements: [
