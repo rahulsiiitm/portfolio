@@ -54,7 +54,7 @@ function App() {
   return (
     <>
       {/* Fixed Hero Section */}
-      <div className="fixed inset-0 bg-[#1A1A1A] text-white flex flex-col overflow-hidden z-10">
+      <div id="home" className="fixed inset-0 bg-[#1A1A1A] text-white flex flex-col overflow-hidden z-10">
         <HeroSection />
         <img
           src="/bg.png"
@@ -79,11 +79,11 @@ function App() {
       />
 
       {/* Scrollable Sections Below Hero */}
-      <div className="relative z-20 mt-[100vh] min-h-screen">
+      <div id="about" className="relative z-20 mt-[100vh] min-h-screen">
         <AboutMeIntro />
       </div>
 
-      <div className="relative z-20 bg-[#16191e] opacity-80 text-white min-h-screen p-8 md:p-16">
+      <div id="experience" className="relative z-20 bg-[#16191e] opacity-80 text-white min-h-screen p-8 md:p-16">
         <Experience />
       </div>
 
@@ -92,11 +92,11 @@ function App() {
       </div>
 
       {/* Projects Section */}
-      <div className="relative z-20">
+      <div id="projects" className="relative z-20">
         <ProjectsSection />
       </div>
 
-      <div className='relative z-20'>
+      <div id="contact" className='relative z-20'>
         <ContactSection />
       </div>
 

@@ -85,9 +85,9 @@ const ContactSection = () => {
   };
 
   const socialLinks = useMemo(() => [
-    { href: "#", icon: <Github className="w-5 h-5" />, label: "GitHub" },
-    { href: "#", icon: <Linkedin className="w-5 h-5" />, label: "LinkedIn" },
-    { href: "#", icon: <Twitter className="w-5 h-5" />, label: "Twitter" },
+    { href: "https://github.com/rahulsiiitm", icon: <Github className="w-5 h-5" />, label: "GitHub" },
+    { href: "https://www.linkedin.com/in/rahulsharma2k4", icon: <Linkedin className="w-5 h-5" />, label: "LinkedIn" },
+    // { href: "https://twitter.com/rahulsiiitm", icon: <Twitter className="w-5 h-5" />, label: "Twitter" },
   ], []);
   
   const customStyles = `
