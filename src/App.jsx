@@ -56,12 +56,23 @@ function App() {
       {/* Fixed Hero Section */}
       <div id="home" className="fixed inset-0 bg-[#1A1A1A] text-white flex flex-col overflow-hidden z-10">
         <HeroSection />
+        {/* Desktop Background Image */}
         <img
           src="/bg.png"
           alt="Abstract background element"
-          className="absolute right-0 md:right-20 lg:right-[106px] top-0 h-full w-auto object-cover opacity-60 md:opacity-100 pointer-events-none z-0 animate-fade-in"
+          className="hidden sm:block absolute right-0 md:right-20 lg:right-[106px] top-0 h-full w-auto object-contain opacity-60 md:opacity-100 pointer-events-none z-0 animate-fade-in"
           style={{ animationDelay: '0.2s' }}
         />
+
+        {/* Mobile Background via CSS */}
+        <div
+          className="sm:hidden absolute inset-0 bg-cover bg-top opacity-60 pointer-events-none z-0 animate-fade-in"
+          style={{
+            backgroundImage: "url('/bg.png')",
+            animationDelay: "0.2s",
+          }}
+        ></div>
+
       </div>
 
       <Navbar
