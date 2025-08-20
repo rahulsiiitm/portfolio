@@ -30,7 +30,7 @@ const ProjectsSection = () => {
       id: 1,
       title: "AgriHive",
       description: "A multilingual AI-powered farming assistant that provides crop insights, weather info, and smart recommendations for farmers.",
-      tech: ["Flutter", "TensorFlow Lite", "Firebase", "Gemini API"],
+      tech: ["Flutter", "TensorFlow", "Firebase", "Gemini API", "Flask"],
       icon: <Sprout className="w-5 h-5" />,
       github: "https://github.com/rahulsiiitm/AgriHive-Frontend", // Frontend repo
       githubBackend: "https://github.com/rahulsiiitm/Backend", // Backend repo
