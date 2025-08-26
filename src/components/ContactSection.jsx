@@ -19,25 +19,25 @@ const Css3dCube = () => {
 
 // Interactive Card Component
 const InteractiveCard = ({ children }) => {
-    const cardRef = useRef(null);
+  const cardRef = useRef(null);
 
-    useEffect(() => {
-        const card = cardRef.current;
-        if (!card) return;
+  useEffect(() => {
+    const card = cardRef.current;
+    if (!card) return;
 
-        const handleMouseMove = (e) => {
-            const rect = card.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            card.style.setProperty('--mouse-x', `${x}px`);
-            card.style.setProperty('--mouse-y', `${y}px`);
-        };
+    const handleMouseMove = (e) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      card.style.setProperty('--mouse-x', `${x}px`);
+      card.style.setProperty('--mouse-y', `${y}px`);
+    };
 
-        card.addEventListener('mousemove', handleMouseMove);
-        return () => card.removeEventListener('mousemove', handleMouseMove);
-    }, []);
+    card.addEventListener('mousemove', handleMouseMove);
+    return () => card.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
-    return <div ref={cardRef} className="interactive-card">{children}</div>;
+  return <div ref={cardRef} className="interactive-card">{children}</div>;
 };
 
 const ContactSection = () => {
@@ -62,9 +62,9 @@ const ContactSection = () => {
     }
 
     return () => {
-        if(sectionRef.current) {
-            observer.unobserve(sectionRef.current)
-        }
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current)
+      }
     };
   }, []);
 
@@ -75,13 +75,49 @@ const ContactSection = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormStatus({ submitting: true, submitted: false, error: false });
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    setFormStatus({ submitting: false, submitted: true, error: false });
-    setFormData({ name: '', email: '', message: '' });
-    setTimeout(() => {
-        setFormStatus({ submitting: false, submitted: false, error: false });
-    }, 5000);
+
+    // Your validation - this is correct!
+    if (!formData.name || !formData.email || !formData.message) {
+      setFormStatus({ submitting: false, submitted: false, error: 'Please fill out all fields.' });
+      return;
+    }
+
+    // 1. Move finalFormData creation inside the function
+    const finalFormData = {
+      ...formData,
+      access_key: import.meta.env.VITE_WEB3FORMS_ACCESS_KEY,
+      subject: `New Message from ${formData.name}`,
+    };
+
+    setFormStatus({ submitting: true, submitted: false, error: null });
+
+    // 2. Add the fetch logic back here
+    try {
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(finalFormData),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setFormStatus({ submitting: false, submitted: true, error: null });
+        setFormData({ name: '', email: '', message: '' }); // Clear form
+        setTimeout(() => {
+          setFormStatus({ submitting: false, submitted: false, error: null });
+        }, 5000);
+      } else {
+        console.error("Form submission error:", result);
+        setFormStatus({ submitting: false, submitted: false, error: result.message || 'An error occurred.' });
+      }
+    } catch (error) {
+      console.error("Network or fetch error:", error);
+      setFormStatus({ submitting: false, submitted: false, error: 'Could not send message. Please try again.' });
+    }
   };
 
   const socialLinks = useMemo(() => [
@@ -89,7 +125,7 @@ const ContactSection = () => {
     { href: "https://www.linkedin.com/in/rahulsharma2k4", icon: <Linkedin className="w-5 h-5" />, label: "LinkedIn" },
     // { href: "https://twitter.com/rahulsiiitm", icon: <Twitter className="w-5 h-5" />, label: "Twitter" },
   ], []);
-  
+
   const customStyles = `
     .interactive-card {
         position: relative;
@@ -162,9 +198,9 @@ const ContactSection = () => {
   `;
 
   return (
-    <section 
-      ref={sectionRef} 
-      id="contact" 
+    <section
+      ref={sectionRef}
+      id="contact"
       className="relative overflow-hidden pt-16 md:pt-24 pb-8 md:pb-12 px-4 sm:px-6 lg:px-8 bg-no-repeat bg-cover bg-center"
       style={{ backgroundImage: `url('/image.png')` }}
     >
@@ -176,7 +212,7 @@ const ContactSection = () => {
             <div className="text-stone-300 text-4xl md:text-5xl font-normal font-['Dancing_Script']">
               Get in
             </div>
-            <div className="text-[#ff470f] text-5xl md:text-7xl font-semibold font-['Lufga'] leading-tight tracking-[2px]" style={{textShadow: '4px 4px 19px rgba(0,0,0,1)'}}>
+            <div className="text-[#ff470f] text-5xl md:text-7xl font-semibold font-['Lufga'] leading-tight tracking-[2px]" style={{ textShadow: '4px 4px 19px rgba(0,0,0,1)' }}>
               <div className="hover:tracking-[4px] transition-all duration-700 ease-out">Touch</div>
             </div>
           </div>
@@ -186,50 +222,50 @@ const ContactSection = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start max-w-4xl mx-auto">
-          <div 
+          <div
             className={`lg:col-span-1 transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
             style={{ transitionDelay: `150ms` }}
           >
-             <InteractiveCard>
-                {formStatus.submitted ? (
-                  <div className="flex flex-col items-center justify-center h-full text-center min-h-[380px]">
-                    <CheckCircle className="w-12 h-12 text-green-500 mb-4" />
-                    <h3 className="text-xl font-semibold font-['Lufga'] text-stone-200">Message Sent!</h3>
-                    <p className="text-stone-400 font-['Montserrat'] mt-2">Thank you! I'll be in touch soon.</p>
+            <InteractiveCard>
+              {formStatus.submitted ? (
+                <div className="flex flex-col items-center justify-center h-full text-center min-h-[380px]">
+                  <CheckCircle className="w-12 h-12 text-green-500 mb-4" />
+                  <h3 className="text-xl font-semibold font-['Lufga'] text-stone-200">Message Sent!</h3>
+                  <p className="text-stone-400 font-['Montserrat'] mt-2">Thank you! I'll be in touch soon.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-5">
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-stone-300 font-['Montserrat'] mb-2">Name</label>
+                    <input type="text" name="name" id="name" required value={formData.name} onChange={handleInputChange} className="w-full bg-zinc-900/60 border border-white/10 rounded-lg px-4 py-2.5 text-stone-200 focus:ring-2 focus:ring-[#FF4500] focus:border-transparent outline-none transition-all duration-300" />
                   </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <div>
-                      <label htmlFor="name" className="block text-sm font-medium text-stone-300 font-['Montserrat'] mb-2">Name</label>
-                      <input type="text" name="name" id="name" required value={formData.name} onChange={handleInputChange} className="w-full bg-zinc-900/60 border border-white/10 rounded-lg px-4 py-2.5 text-stone-200 focus:ring-2 focus:ring-[#FF4500] focus:border-transparent outline-none transition-all duration-300" />
-                    </div>
-                    <div>
-                      <label htmlFor="email" className="block text-sm font-medium text-stone-300 font-['Montserrat'] mb-2">Email</label>
-                      <input type="email" name="email" id="email" required value={formData.email} onChange={handleInputChange} className="w-full bg-zinc-900/60 border border-white/10 rounded-lg px-4 py-2.5 text-stone-200 focus:ring-2 focus:ring-[#FF4500] focus:border-transparent outline-none transition-all duration-300" />
-                    </div>
-                    <div>
-                      <label htmlFor="message" className="block text-sm font-medium text-stone-300 font-['Montserrat'] mb-2">Message</label>
-                      <textarea name="message" id="message" rows="3" required value={formData.message} onChange={handleInputChange} className="w-full bg-zinc-900/60 border border-white/10 rounded-lg px-4 py-2.5 text-stone-200 focus:ring-2 focus:ring-[#FF4500] focus:border-transparent outline-none transition-all duration-300"></textarea>
-                    </div>
-                    <button type="submit" disabled={formStatus.submitting} className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#FF4500] hover:bg-[#e03d00] rounded-lg transition-colors duration-200 text-sm font-medium font-['Montserrat'] text-white disabled:bg-gray-500 disabled:cursor-not-allowed">
-                      {formStatus.submitting ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          Sending...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4" />
-                          Send Message
-                        </>
-                      )}
-                    </button>
-                  </form>
-                )}
-             </InteractiveCard>
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-stone-300 font-['Montserrat'] mb-2">Email</label>
+                    <input type="email" name="email" id="email" required value={formData.email} onChange={handleInputChange} className="w-full bg-zinc-900/60 border border-white/10 rounded-lg px-4 py-2.5 text-stone-200 focus:ring-2 focus:ring-[#FF4500] focus:border-transparent outline-none transition-all duration-300" />
+                  </div>
+                  <div>
+                    <label htmlFor="message" className="block text-sm font-medium text-stone-300 font-['Montserrat'] mb-2">Message</label>
+                    <textarea name="message" id="message" rows="3" required value={formData.message} onChange={handleInputChange} className="w-full bg-zinc-900/60 border border-white/10 rounded-lg px-4 py-2.5 text-stone-200 focus:ring-2 focus:ring-[#FF4500] focus:border-transparent outline-none transition-all duration-300"></textarea>
+                  </div>
+                  <button type="submit" disabled={formStatus.submitting} className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-[#FF4500] hover:bg-[#e03d00] rounded-lg transition-colors duration-200 text-sm font-medium font-['Montserrat'] text-white disabled:bg-gray-500 disabled:cursor-not-allowed">
+                    {formStatus.submitting ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        Send Message
+                      </>
+                    )}
+                  </button>
+                </form>
+              )}
+            </InteractiveCard>
           </div>
-          
-          <div 
+
+          <div
             className={`flex flex-col gap-4 lg:col-span-1 transition-all duration-700 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
             style={{ transitionDelay: `300ms` }}
           >
