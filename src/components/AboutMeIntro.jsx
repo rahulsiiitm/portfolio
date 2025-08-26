@@ -1,9 +1,10 @@
-// src/components/AboutMeIntro.jsx
 import React, { useEffect, useRef, useState } from 'react';
 
 function AboutMeIntro() {
   const [isVisible, setIsVisible] = useState(false);
+  const [counters, setCounters] = useState({});
   const sectionRef = useRef(null);
+  const hasAnimated = useRef(false);
 
   // Intersection Observer for scroll animations
   useEffect(() => {
@@ -11,6 +12,13 @@ function AboutMeIntro() {
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
+          // Start counter animation only once
+          if (!hasAnimated.current) {
+            hasAnimated.current = true;
+            setTimeout(() => {
+              animateCounters();
+            }, 800); // Delay to sync with fade-in animation
+          }
         } else {
           // Optionally reset if you want animation to repeat on scroll up
           // setIsVisible(false);
@@ -27,18 +35,49 @@ function AboutMeIntro() {
   }, []);
 
   const personalStats = [
-    { number: '3rd Year', label: 'B.Tech CSE' },
-    { number: '6+', label: 'Projects Built' },
-    { number: '5+', label: 'Hackathons Participated' },
-    { number: '1', label: 'Startup Idea Presented' }
+    { number: '3rd Year', label: 'B.Tech CSE', numericValue: 3, suffix: 'rd Year' },
+    { number: '6+', label: 'Projects Built', numericValue: 6, suffix: '+' },
+    { number: '5+', label: 'Hackathons Participated', numericValue: 5, suffix: '+' },
+    { number: '1', label: 'Startup Idea Presented', numericValue: 1, suffix: '' }
   ];
 
+  // Counter animation function
+  const animateCounters = () => {
+    personalStats.forEach((stat, index) => {
+      let current = 0;
+      const target = stat.numericValue;
+      const increment = target / 30; // 30 frames for smooth animation
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) {
+          current = target;
+          clearInterval(timer);
+        }
+        
+        setCounters(prev => ({
+          ...prev,
+          [index]: Math.floor(current)
+        }));
+      }, 20); // 20ms intervals for smooth animation
+    });
+  };
+
+  const getDisplayValue = (stat, index) => {
+    const animatedValue = counters[index];
+    if (animatedValue === undefined) return '0';
+    
+    if (stat.suffix === 'rd Year') {
+      return animatedValue === 3 ? '3rd Year' : `${animatedValue}${animatedValue === 1 ? 'st' : animatedValue === 2 ? 'nd' : 'rd'} Year`;
+    }
+    
+    return `${animatedValue}${stat.suffix}`;
+  };
 
   return (
     <section
       id="about-intro"
       ref={sectionRef}
-      className="min-h-screen bg-transparent px-4 sm:px-6 md:px-8 lg:px-[60px] pt-16 sm:pt-20 pb-8 sm:pb-0 relative overflow-hidden flex items-center justify-center"
+      className="min-h-screen bg-transparent px-4 sm:px-6 md:px-8 lg:px-[60px] pt-16 sm:pt-20 pb-0 relative overflow-hidden flex items-center justify-center"
     >
       {/* Background Effects */}
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-orange-900/20 via-transparent to-transparent"></div>
@@ -77,9 +116,9 @@ function AboutMeIntro() {
               {/* Personal Stats - Below Image */}
               <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:gap-4 w-full max-w-xs sm:max-w-sm font-['Montserrat']">
                 {personalStats.map((stat, index) => (
-                  <div key={index} className="text-center p-2 sm:p-3 lg:p-4 bg-black/20 rounded-lg sm:rounded-xl border border-white/10 group hover:scale-105 transition-transform duration-300">
-                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-[#ff470f] mb-0.5 sm:mb-1 group-hover:text-[#ff470f] transition-colors">
-                      {stat.number}
+                  <div key={index} className="text-center p-2 sm:p-3 lg:p-4 bg-black/20 rounded-lg sm:rounded-xl border border-white/10 group hover:scale-105 transition-all duration-300 hover:bg-black/30">
+                    <div className="text-lg sm:text-xl lg:text-2xl font-bold text-[#ff470f] mb-0.5 sm:mb-1 group-hover:text-[#ff6b2f] transition-colors min-h-[1.5em] flex items-center justify-center">
+                      {getDisplayValue(stat, index)}
                     </div>
                     <div className="text-[10px] sm:text-xs text-stone-200 group-hover:text-stone-100 transition-colors leading-tight">
                       {stat.label}
@@ -116,12 +155,8 @@ function AboutMeIntro() {
               <div className="space-y-4 sm:space-y-6 font-['Montserrat']">
                 <div className="prose prose-lg prose-invert max-w-none">
                   <p className="text-stone-100 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4">
-
-                    My name is Rahul Sharma and I’m a third-year CS student at IIIT Manipur with a passion for building AI-powered systems that are practical and easy to use. Recently, I developed AgriHive, a multilingual farming assistant that helps farmers make smarter decisions. My workflow is a mix of design and development, whether it’s tweaking Flutter UIs, setting up Firebase backends, training AI models, or prototyping chatbots with Gemini. It’s organized chaos in the best way possible: if something’s blinking, broken, or confusing, I’m probably already experimenting with it, fixing it, or reimagining it 😎.</p>
-
-                  {/* <p className="text-stone-300 text-xs sm:text-sm leading-relaxed mb-3 sm:mb-4">
-                    I like exploring different layers of technology, from training AI models and building backends to designing intuitive interfaces. Outside academics and projects, I spend my time sketching, playing basketball, and experimenting with new ideas. For me, technology is not just about solving problems but also about making experiences meaningful and accessible.
-                  </p> */}
+                    My name is Rahul Sharma and I'm a third-year CS student at IIIT Manipur with a passion for building AI-powered systems that are practical and easy to use. Recently, I developed AgriHive, a multilingual farming assistant that helps farmers make smarter decisions. My workflow is a mix of design and development, whether it's tweaking Flutter UIs, setting up Firebase backends, training AI models, or prototyping chatbots with Gemini. It's organized chaos in the best way possible: if something's blinking, broken, or confusing, I'm probably already experimenting with it, fixing it, or reimagining it 😎.
+                  </p>
                 </div>
 
                 {/* Skills/Expertise Tags */}
