@@ -1,4 +1,5 @@
 // src/App.jsx
+import { Analytics } from "@vercel/analytics/react"
 import React, { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import RightSidebar from './components/RightSidebar';
@@ -11,7 +12,7 @@ import SkillsSection from './components/SkillsSection';
 import ContactSection from './components/ContactSection';
 import './index.css';
 
-function App() {
+export default function App() {
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -111,8 +112,8 @@ function App() {
         <ContactSection />
       </div>
 
+      <Analytics />
     </>
   );
 }
 
-export default App;

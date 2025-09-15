@@ -1,5 +1,5 @@
 // src/components/RightSidebar.jsx
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   FaLinkedinIn,
   FaTwitter,
@@ -190,7 +190,7 @@ function RightSidebar() {
           <FaGithub />
         </a>
         <a
-          href="https://twitter.com/your-handle"
+          // href="https://twitter.com/your-handle"
           className="text-white/70 text-lg lg:text-xl hover:text-[#1DA1F2] transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(29,161,242,0.3)] rounded-full p-1"
           aria-label="Twitter"
           target="_blank"
