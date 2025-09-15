@@ -1,5 +1,6 @@
 // src/App.jsx
 import { Analytics } from "@vercel/analytics/react"
+import { SpeedInsights } from "@vercel/speed-insights/react"
 import React, { useEffect, useState } from 'react';
 import Navbar from './components/Navbar';
 import RightSidebar from './components/RightSidebar';
@@ -113,6 +114,7 @@ export default function App() {
       </div>
 
       <Analytics />
+      <SpeedInsights />
     </>
   );
 }
