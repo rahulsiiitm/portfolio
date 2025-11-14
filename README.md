@@ -116,7 +116,7 @@ To personalize the portfolio, update the following files:
 * `src/components/SkillsSection.jsx` → Customize your **skills**
 * `src/components/ExperienceSection.jsx` → Update with your **work experience**
 * `src/components/ContactSection.jsx` → Update with your **contact info**
-* `public/Rahul_Resume (1).pdf` → Replace with your resume and update the link in `HeroSection.jsx`
+* `public/Rahul_Sharma_Resume.pdf` → Replace with your resume and update the link in `HeroSection.jsx`
 
 ---
 

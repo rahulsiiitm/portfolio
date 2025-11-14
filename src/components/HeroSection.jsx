@@ -29,8 +29,8 @@ function HeroSection() {
 
   const downloadResume = () => {
     const link = document.createElement('a');
-    link.href = '/Rahul_Resume.pdf';
-    link.download = 'Rahul_Resume.pdf';
+    link.href = '/Rahul_Sharma_Resume.pdf';
+    link.download = 'Rahul_Sharma_Resume.pdf';
     link.click();
   };
 

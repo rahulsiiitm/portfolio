@@ -33,8 +33,8 @@ function MobileSidebar({ isOpen, onClose }) {
 
   const downloadResume = () => {
     const link = document.createElement('a');
-    link.href = '/Rahul_Resume (1).pdf';
-    link.download = 'Rahul_Resume (1).pdf';
+    link.href = '/Rahul_Sharma_Resume.pdf';
+    link.download = 'Rahul_Sharma_Resume.pdf';
     link.click();
     onClose();
   };
