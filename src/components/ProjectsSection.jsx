@@ -1,28 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ExternalLink, Github, Brain, Eye, MessageSquare, BarChart3, Sparkles, Code2, Sprout, Laptop, Smartphone, Download, Globe, Wrench } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { ExternalLink, Github, Sprout, MessageSquare, Laptop, Wrench, Download, Globe } from 'lucide-react';
 
 const ProjectsSection = () => {
-  const sectionRef = useRef(null);
-  const [isVisible, setIsVisible] = useState(false);
   const [hoveredProject, setHoveredProject] = useState(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
 
   const projects = [
     {
@@ -34,7 +15,7 @@ const ProjectsSection = () => {
       github: "https://github.com/rahulsiiitm/AgriHive-Frontend",
       githubBackend: "https://github.com/rahulsiiitm/Backend",
       download: "https://drive.google.com/uc?export=download&id=1mOW06ng4V848ZiInPcajH08s4yVApNqz",
-      image: "AgriHive.png",
+      image: "AgriHive.png", // Ensure this path is correct in your public folder
       featured: true,
       color: "#22c55e",
       type: "app"
@@ -48,7 +29,6 @@ const ProjectsSection = () => {
       github: "https://github.com/rahulsiiitm/My-Website",
       demo: "https://my-test-website-eta.vercel.app/",
       image: "techfest.png",
-      gradient: "from-cyan-500/20 via-blue-500/20 to-purple-500/20",
       color: "#06b6d4"
     },
     {
@@ -59,7 +39,6 @@ const ProjectsSection = () => {
       icon: <MessageSquare className="w-5 h-5" />,
       github: "https://github.com/rahulsiiitm/Chatbot",
       image: "guidance.png",
-      gradient: "from-blue-500/20 via-cyan-500/20 to-indigo-500/20",
       color: "#3b82f6"
     },
     {
@@ -70,241 +49,232 @@ const ProjectsSection = () => {
       icon: <Laptop className="w-5 h-5" />,
       github: "https://github.com/rahulsiiitm/portfolio",
       image: "portfolio.png",
-      gradient: "from-purple-500/20 via-pink-500/20 to-red-500/20",
-      color: "#a855f7",
-      type: "portfolio"
+      type: "portfolio",
+      color: "#a855f7"
     },
     {
       id: 5,
       title: "More Coming Soon...",
       description: "Exciting new projects are currently in development! Stay tuned for innovative solutions and creative experiments.",
-      tech: ["React", "Flutter/Dart", "AI/ML", "..."],
+      tech: ["React", "Flutter/Dart", "AI/ML"],
       icon: <Wrench className="w-5 h-5" />,
       image: null,
       type: "coming-soon",
-      featured: true,
       color: "#6b7280"
     }
   ];
 
-  const animationStyles = `
-    @keyframes gentle-float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-2px); }
+  // Animation Variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15
+      }
     }
-    @keyframes subtle-glow {
-      0%, 100% { box-shadow: 0 4px 20px rgba(255,71,15,0.05); }
-      50% { box-shadow: 0 6px 25px rgba(255,71,15,0.08); }
+  };
+
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { 
+      opacity: 1, 
+      y: 0,
+      transition: { 
+        type: "spring", 
+        stiffness: 50, 
+        damping: 12 
+      }
     }
-    .project-card {
-      animation: gentle-float 6s ease-in-out infinite, subtle-glow 4s ease-in-out infinite;
-    }
-    .project-card:nth-child(2n) {
-      animation-delay: -2s, -1s;
-    }
-    .project-card:nth-child(3n) {
-      animation-delay: -3s, -2s;
-    }
-    .project-card:hover {
-      transform: translateY(-4px);
-    }
-  `;
-
-  const ProjectCard = ({ project, index }) => (
-    <div
-      className={`
-        project-card relative group p-4 sm:p-6 lg:p-8
-        bg-black/[0.1] backdrop-blur-sm border border-white/[0.08] rounded-2xl
-        hover:bg-white/[0.06] hover:border-white/[0.15] transition-all duration-500
-        overflow-hidden cursor-pointer
-        ${project.featured && project.type !== 'coming-soon' ? 'col-span-1 md:col-span-2 row-span-1 md:row-span-2' : project.type === 'coming-soon' ? 'col-span-1 md:col-span-2 row-span-1' : 'col-span-1 row-span-1'}
-        ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}
-      `}
-      style={{
-        transitionDelay: `${index * 150}ms`
-      }}
-      onMouseEnter={() => setHoveredProject(project.id)}
-      onMouseLeave={() => setHoveredProject(null)}
-    >
-      {/* Background Image */}
-      {project.image && (
-        <>
-          <img
-            src={project.image}
-            alt={project.title}
-            className="absolute inset-0 w-full h-full object-cover rounded-2xl"
-          />
-          {/* Default light overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/20 rounded-2xl transition-all duration-300"></div>
-          {/* Hover dark overlay */}
-          <div className="absolute inset-0 bg-black/80 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-        </>
-      )}
-
-      {/* Content */}
-      <div className="relative z-10 flex flex-col h-full">
-        {/* Header - Always visible */}
-        <div className="flex items-center gap-3 mb-3">
-          <div className="p-2 sm:p-2.5 bg-black/70 backdrop-blur-sm rounded-lg text-[#FF4500] border border-[#FF4500]/30 transition-all duration-300">
-            {project.icon}
-          </div>
-          <h3 className="text-white text-sm sm:text-base font-semibold font-['Lufga'] drop-shadow-lg" 
-              style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
-            {project.title}
-          </h3>
-        </div>
-
-        {/* Description - Only on hover */}
-        <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 mb-4">
-          <p className="text-gray-200 text-xs sm:text-sm leading-relaxed font-['Montserrat'] line-clamp-3">
-            {project.description}
-          </p>
-        </div>
-
-        {/* Tech Stack - Only on hover */}
-        <div className="opacity-0 group-hover:opacity-100 transition-all duration-300 mb-4">
-          <div className="flex flex-wrap gap-1.5">
-            {project.tech.slice(0, 4).map((tech) => (
-              <span
-                key={tech}
-                className="px-2 py-0.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded text-xs text-gray-300 font-medium"
-              >
-                {tech}
-              </span>
-            ))}
-            {project.tech.length > 4 && (
-              <span className="px-2 py-0.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded text-xs text-gray-300 font-medium">
-                +{project.tech.length - 4}
-              </span>
-            )}
-          </div>
-        </div>
-
-        {/* Spacer */}
-        <div className="flex-1"></div>
-
-        {/* Buttons - Always visible at bottom */}
-        <div className="flex flex-wrap gap-2">
-          {project.type === "app" ? (
-            <>
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 px-2.5 py-1.5 bg-black/70 hover:bg-black/80 backdrop-blur-sm border border-white/30 rounded-lg transition-all duration-300 text-xs text-gray-200 hover:text-white"
-              >
-                <Github className="w-3 h-3" />
-                Frontend
-              </a>
-              <a
-                href={project.githubBackend}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 px-2.5 py-1.5 bg-black/70 hover:bg-black/80 backdrop-blur-sm border border-white/30 rounded-lg transition-all duration-300 text-xs text-gray-200 hover:text-white"
-              >
-                <Github className="w-3 h-3" />
-                Backend
-              </a>
-              <a
-                href={project.download}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 px-2.5 py-1.5 bg-[#FF4500] hover:bg-[#e03d00] rounded-lg transition-all duration-300 text-xs font-medium text-white"
-              >
-                <Download className="w-3 h-3" />
-                APK
-              </a>
-            </>
-          ) : project.type === "portfolio" ? (
-            <a
-              href={project.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-1 px-3 py-1.5 bg-black/70 hover:bg-black/80 backdrop-blur-sm border border-white/30 rounded-lg transition-all duration-300 text-xs text-gray-200 hover:text-white"
-            >
-              <Github className="w-3 h-3" />
-              Code
-            </a>
-          ) : project.type === "coming-soon" ? (
-            <div className="flex items-center gap-1 px-3 py-1.5 bg-gray-600/70 backdrop-blur-sm border border-gray-500/30 rounded-lg text-xs text-gray-300 cursor-not-allowed">
-              <Wrench className="w-3 h-3" />
-              Coming Soon
-            </div>
-          ) : (
-            <>
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 px-2.5 py-1.5 bg-black/70 hover:bg-black/80 backdrop-blur-sm border border-white/30 rounded-lg transition-all duration-300 text-xs text-gray-200 hover:text-white"
-              >
-                <Github className="w-3 h-3" />
-                Code
-              </a>
-              {project.demo && (
-                <a
-                  href={project.demo}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-1 px-2.5 py-1.5 bg-[#FF4500] hover:bg-[#e03d00] rounded-lg transition-all duration-300 text-xs font-medium text-white"
-                >
-                  <ExternalLink className="w-3 h-3" />
-                  Demo
-                </a>
-              )}
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+  };
 
   return (
-    <div ref={sectionRef} className="bg-[#16191e] relative overflow-hidden py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8">
-      <style>{animationStyles}</style>
-
+    <section className="bg-[#16191e] relative overflow-hidden py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8">
+      
       {/* Background Effects */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-orange-600/5 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#ff470f]/5 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDelay: '2s' }}></div>
 
       <div className="max-w-7xl mx-auto relative z-10">
+        
         {/* Header */}
-        <div className={`text-center mb-12 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
           <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-semibold text-stone-200 leading-tight tracking-wide mb-3">
             <span className="font-['Dancing_Script'] text-white">Technical</span>
             <br />
             <span className="text-[#ff470f] font-['Lufga']">Projects</span>
           </h2>
-          <div className="w-16 h-0.5 bg-gradient-to-r from-[#FF4500] to-[#FF6B35] rounded-full mx-auto mb-4"></div>
+          <motion.div 
+            initial={{ width: 0 }}
+            whileInView={{ width: 64 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.4, duration: 0.8 }}
+            className="h-0.5 bg-gradient-to-r from-[#FF4500] to-[#FF6B35] rounded-full mx-auto mb-4"
+          />
           <p className="text-stone-400 text-sm sm:text-base max-w-2xl mx-auto font-['Montserrat']">
             Hover to explore project details and technologies used.
           </p>
-        </div>
+        </motion.div>
 
-        {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {projects.map((project, index) => (
-            <ProjectCard key={project.id} project={project} index={index} />
+        {/* Projects Grid */}
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6"
+        >
+          {projects.map((project) => (
+            <motion.div
+              key={project.id}
+              variants={cardVariants}
+              whileHover={{ 
+                y: -8,
+                transition: { type: "spring", stiffness: 300 }
+              }}
+              onMouseEnter={() => setHoveredProject(project.id)}
+              onMouseLeave={() => setHoveredProject(null)}
+              className={`
+                relative group p-4 sm:p-6 lg:p-8
+                bg-black/[0.1] backdrop-blur-sm border border-white/[0.08] rounded-2xl
+                hover:bg-white/[0.06] hover:border-white/[0.15] transition-colors duration-300
+                overflow-hidden cursor-default flex flex-col h-full
+                ${project.featured && project.type !== 'coming-soon' ? 'md:col-span-2 md:row-span-2' : 
+                  project.type === 'coming-soon' ? 'md:col-span-2' : ''}
+              `}
+            >
+              {/* Background Image with Overlay */}
+              {project.image && (
+                <>
+                  <div className="absolute inset-0 z-0">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#16191e] via-[#16191e]/80 to-[#16191e]/30 z-0"></div>
+                  <motion.div 
+                    initial={{ opacity: 0 }}
+                    whileHover={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute inset-0 bg-black/60 z-0"
+                  />
+                </>
+              )}
+
+              {/* Content */}
+              <div className="relative z-10 flex flex-col h-full">
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="p-2 sm:p-2.5 bg-black/70 backdrop-blur-sm rounded-lg text-[#FF4500] border border-[#FF4500]/30">
+                    {project.icon}
+                  </div>
+                  <h3 className="text-white text-sm sm:text-base font-semibold font-['Lufga'] drop-shadow-lg" 
+                      style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+                    {project.title}
+                  </h3>
+                </div>
+
+                {/* Description & Tech - Revealed on Hover */}
+                <motion.div 
+                  initial={{ opacity: 0.8, height: "auto" }}
+                  whileHover={{ opacity: 1 }}
+                  className="mb-4 flex-grow"
+                >
+                  <p className={`text-gray-300 text-xs sm:text-sm leading-relaxed font-['Montserrat'] mb-4 
+                    ${hoveredProject === project.id ? 'line-clamp-none' : 'line-clamp-3'}`}>
+                    {project.description}
+                  </p>
+                  
+                  {/* Tech Stack Pills */}
+                  <div className="flex flex-wrap gap-1.5">
+                    {project.tech.map((tech) => (
+                      <span
+                        key={tech}
+                        className="px-2 py-0.5 bg-white/10 backdrop-blur-sm border border-white/20 rounded text-[10px] sm:text-xs text-gray-200 font-medium"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                  </div>
+                </motion.div>
+
+                {/* Buttons / Links */}
+                <div className="mt-auto pt-4 border-t border-white/10 flex flex-wrap gap-2">
+                  {project.type === "app" ? (
+                    <>
+                      <ProjectButton href={project.github} icon={<Github className="w-3 h-3"/>} label="Frontend" />
+                      <ProjectButton href={project.githubBackend} icon={<Github className="w-3 h-3"/>} label="Backend" />
+                      <ProjectButton href={project.download} icon={<Download className="w-3 h-3"/>} label="APK" primary />
+                    </>
+                  ) : project.type === "coming-soon" ? (
+                    <div className="flex items-center gap-1 px-3 py-1.5 bg-gray-600/20 backdrop-blur-sm border border-gray-500/30 rounded-lg text-xs text-gray-400 cursor-not-allowed">
+                      <Wrench className="w-3 h-3" />
+                      Coming Soon
+                    </div>
+                  ) : (
+                    <>
+                      <ProjectButton href={project.github} icon={<Github className="w-3 h-3"/>} label="Code" />
+                      {project.demo && (
+                        <ProjectButton href={project.demo} icon={<ExternalLink className="w-3 h-3"/>} label="Live Demo" primary />
+                      )}
+                    </>
+                  )}
+                </div>
+              </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* View All Button */}
-        <div className="mt-12 text-center">
-          <a
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6 }}
+          className="mt-12 text-center"
+        >
+          <motion.a
             href='https://github.com/rahulsiiitm?tab=repositories'
             target="_blank"
             rel="noopener noreferrer"
-            className={`inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#ff470f] to-[#ff6b35] rounded-full text-white font-medium transition-all duration-500 hover:scale-105 hover:shadow-lg ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}
-            style={{ transitionDelay: '800ms' }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-[#ff470f] to-[#ff6b35] rounded-full text-white font-medium shadow-lg hover:shadow-orange-500/25 transition-shadow"
           >
             <Github className="w-5 h-5" />
             View All Projects
             <ExternalLink className="w-4 h-4" />
-          </a>
-        </div>
+          </motion.a>
+        </motion.div>
       </div>
-    </div>
+    </section>
   );
 };
+
+// Helper Component for Buttons to keep code clean
+const ProjectButton = ({ href, icon, label, primary = false }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className={`
+      flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300
+      ${primary 
+        ? 'bg-[#FF4500] hover:bg-[#e03d00] text-white shadow-lg shadow-orange-500/20' 
+        : 'bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white'}
+    `}
+  >
+    {icon}
+    {label}
+  </a>
+);
 
 export default ProjectsSection;

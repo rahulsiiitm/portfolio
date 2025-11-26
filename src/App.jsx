@@ -12,6 +12,8 @@ import ProjectsSection from './components/ProjectsSection';
 import SkillsSection from './components/SkillsSection';
 import ContactSection from './components/ContactSection';
 import './index.css';
+import MouseSpotlight from './components/MouseSpotlight';
+import GrainOverlay from './components/GrainOverlay';
 
 export default function App() {
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -55,6 +57,8 @@ export default function App() {
 
   return (
     <>
+      {/* <MouseSpotlight /> */}
+      <GrainOverlay />
       {/* Fixed Hero Section */}
       <div id="home" className="fixed inset-0 bg-[#1A1A1A] text-white flex flex-col overflow-hidden z-10">
         <HeroSection />
