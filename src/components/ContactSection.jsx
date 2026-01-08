@@ -72,7 +72,7 @@ const ContactSection = () => {
     <section 
       id="contact" 
       className="min-h-screen flex items-center justify-center py-20 px-4 sm:px-6 relative overflow-hidden bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `url('/image.png')` }} // YOUR ORIGINAL BACKGROUND
+      style={{ backgroundImage: `url('/image.webp')` }} // YOUR ORIGINAL BACKGROUND
     >
       {/* Dark Overlay to make text readable */}
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm z-0"></div>

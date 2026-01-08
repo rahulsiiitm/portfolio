@@ -17,7 +17,7 @@ const ProjectsSection = () => {
       githubBackend: "https://github.com/rahulsiiitm/Backend",
       download: "https://drive.google.com/uc?export=download&id=1mOW06ng4V848ZiInPcajH08s4yVApNqz",
       link: "https://agrihive-c8f6b.web.app/",
-      image: "AgriHive.png",
+      image: "AgriHive.webp",
       featured: true,
       color: "#22c55e",
       type: "app"
@@ -40,7 +40,7 @@ const ProjectsSection = () => {
       tech: ["Python", "Flask", "LangChain", "Dart"],
       icon: <MessageSquare className="w-5 h-5" />,
       github: "https://github.com/rahulsiiitm/Chatbot",
-      image: "guidance.png",
+      image: "guidance.webp",
       color: "#3b82f6"
     },
     {
@@ -51,7 +51,7 @@ const ProjectsSection = () => {
       icon: <Globe className="w-5 h-5" />,
       github: "https://github.com/rahulsiiitm/My-Website",
       demo: "https://my-test-website-eta.vercel.app/",
-      image: "techfest.png",
+      image: "techfest.webp",
       color: "#06b6d4"
     },
     {
@@ -61,7 +61,7 @@ const ProjectsSection = () => {
       tech: ["React", "Tailwind CSS", "Framer Motion"],
       icon: <Laptop className="w-5 h-5" />,
       github: "https://github.com/rahulsiiitm/portfolio",
-      image: "portfolio.png",
+      image: "portfolio.webp",
       type: "portfolio",
       color: "#a855f7"
     },
@@ -102,28 +102,28 @@ const ProjectsSection = () => {
 
   const cardVariants = {
     hidden: { opacity: 0, y: 50 },
-    visible: { 
-      opacity: 1, 
+    visible: {
+      opacity: 1,
       y: 0,
-      transition: { 
-        type: "spring", 
-        stiffness: 50, 
-        damping: 12 
+      transition: {
+        type: "spring",
+        stiffness: 50,
+        damping: 12
       }
     }
   };
 
   return (
     <section className="bg-[#16191e] relative overflow-hidden py-12 sm:py-16 md:py-24 px-4 sm:px-6 lg:px-8">
-      
+
       {/* Background Effects */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-orange-600/5 rounded-full blur-3xl pointer-events-none animate-pulse"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#ff470f]/5 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDelay: '2s' }}></div>
 
       <div className="max-w-7xl mx-auto relative z-10">
-        
+
         {/* Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
@@ -135,7 +135,7 @@ const ProjectsSection = () => {
             <br />
             <span className="text-[#ff470f] font-['Lufga']">Projects</span>
           </h2>
-          <motion.div 
+          <motion.div
             initial={{ width: 0 }}
             whileInView={{ width: 64 }}
             viewport={{ once: true }}
@@ -148,7 +148,7 @@ const ProjectsSection = () => {
         </motion.div>
 
         {/* Projects Grid */}
-        <motion.div 
+        <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
@@ -159,7 +159,7 @@ const ProjectsSection = () => {
             <motion.div
               key={project.id}
               variants={cardVariants}
-              whileHover={{ 
+              whileHover={{
                 y: -8,
                 transition: { type: "spring", stiffness: 300 }
               }}
@@ -179,9 +179,9 @@ const ProjectsSection = () => {
                 hover:bg-white/[0.06] hover:border-white/[0.15] transition-colors duration-300
                 overflow-hidden cursor-default flex flex-col h-full
                 ${project.featured && project.type !== 'coming-soon' && project.type !== 'confidential' && project.type !== 'in-progress'
-                  ? 'md:col-span-2 md:row-span-2' 
-                  : project.type === 'coming-soon' 
-                    ? 'md:col-span-2 lg:col-span-3' 
+                  ? 'md:col-span-2 md:row-span-2'
+                  : project.type === 'coming-soon'
+                    ? 'md:col-span-2 lg:col-span-3'
                     : ''}
               `}
             >
@@ -203,7 +203,7 @@ const ProjectsSection = () => {
 
               {/* Confidential Tooltip */}
               {showConfidentialTooltip === project.id && project.type === 'confidential' && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="absolute top-16 right-4 z-40 max-w-xs p-4 bg-zinc-900/95 backdrop-blur-xl border border-red-500/30 rounded-lg shadow-xl"
@@ -222,7 +222,7 @@ const ProjectsSection = () => {
 
               {/* In Progress Tooltip */}
               {showConfidentialTooltip === project.id && project.type === 'in-progress' && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   className="absolute top-16 right-4 z-40 max-w-xs p-4 bg-zinc-900/95 backdrop-blur-xl border border-amber-500/30 rounded-lg shadow-xl"
@@ -250,7 +250,7 @@ const ProjectsSection = () => {
                     />
                   </div>
                   <div className="absolute inset-0 bg-gradient-to-t from-[#16191e] via-[#16191e]/80 to-[#16191e]/30 z-0"></div>
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0 }}
                     whileHover={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
@@ -293,23 +293,22 @@ const ProjectsSection = () => {
               <div className="relative z-10 flex flex-col h-full">
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-3">
-                  <div className={`p-2 sm:p-2.5 backdrop-blur-sm rounded-lg border ${
-                    project.type === 'confidential' 
-                      ? 'bg-red-900/70 text-red-400 border-red-500/40' 
+                  <div className={`p-2 sm:p-2.5 backdrop-blur-sm rounded-lg border ${project.type === 'confidential'
+                      ? 'bg-red-900/70 text-red-400 border-red-500/40'
                       : project.type === 'in-progress'
                         ? 'bg-amber-900/70 text-amber-400 border-amber-500/40'
                         : 'bg-black/70 text-[#FF4500] border-[#FF4500]/30'
-                  }`}>
+                    }`}>
                     {project.icon}
                   </div>
-                  <h3 className="text-white text-sm sm:text-base font-semibold font-['Lufga'] drop-shadow-lg flex-1" 
-                      style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
+                  <h3 className="text-white text-sm sm:text-base font-semibold font-['Lufga'] drop-shadow-lg flex-1"
+                    style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.8)' }}>
                     {project.title}
                   </h3>
                 </div>
 
                 {/* Description & Tech - Revealed on Hover */}
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0.8, height: "auto" }}
                   whileHover={{ opacity: 1 }}
                   className="mb-4 flex-grow"
@@ -318,19 +317,18 @@ const ProjectsSection = () => {
                     ${hoveredProject === project.id ? 'line-clamp-none' : 'line-clamp-3'}`}>
                     {project.description}
                   </p>
-                  
+
                   {/* Tech Stack Pills */}
                   <div className="flex flex-wrap gap-1.5">
                     {project.tech.map((tech) => (
                       <span
                         key={tech}
-                        className={`px-2 py-0.5 backdrop-blur-sm border rounded text-[10px] sm:text-xs font-medium ${
-                          project.type === 'confidential'
+                        className={`px-2 py-0.5 backdrop-blur-sm border rounded text-[10px] sm:text-xs font-medium ${project.type === 'confidential'
                             ? 'bg-red-500/10 border-red-500/30 text-red-300 hover:border-red-500/50 hover:text-red-200'
                             : project.type === 'in-progress'
                               ? 'bg-amber-500/10 border-amber-500/30 text-amber-300 hover:border-amber-500/50 hover:text-amber-200'
                               : 'bg-white/10 border-white/20 text-gray-200 hover:border-[#FF4500]/60 hover:text-[#FF4500] hover:bg-zinc-700/70'
-                        } transition-all duration-300 cursor-default`}
+                          } transition-all duration-300 cursor-default`}
                       >
                         {tech}
                       </span>
@@ -342,9 +340,9 @@ const ProjectsSection = () => {
                 <div className="mt-auto pt-4 border-t border-white/10 flex flex-wrap gap-2">
                   {project.type === "app" ? (
                     <>
-                      <ProjectButton href={project.github} icon={<Github className="w-3 h-3"/>} label="Frontend" />
-                      <ProjectButton href={project.githubBackend} icon={<Github className="w-3 h-3"/>} label="Backend" />
-                      <ProjectButton href={project.download} icon={<Download className="w-3 h-3"/>} label="APK" primary />
+                      <ProjectButton href={project.github} icon={<Github className="w-3 h-3" />} label="Frontend" />
+                      <ProjectButton href={project.githubBackend} icon={<Github className="w-3 h-3" />} label="Backend" />
+                      <ProjectButton href={project.download} icon={<Download className="w-3 h-3" />} label="APK" primary />
                     </>
                   ) : project.type === "confidential" ? (
                     <div className="flex items-center gap-1 px-3 py-1.5 bg-red-900/20 backdrop-blur-sm border border-red-500/30 rounded-lg text-xs text-red-300 cursor-not-allowed">
@@ -352,7 +350,7 @@ const ProjectsSection = () => {
                       Confidential Project
                     </div>
                   ) : project.type === "in-progress" ? (
-                    <ProjectButton href={project.github} icon={<Github className="w-3 h-3"/>} label="View Progress" amber />
+                    <ProjectButton href={project.github} icon={<Github className="w-3 h-3" />} label="View Progress" amber />
                   ) : project.type === "coming-soon" ? (
                     <div className="flex items-center gap-1 px-3 py-1.5 bg-gray-600/20 backdrop-blur-sm border border-gray-500/30 rounded-lg text-xs text-gray-400 cursor-not-allowed">
                       <Wrench className="w-3 h-3" />
@@ -360,9 +358,9 @@ const ProjectsSection = () => {
                     </div>
                   ) : (
                     <>
-                      <ProjectButton href={project.github} icon={<Github className="w-3 h-3"/>} label="Code" />
+                      <ProjectButton href={project.github} icon={<Github className="w-3 h-3" />} label="Code" />
                       {project.demo && (
-                        <ProjectButton href={project.demo} icon={<ExternalLink className="w-3 h-3"/>} label="Live Demo" primary />
+                        <ProjectButton href={project.demo} icon={<ExternalLink className="w-3 h-3" />} label="Live Demo" primary />
                       )}
                     </>
                   )}
@@ -373,7 +371,7 @@ const ProjectsSection = () => {
         </motion.div>
 
         {/* View All Button */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -406,8 +404,8 @@ const ProjectButton = ({ href, icon, label, primary = false, amber = false }) =>
     rel="noopener noreferrer"
     className={`
       flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all duration-300
-      ${primary 
-        ? 'bg-[#FF4500] hover:bg-[#e03d00] text-white shadow-lg shadow-orange-500/20' 
+      ${primary
+        ? 'bg-[#FF4500] hover:bg-[#e03d00] text-white shadow-lg shadow-orange-500/20'
         : amber
           ? 'bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 hover:text-amber-200'
           : 'bg-white/5 hover:bg-white/10 border border-white/10 text-gray-300 hover:text-white'}

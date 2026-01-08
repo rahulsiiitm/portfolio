@@ -18,7 +18,7 @@ function HeroSection() {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 768);
     };
-    
+
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -58,7 +58,7 @@ function HeroSection() {
 
           {/* Name - More Compact */}
           <div className="mb-6">
-            <div className="text-[#ff470f] text-6xl font-semibold font-['Lufga'] leading-tight tracking-[1px] [text-shadow:_3px_3px_15px_rgb(0_0_0_/_0.9)] animate-scale-in" style={{ animationDelay: '0.8s' }}>
+            <div className="text-[#ff470f] text-6xl font-semibold font-['Lufga'] leading-tight tracking-[1px] [text-shadow:_3px_3px_15px_rgb(0_0_0_/_0.9)] animate-scale-in" style={{ animationDelay: '0.1s' }}>
               <div className="hover:tracking-[3px] transition-all duration-700 ease-out">
                 Rahul Sharma
               </div>
@@ -137,9 +137,9 @@ function HeroSection() {
         </div>
 
         {/* Enhanced Tagline */}
-        <div className="mb-6 sm:mb-8 md:mb-10 space-y-3 sm:space-y-3 animate-fade-in" style={{ animationDelay: '1s' }}>
+        <div className="mb-6 sm:mb-8 md:mb-10 space-y-3 sm:space-y-3 animate-fade-in" style={{ animationDelay: '0.3s' }}>
           <div className="justify-start text-stone-300 text-2xl sm:text-2xl md:text-4xl lg:text-6xl font-normal font-['Nanum_Brush_Script'] hover:text-[#ff470f] hover:tracking-[0.5px] sm:hover:tracking-[1px] transition-all duration-500 ease-out leading-tight">
-            AI/ML Engineer & UI/UX Designer
+            AI/ML Engineer
           </div>
           <p className="text-base sm:text-base md:text-lg text-stone-300 max-w-2xl leading-relaxed hover:text-stone-200 transition-colors duration-400">
             Crafting intelligent solutions through machine learning and creating beautiful,
@@ -194,7 +194,7 @@ function HeroSection() {
         <div className="flex flex-wrap gap-3 animate-fade-in justify-start" style={{ animationDelay: '1.4s' }}>
           {[
             'Machine Learning',
-            'Deep Learning', 
+            'Deep Learning',
             'UI/UX Design',
             'Python',
             'React'

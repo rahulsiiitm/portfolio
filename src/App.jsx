@@ -1,19 +1,21 @@
 // src/App.jsx
-import { Analytics } from "@vercel/analytics/react"
-import { SpeedInsights } from "@vercel/speed-insights/react"
-import React, { useEffect, useState } from 'react';
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
+import React, { useEffect, useState, Suspense } from 'react';
 import Navbar from './components/Navbar';
 import RightSidebar from './components/RightSidebar';
 import MobileSidebar from './components/MobileSidebar';
 import HeroSection from './components/HeroSection';
-import AboutMeIntro from './components/AboutMeIntro';
-import Experience from './components/ExperienceSection';
-import ProjectsSection from './components/ProjectsSection';
-import SkillsSection from './components/SkillsSection';
-import ContactSection from './components/ContactSection';
 import './index.css';
-import MouseSpotlight from './components/MouseSpotlight';
+// import MouseSpotlight from './components/MouseSpotlight';
 import GrainOverlay from './components/GrainOverlay';
+
+// 1. Lazy load non-critical sections to reduce initial bundle size
+const AboutMeIntro = React.lazy(() => import('./components/AboutMeIntro'));
+const Experience = React.lazy(() => import('./components/ExperienceSection'));
+const ProjectsSection = React.lazy(() => import('./components/ProjectsSection'));
+const SkillsSection = React.lazy(() => import('./components/SkillsSection'));
+const ContactSection = React.lazy(() => import('./components/ContactSection'));
 
 export default function App() {
   const [hasScrolled, setHasScrolled] = useState(false);
@@ -59,23 +61,22 @@ export default function App() {
     <>
       {/* <MouseSpotlight /> */}
       <GrainOverlay />
+
       {/* Fixed Hero Section */}
       <div id="home" className="fixed inset-0 bg-[#1A1A1A] text-white flex flex-col overflow-hidden z-10">
         <HeroSection />
-        {/* Desktop Background Image */}
+
         <img
-          src="/bg.png"
+          src="/bg.webp"
           alt="Abstract background element"
-          className="hidden sm:block absolute right-0 md:right-20 lg:right-[106px] top-0 h-full w-auto object-contain opacity-60 md:opacity-100 pointer-events-none z-0 animate-fade-in"
-          style={{ animationDelay: '0.2s' }}
+          fetchpriority="high"
+          className="hidden sm:block absolute right-0 md:right-20 lg:right-[106px] top-0 h-full w-auto object-contain opacity-60 md:opacity-100 pointer-events-none z-0"
         />
 
-        {/* Mobile Background via CSS */}
         <div
-          className="sm:hidden absolute inset-0 bg-cover bg-top opacity-60 pointer-events-none z-0 animate-fade-in"
+          className="sm:hidden absolute inset-0 bg-cover bg-top opacity-60 pointer-events-none z-0"
           style={{
-            backgroundImage: "url('/bg.png')",
-            animationDelay: "0.2s",
+            backgroundImage: "url('/bg.webp')",
           }}
         ></div>
 
@@ -95,31 +96,35 @@ export default function App() {
         onClose={closeMobileSidebar}
       />
 
-      {/* Scrollable Sections Below Hero */}
-      <div id="about" className="relative z-20 mt-[100vh] min-h-screen">
-        <AboutMeIntro />
-      </div>
+      {/* 3. SUSPENSE WRAPPER */}
+      <Suspense fallback={<div className="min-h-screen bg-[#1A1A1A]" />}>
 
-      <div id="experience" className="relative z-20 bg-[#16191e] opacity-80 text-white min-h-screen p-8 md:p-16">
-        <Experience />
-      </div>
+        {/* Scrollable Sections Below Hero */}
+        <div id="about" className="relative z-20 mt-[100vh] min-h-screen">
+          <AboutMeIntro />
+        </div>
 
-      <div className="relative z-20">
-        <SkillsSection />
-      </div>
+        <div id="experience" className="relative z-20 bg-[#16191e] opacity-80 text-white min-h-screen p-8 md:p-16">
+          <Experience />
+        </div>
 
-      {/* Projects Section */}
-      <div id="projects" className="relative z-20">
-        <ProjectsSection />
-      </div>
+        <div className="relative z-20">
+          <SkillsSection />
+        </div>
 
-      <div id="contact" className='relative z-20'>
-        <ContactSection />
-      </div>
+        {/* Projects Section */}
+        <div id="projects" className="relative z-20">
+          <ProjectsSection />
+        </div>
+
+        <div id="contact" className='relative z-20'>
+          <ContactSection />
+        </div>
+
+      </Suspense>
 
       <Analytics />
       <SpeedInsights />
     </>
   );
 }
-
