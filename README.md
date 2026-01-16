@@ -1,128 +1,36 @@
-# Personal Portfolio
-
-This is a **responsive personal portfolio website** built with **React, Vite, and Tailwind CSS**. I have designed it to showcase my **skills, projects, and experience** in a clean, modern, and interactive way.
-
----
-
-## Features
-
-* **Responsive Design** – Works seamlessly across desktops, tablets, and mobile devices.
-* **Interactive UI** – Smooth animations and transitions for an engaging experience.
-* **Component-Based Architecture** – Built with reusable and modular React components.
-* **Project Showcase** – Display of projects with GitHub links and live demos.
-* **Downloadable Resume** – One-click resume download option.
-* **Contact Section** – Includes contact details and social media links.
-* **Skills Display** – Visually highlights technical expertise.
-
----
-
-## Tech Stack
-
-**Frontend:**
-
-* React
-* Vite
-* Tailwind CSS
-* Framer Motion (animations)
-* React Intersection Observer (scroll animations)
-
-**Icons:**
-
-* Lucide React
-* React Icons
-
-**Particles:**
-
-* React TSParticles
-* TSParticles
-
-**Linting & Formatting:**
-
-* ESLint
-
----
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 
-Follow these steps to run the project locally.
-
-### Prerequisites
-
-Make sure you have **Node.js** and **npm** installed.
-
-### Installation
+First, run the development server:
 
 ```bash
-# Clone the repository
-git clone https://github.com/your-username/your-repository.git
-
-# Navigate to the project folder
-cd your-repository
-
-# Install dependencies
-npm install
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
----
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Available Scripts
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-In the project directory, you can run:
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-```bash
-npm run dev      # Runs the app in development mode at http://localhost:5173
-npm run lint     # Lints and fixes code issues
-npm run preview  # Serves the production build locally
-```
+## Learn More
 
----
+To learn more about Next.js, take a look at the following resources:
 
-## Project Structure
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-```
-portfolio/
-├── public/                # Static assets (images, fonts, resume, etc.)
-├── src/
-│   ├── assets/            # Image assets
-│   ├── components/        # React components
-│   │   ├── AboutMeIntro.jsx
-│   │   ├── ContactSection.jsx
-│   │   ├── ExperienceSection.jsx
-│   │   ├── HeroSection.jsx
-│   │   ├── MobileSidebar.jsx
-│   │   ├── Navbar.jsx
-│   │   ├── ProjectsSection.jsx
-│   │   ├── RightSidebar.jsx
-│   │   └── SkillsSection.jsx
-│   ├── App.jsx
-│   ├── index.css
-│   └── main.jsx
-├── .gitignore
-├── index.html
-├── package.json
-├── README.md
-└── ... (config files)
-```
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
----
+## Deploy on Vercel
 
-## Customization
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-To personalize the portfolio, update the following files:
-
-* `src/components/HeroSection.jsx` → Add your **name, title, and bio**
-* `src/components/AboutMeIntro.jsx` → Update the **About Me** section and replace `My_photo2.jpg` in `/public` with your photo
-* `src/components/ProjectsSection.jsx` → Add your **projects and images**
-* `src/components/SkillsSection.jsx` → Customize your **skills**
-* `src/components/ExperienceSection.jsx` → Update with your **work experience**
-* `src/components/ContactSection.jsx` → Update with your **contact info**
-* `public/Rahul_Sharma_Resume.pdf` → Replace with your resume and update the link in `HeroSection.jsx`
-
----
-
-## Author
-
-**Rahul Sharma**
-
-* GitHub: [@rahulsiiitm](https://github.com/rahulsiiitm)
-* LinkedIn: [@rahulsharma2k4](https://www.linkedin.com/in/rahulsharma2k4/)
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
