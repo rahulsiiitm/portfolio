@@ -3,6 +3,7 @@ import Intro from "./components/Intro";
 import Projects from "./components/Projects";
 import TechStack from "./components/TechStack"; // Import this
 import Experience from "./components/Experience";
+import Achievements from "./components/Achievements";
 import Footer from "./components/Footer";
 
 export default function Home() {
@@ -11,8 +12,9 @@ export default function Home() {
       <Hero />
       <Intro />
       <Projects />
-      <TechStack />  {/* Add it here */}
+      <TechStack /> 
       <Experience />
+      <Achievements />
       <Footer />
     </main>
   );
