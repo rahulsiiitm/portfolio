@@ -76,7 +76,7 @@ export default function Footer() {
         setIsSubmitting(true);
         setResult("Sending data packets...");
 
-const formData = new FormData(event.target as HTMLFormElement);
+        const formData = new FormData(event.target as HTMLFormElement);
         // Optional: Append custom subject so you know where it came from
         formData.append("subject", "New Message from Rahul's Portfolio");
 
@@ -106,6 +106,7 @@ const formData = new FormData(event.target as HTMLFormElement);
 
     return (
         <footer
+            id="contact"
             ref={footerRef}
             onMouseEnter={handleMouseEnter}
             className="group relative w-full bg-red-600 text-white overflow-hidden flex flex-col pt-20 pb-0"

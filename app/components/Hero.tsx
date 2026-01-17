@@ -28,7 +28,7 @@ export default function Hero() {
     }, []);
 
     return (
-        <section className="relative w-full h-screen overflow-hidden bg-black">
+        <section id="home" className="relative w-full h-screen overflow-hidden bg-black">
 
             {/* === 0. THE STATIC GLOBAL GRID === */}
             <div className="fixed inset-0 z-20 pointer-events-none bg-grid-pattern opacity-40 mix-blend-multiply"></div>

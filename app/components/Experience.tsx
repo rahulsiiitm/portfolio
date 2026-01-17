@@ -30,7 +30,7 @@ export default function Experience() {
     // Optional: Custom cursor logic could go here if you wanted a floating image
 
     return (
-        <section className="bg-black text-white py-32 px-4 md:px-12 border-t border-white/10">
+        <section id="experience" className="bg-black text-white py-32 px-4 md:px-12 border-t border-white/10">
 
             <div className="max-w-7xl mx-auto">
 
