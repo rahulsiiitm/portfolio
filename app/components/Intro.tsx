@@ -79,10 +79,9 @@ export default function Intro() {
                     {/* THE IMAGE CONTAINER (Animated) */}
                     <div ref={imageRef} className="relative aspect-[3/4] w-full bg-gray-200 overflow-hidden">
 
-                        <Image src="/zen.jpg" fill alt="Rahul" className="object-cover" />
+                        <Image src="/profile.jpg" fill alt="Rahul" className="object-cover" />
                         <div className="absolute inset-0 flex items-center justify-center border-2 border-dashed border-gray-400 m-4">
                             <p className="text-gray-400 font-mono text-sm uppercase tracking-widest text-center">
-                                [ Photograph by Rahul Sharma ]
                             </p>
                         </div>
 

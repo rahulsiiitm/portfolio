@@ -30,22 +30,15 @@ export default function Hero() {
     return (
         <section className="relative w-full h-screen overflow-hidden bg-black">
 
-            {/* === 0. THE STATIC GLOBAL GRID === 
-          - position: fixed -> It never scrolls.
-          - z-index: 20 -> It sits ON TOP of the video and white sheet.
-          - blend-mode -> It effectively "disappears" on the dark video but shows on white.
-      */}
+            {/* === 0. THE STATIC GLOBAL GRID === */}
             <div className="fixed inset-0 z-20 pointer-events-none bg-grid-pattern opacity-40 mix-blend-multiply"></div>
 
-
-            {/* 1. FIXED BACKGROUND VIDEO */}
-            <div className="absolute inset-0 z-0">
-                <video
-                    autoPlay muted loop playsInline
-                    className="w-full h-full object-cover opacity-60"
-                >
-                    <source src="https://videos.pexels.com/video-files/3195394/3195394-uhd_2560_1440_25fps.mp4" type="video/mp4" />
-                </video>
+            <div className="absolute right-0 top-0 w-full h-full flex items-center justify-end lg:block">
+                <img
+                    src="/livery.jpeg"
+                    alt="Background Livery"
+                    className="w-full h-full object-cover rounded-lg"
+                />
             </div>
 
             {/* 2. THE SLANTED "CUTOUT" PANEL */}
@@ -53,7 +46,7 @@ export default function Hero() {
                 ref={overlayRef}
                 className="absolute top-0 left-[-10%] w-[120%] h-full bg-off-white z-10 transform -skew-x-12 origin-bottom border-r-8 border-racing-red"
             >
-                {/* REMOVED THE GRID FROM HERE so it doesn't move with this div */}
+
 
                 {/* 4. CONTENT CONTAINER */}
                 <div className="absolute inset-0 flex flex-col justify-center px-20 md:px-40 transform skew-x-12">

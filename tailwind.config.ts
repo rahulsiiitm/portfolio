@@ -9,10 +9,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'racing-red': '#E10600',
-        'carbon-black': '#111111',
-        'off-white': '#F4F4F4',
+        // DEFINING THE CUSTOM COLORS USED IN YOUR HERO
+        "racing-red": "#E10600",       // Bright Red
+        "carbon-black": "#111111",     // Deep Black
+        "off-white": "#f4f4f4",        // The Studio Paper color
       },
+      backgroundImage: {
+        // DEFINING THE GRID PATTERN
+        "grid-pattern": "linear-gradient(to right, #e5e5e5 1px, transparent 1px), linear-gradient(to bottom, #e5e5e5 1px, transparent 1px)",
+      },
+      backgroundSize: {
+        "grid-pattern": "40px 40px",
+      }
     },
   },
   plugins: [],

@@ -70,23 +70,45 @@ export default function Footer() {
         gsap.to(wheelRef.current, { rotation: "+=360", duration: 1.5, ease: "power2.out" });
     };
 
-    const onSubmit = async (event: any) => {
-        event.preventDefault(); setIsSubmitting(true); setResult("Transmission in progress...");
-        const formData = new FormData(event.target);
-        // 👇 Replace with your actual Web3Forms Access Key
-        formData.append("access_key", "YOUR_ACCESS_KEY_HERE");
+    // 5. WEB3FORMS SUBMISSION LOGIC
+    const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setIsSubmitting(true);
+        setResult("Sending data packets...");
 
-        const response = await fetch("https://api.web3forms.com/submit", { method: "POST", body: formData });
-        const data = await response.json();
-        if (data.success) { setResult("Message Received."); event.target.reset(); } else { setResult("Error. Retry."); }
-        setIsSubmitting(false);
+const formData = new FormData(event.target as HTMLFormElement);
+        // Optional: Append custom subject so you know where it came from
+        formData.append("subject", "New Message from Rahul's Portfolio");
+
+        try {
+            const response = await fetch("https://api.web3forms.com/submit", {
+                method: "POST",
+                body: formData
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setResult("Transmission Successful. We'll be in touch.");
+                (event.target as HTMLFormElement).reset();
+            } else {
+                console.error("Error", data);
+                setResult(data.message || "Connection Failed. Retrying...");
+            }
+        } catch (error) {
+            setResult("Network Error. Check connectivity.");
+        } finally {
+            setIsSubmitting(false);
+            // Clear success message after 5 seconds
+            setTimeout(() => setResult(""), 5000);
+        }
     };
 
     return (
         <footer
             ref={footerRef}
             onMouseEnter={handleMouseEnter}
-            className="group relative w-full bg-racing-red text-white overflow-hidden flex flex-col pt-20 pb-0"
+            className="group relative w-full bg-red-600 text-white overflow-hidden flex flex-col pt-20 pb-0"
             style={{ clipPath: "polygon(0% 5%, 100% 0%, 100% 100%, 0% 100%)", marginTop: "-5vh" }}
         >
 
@@ -137,30 +159,44 @@ export default function Footer() {
                 {/* RIGHT: The "Pit Board" Form */}
                 <div
                     ref={formRef}
-                    className="w-full bg-white text-carbon-black p-8 md:p-12 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative overflow-hidden transform -skew-x-2 rounded-sm"
+                    className="w-full bg-white text-zinc-900 p-8 md:p-12 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative overflow-hidden transform -skew-x-2 rounded-sm"
                 >
-                    <div className="absolute top-0 right-0 w-3 h-full bg-racing-red"></div>
+                    <div className="absolute top-0 right-0 w-3 h-full bg-red-600"></div>
 
                     <h3 className="text-2xl font-black uppercase mb-8 tracking-tighter flex items-center gap-4">
-                        <span className="w-5 h-5 border-2 border-racing-red border-t-transparent rounded-full animate-spin"></span>
+                        <span className="w-5 h-5 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></span>
                         Initialize Comms
                     </h3>
 
                     <form onSubmit={onSubmit} className="flex flex-col gap-5">
+                        {/* --- WEB3FORMS CONFIGURATION --- */}
+                        <input
+                            type="hidden"
+                            name="access_key"
+                            value={process.env.NEXT_PUBLIC_WEB3FORMS_KEY}
+                        />
+
+                        {/* Honeypot Spam Protection (Keep hidden) */}
+                        <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 form-element">
-                            <input type="text" name="name" required className="w-full bg-gray-100 p-4 text-sm font-bold uppercase focus:bg-white focus:ring-2 focus:ring-racing-red outline-none transition-all placeholder-gray-400" placeholder="NAME" />
-                            <input type="email" name="email" required className="w-full bg-gray-100 p-4 text-sm font-bold uppercase focus:bg-white focus:ring-2 focus:ring-racing-red outline-none transition-all placeholder-gray-400" placeholder="EMAIL" />
+                            <input type="text" name="name" required className="w-full bg-gray-100 p-4 text-sm font-bold uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all placeholder-gray-400" placeholder="NAME" />
+                            <input type="email" name="email" required className="w-full bg-gray-100 p-4 text-sm font-bold uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all placeholder-gray-400" placeholder="EMAIL" />
                         </div>
                         <div className="form-element">
-                            <textarea name="message" required rows={3} className="w-full bg-gray-100 p-4 text-sm font-medium uppercase focus:bg-white focus:ring-2 focus:ring-racing-red outline-none transition-all resize-none placeholder-gray-400" placeholder="PROJECT BRIEF..."></textarea>
+                            <textarea name="message" required rows={3} className="w-full bg-gray-100 p-4 text-sm font-medium uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all resize-none placeholder-gray-400" placeholder="PROJECT BRIEF..."></textarea>
                         </div>
 
-                        <button type="submit" disabled={isSubmitting} className="form-element mt-2 py-5 px-6 bg-black text-white text-base font-black uppercase tracking-widest hover:bg-racing-red hover:animate-shake transition-colors duration-300 flex justify-between items-center group/btn">
+                        <button type="submit" disabled={isSubmitting} className="form-element mt-2 py-5 px-6 bg-black text-white text-base font-black uppercase tracking-widest hover:bg-red-600 hover:animate-shake transition-colors duration-300 flex justify-between items-center group/btn">
                             <span>{isSubmitting ? "Transmitting..." : "Start Engine"}</span>
                             <span className="group-hover/btn:translate-x-2 transition-transform">→</span>
                         </button>
 
-                        {result && <div className="text-center p-3 bg-gray-100 text-[10px] font-bold uppercase tracking-widest border-l-4 border-green-500">{result}</div>}
+                        {result && (
+                            <div className={`text-center p-3 text-[10px] font-bold uppercase tracking-widest border-l-4 ${result.includes("Error") ? "bg-red-100 border-red-600 text-red-600" : "bg-green-100 border-green-500 text-green-700"}`}>
+                                {result}
+                            </div>
+                        )}
                     </form>
                 </div>
             </div>
@@ -172,9 +208,9 @@ export default function Footer() {
                     © 2026 Rahul Sharma // Imphal, IN
                 </div>
 
-                <div className="hidden md:flex gap-8 text-[10px] font-mono text-racing-red tracking-widest">
+                <div className="hidden md:flex gap-8 text-[10px] font-mono text-red-600 tracking-widest">
                     <span className="flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 bg-racing-red rounded-full animate-pulse"></span>
+                        <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse"></span>
                         SYS: ONLINE
                     </span>
                     <span>VER: 2.0.4</span>
@@ -182,14 +218,13 @@ export default function Footer() {
                 </div>
 
                 <div className="flex gap-8 text-xs font-bold uppercase tracking-[0.2em] text-white">
-                    <a href="https://linkedin.com/in/rahulsharma2k4" target="_blank" className="hover:text-racing-red transition-colors">
+                    <a href="https://linkedin.com/in/rahulsharma2k4" target="_blank" className="hover:text-red-600 transition-colors">
                         LinkedIn
                     </a>
-                    {/* Updated GitHub Link to your Legacy Repo Handle */}
-                    <a href="https://github.com/rahulsiiitm" target="_blank" className="hover:text-racing-red transition-colors">
+                    <a href="https://github.com/rahulsiiitm" target="_blank" className="hover:text-red-600 transition-colors">
                         GitHub
                     </a>
-                    <a href="mailto:rahulsharma.hps@gmail.com" className="hover:text-racing-red transition-colors">
+                    <a href="mailto:rahulsharma.hps@gmail.com" className="hover:text-red-600 transition-colors">
                         Email
                     </a>
                 </div>
