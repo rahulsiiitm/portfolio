@@ -18,16 +18,45 @@ export default function Footer() {
     const [displayText, setDisplayText] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
 
+    // --- AUDIO STATE ---
+    const audioRef = useRef<HTMLAudioElement | null>(null);
+    const [audioUnlocked, setAudioUnlocked] = useState(false);
+
     useEffect(() => {
+        // 1. SETUP AUDIO
+        const audio = new Audio("/engine-start.mp3");
+        audio.volume = 0.5;
+        audioRef.current = audio;
+
+        // 2. UNLOCK AUDIO (Browser Policy Fix)
+        const unlockAudio = () => {
+            if (audioRef.current) {
+                const playPromise = audioRef.current.play();
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        audioRef.current?.pause();
+                        audioRef.current!.currentTime = 0;
+                        setAudioUnlocked(true);
+                    }).catch((error) => {
+                        console.log("Audio unlock blocked (waiting for interaction)");
+                    });
+                }
+            }
+            document.removeEventListener("click", unlockAudio);
+            document.removeEventListener("touchstart", unlockAudio);
+        };
+
+        document.addEventListener("click", unlockAudio);
+        document.addEventListener("touchstart", unlockAudio);
+
+        // 3. GSAP ANIMATIONS
         gsap.registerPlugin(ScrollTrigger);
 
-        // 1. Footer Parallax
         gsap.fromTo(footerRef.current,
             { y: -100 },
             { y: 0, scrollTrigger: { trigger: footerRef.current, start: "top bottom", end: "bottom bottom", scrub: true } }
         );
 
-        // 2. Form Slide-Up
         const tl = gsap.timeline({
             scrollTrigger: { trigger: footerRef.current, start: "top 60%" }
         });
@@ -42,9 +71,14 @@ export default function Footer() {
                 "-=0.4"
             );
 
+        return () => {
+            document.removeEventListener("click", unlockAudio);
+            document.removeEventListener("touchstart", unlockAudio);
+        };
+
     }, []);
 
-    // 3. Typer Logic
+    // 4. Typer Logic
     useEffect(() => {
         const handleTyping = () => {
             const fullWord = TYPER_WORDS[currentWordIndex];
@@ -65,19 +99,29 @@ export default function Footer() {
         return () => clearTimeout(timer);
     }, [displayText, isDeleting, currentWordIndex]);
 
-    // 4. Wheel Spin Acceleration
+    // 5. Wheel Spin
     const handleMouseEnter = () => {
         gsap.to(wheelRef.current, { rotation: "+=360", duration: 1.5, ease: "power2.out" });
     };
 
-    // 5. WEB3FORMS SUBMISSION LOGIC
+    // --- PLAY SOUND FUNCTION ---
+    const playHoverSound = () => {
+        if (!audioUnlocked) return;
+        
+        if (audioRef.current) {
+            audioRef.current.currentTime = 0;
+            audioRef.current.play().catch((e) => console.log("Play blocked", e));
+        }
+    };
+
+    // 6. SUBMISSION LOGIC
     const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setIsSubmitting(true);
         setResult("Sending data packets...");
+        playHoverSound();
 
         const formData = new FormData(event.target as HTMLFormElement);
-        // Optional: Append custom subject so you know where it came from
         formData.append("subject", "New Message from Rahul's Portfolio");
 
         try {
@@ -99,7 +143,6 @@ export default function Footer() {
             setResult("Network Error. Check connectivity.");
         } finally {
             setIsSubmitting(false);
-            // Clear success message after 5 seconds
             setTimeout(() => setResult(""), 5000);
         }
     };
@@ -122,11 +165,9 @@ export default function Footer() {
                 ref={wheelRef}
                 className="absolute -left-[15%] top-[5%] w-[60vw] h-[60vw] md:w-[45vw] md:h-[45vw] opacity-20 pointer-events-none z-0 border-[4px] border-dashed border-white rounded-full flex items-center justify-center animate-spin-slow"
             >
-                {/* Tire Sidewall Details */}
                 <div className="w-[85%] h-[85%] border-[1px] border-white/30 rounded-full flex items-center justify-center">
                     <div className="w-[80%] h-[80%] border-[20px] border-white/20 rounded-full"></div>
                 </div>
-                {/* Spokes */}
                 <div className="absolute w-full h-[2px] bg-white/20 rotate-0"></div>
                 <div className="absolute w-full h-[2px] bg-white/20 rotate-45"></div>
                 <div className="absolute w-full h-[2px] bg-white/20 rotate-90"></div>
@@ -170,14 +211,7 @@ export default function Footer() {
                     </h3>
 
                     <form onSubmit={onSubmit} className="flex flex-col gap-5">
-                        {/* --- WEB3FORMS CONFIGURATION --- */}
-                        <input
-                            type="hidden"
-                            name="access_key"
-                            value={process.env.NEXT_PUBLIC_WEB3FORMS_KEY}
-                        />
-
-                        {/* Honeypot Spam Protection (Keep hidden) */}
+                        <input type="hidden" name="access_key" value={process.env.NEXT_PUBLIC_WEB3FORMS_KEY} />
                         <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 form-element">
@@ -188,7 +222,14 @@ export default function Footer() {
                             <textarea name="message" required rows={3} className="w-full bg-gray-100 p-4 text-sm font-medium uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all resize-none placeholder-gray-400" placeholder="PROJECT BRIEF..."></textarea>
                         </div>
 
-                        <button type="submit" disabled={isSubmitting} className="form-element mt-2 py-5 px-6 bg-black text-white text-base font-black uppercase tracking-widest hover:bg-red-600 hover:animate-shake transition-colors duration-300 flex justify-between items-center group/btn">
+                        {/* --- BUTTON WITH ENGINE SHAKE --- */}
+                        <button 
+                            type="submit" 
+                            disabled={isSubmitting} 
+                            onMouseEnter={playHoverSound}
+                            // Added custom hover class `hover:animate-engine-start`
+                            className="form-element mt-2 py-5 px-6 bg-black text-white text-base font-black uppercase tracking-widest hover:bg-red-600 hover:animate-engine-start transition-colors duration-300 flex justify-between items-center group/btn cursor-pointer"
+                        >
                             <span>{isSubmitting ? "Transmitting..." : "Start Engine"}</span>
                             <span className="group-hover/btn:translate-x-2 transition-transform">→</span>
                         </button>
@@ -219,7 +260,7 @@ export default function Footer() {
                 </div>
 
                 <div className="flex gap-8 text-xs font-bold uppercase tracking-[0.2em] text-white">
-                    <a href="https://linkedin.com/in/rahulsharma2k4" target="_blank" className="hover:text-red-600 transition-colors">
+                    <a href="https://linkedin.com/in/rahulsiiitm" target="_blank" className="hover:text-red-600 transition-colors">
                         LinkedIn
                     </a>
                     <a href="https://github.com/rahulsiiitm" target="_blank" className="hover:text-red-600 transition-colors">
@@ -233,31 +274,44 @@ export default function Footer() {
             </div>
 
             <style jsx>{`
-        .stroke-text { -webkit-text-stroke: 2px white; color: transparent; }
-        
-        @keyframes spin-slow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .animate-spin-slow {
-            animation: spin-slow 20s linear infinite;
-        }
+                .stroke-text { -webkit-text-stroke: 2px white; color: transparent; }
+                
+                @keyframes spin-slow {
+                    from { transform: rotate(0deg); }
+                    to { transform: rotate(360deg); }
+                }
+                .animate-spin-slow {
+                    animation: spin-slow 20s linear infinite;
+                }
 
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            10% { transform: translate(-1px, -2px) rotate(-1deg); }
-            20% { transform: translate(-3px, 0px) rotate(1deg); }
-            30% { transform: translate(3px, 2px) rotate(0deg); }
-            40% { transform: translate(1px, -1px) rotate(1deg); }
-            50% { transform: translate(-1px, 2px) rotate(-1deg); }
-            60% { transform: translate(-3px, 1px) rotate(0deg); }
-            100% { transform: translate(1px, -2px) rotate(-1deg); }
-        }
-        .hover\:animate-shake:hover {
-            animation: shake 0.5s; 
-            animation-iteration-count: infinite; 
-        }
-      `}</style>
+                /* --- ENGINE START SHAKE ANIMATION --- */
+                /* Total Duration: 3s. 0-2s (approx 66%) is intense, 2s-3s (66%-100%) decays */
+                @keyframes engine-shake {
+                    0% { transform: translate(2px, 2px) rotate(1deg); }
+                    5% { transform: translate(-2px, -3px) rotate(-1deg); }
+                    10% { transform: translate(-4px, 1px) rotate(2deg); }
+                    15% { transform: translate(4px, 3px) rotate(0deg); }
+                    20% { transform: translate(2px, -2px) rotate(2deg); }
+                    25% { transform: translate(-2px, 3px) rotate(-2deg); }
+                    30% { transform: translate(-4px, -1px) rotate(1deg); }
+                    35% { transform: translate(4px, 2px) rotate(-1deg); }
+                    40% { transform: translate(2px, -3px) rotate(2deg); }
+                    45% { transform: translate(-2px, 1px) rotate(-2deg); }
+                    50% { transform: translate(-4px, -2px) rotate(1deg); }
+                    55% { transform: translate(4px, 3px) rotate(-1deg); }
+                    60% { transform: translate(2px, -2px) rotate(2deg); }
+                    
+                    /* GRADUAL DECAY STARTING (2.0s mark) */
+                    70% { transform: translate(-1px, 2px) rotate(-1deg); }
+                    80% { transform: translate(1px, -1px) rotate(0.5deg); }
+                    90% { transform: translate(0.5px, 0.5px) rotate(-0.5deg); }
+                    100% { transform: translate(0, 0) rotate(0); }
+                }
+
+                .hover\:animate-engine-start:hover {
+                    animation: engine-shake 3s ease-out forwards; 
+                }
+            `}</style>
         </footer>
     );
 }
