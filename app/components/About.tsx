@@ -167,11 +167,11 @@ export default function About() {
                     {/* Stats */}
                     <div className="mt-8 grid grid-cols-2 gap-4 border-t border-black/10 pt-6">
                         <div>
-                            <span className="block text-2xl font-black text-black">3+</span>
+                            <span className="block text-2xl font-black text-black">2+</span>
                             <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Years Exp.</span>
                         </div>
                         <div>
-                            <span className="block text-2xl font-black text-black">15+</span>
+                            <span className="block text-2xl font-black text-black">10+</span>
                             <span className="text-xs font-bold uppercase tracking-widest text-gray-400">Projects</span>
                         </div>
                     </div>
@@ -181,8 +181,8 @@ export default function About() {
              {/* Download Button (Slow Layer) */}
              <div ref={buttonRef} className="mt-24 relative z-10">
                 <a 
-                    href="/Rahul_Sharma_Resume.pdf" 
-                    download="Rahul_Sharma_Resume.pdf"
+                    href="https://drive.google.com/file/d/1GaUFx-KT4HekLrgq1jmTVeSRy-z6HGdu/view?usp=sharing" 
+                    download="Rahul Sharma.pdf"
                     className="inline-flex items-center gap-4 px-8 py-4 bg-black text-white font-bold uppercase tracking-[0.2em] text-sm hover:bg-racing-red transition-colors duration-300 group shadow-xl"
                 >
                     <span>Download Telemetry</span>
