@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -11,7 +11,32 @@ export default function About() {
   const numberRef = useRef(null);
   const sidebarRef = useRef(null);
   
+  // Audio State
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [audioUnlocked, setAudioUnlocked] = useState(false);
+
   useEffect(() => {
+    // 1. SETUP AUDIO
+    const audio = new Audio("/engine-start.mp3");
+    audio.volume = 0.5;
+    audioRef.current = audio;
+
+    // 2. UNLOCK AUDIO (Browser Policy Fix)
+    const unlockAudio = () => {
+        if (audioRef.current) {
+            const playPromise = audioRef.current.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    audioRef.current?.pause();
+                    audioRef.current!.currentTime = 0;
+                    setAudioUnlocked(true);
+                }).catch(() => {});
+            }
+        }
+        document.removeEventListener("click", unlockAudio);
+    };
+    document.addEventListener("click", unlockAudio);
+
     gsap.registerPlugin(ScrollTrigger);
 
     const ctx = gsap.context(() => {
@@ -94,8 +119,19 @@ export default function About() {
 
     }, container);
 
-    return () => ctx.revert();
+    return () => {
+        ctx.revert();
+        document.removeEventListener("click", unlockAudio);
+    };
   }, []);
+
+  const playHoverSound = () => {
+    if (!audioUnlocked) return;
+    if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play().catch(() => {});
+    }
+  };
 
   return (
     <section ref={container} id="about" className="relative w-full bg-off-white text-carbon-black border-b border-black/10 overflow-hidden">
@@ -179,11 +215,13 @@ export default function About() {
             </div>
 
              {/* Download Button (Slow Layer) */}
-             <div ref={buttonRef} className="mt-24 relative z-10">
+             <div ref={buttonRef} className="mt-7 relative z-10">
                 <a 
                     href="https://drive.google.com/file/d/1GaUFx-KT4HekLrgq1jmTVeSRy-z6HGdu/view?usp=sharing" 
-                    download="Rahul Sharma.pdf"
-                    className="inline-flex items-center gap-4 px-8 py-4 bg-black text-white font-bold uppercase tracking-[0.2em] text-sm hover:bg-racing-red transition-colors duration-300 group shadow-xl"
+                    download="Rahul_Sharma_Resume.pdf"
+                    target="_blank"
+                    onMouseEnter={playHoverSound} // <--- Added Sound Here
+                    className="inline-flex items-center gap-4 px-8 py-4 bg-black text-white font-bold uppercase tracking-[0.2em] text-sm hover:bg-racing-red transition-colors duration-300 group shadow-xl cursor-pointer"
                 >
                     <span>Download Telemetry</span>
                     <span className="group-hover:translate-y-1 transition-transform duration-300">↓</span>

@@ -47,15 +47,15 @@ export default function Navbar() {
 
   return (
     <>
-      {/* === NAVBAR (Fixed Top) === 
-          - z-[100]: Ensures it's above the Hero Grid (which is z-50)
-          - mix-blend-difference: Inverts colors so it's visible on light/dark backgrounds
-      */}
       <nav className="fixed top-0 left-0 w-full z-[100] px-6 md:px-12 py-6 flex justify-between items-center mix-blend-difference text-white">
         
         {/* LOGO */}
         <Link href="/" className="group flex items-center gap-2">
-          <div className="w-3 h-3 bg-white group-hover:bg-racing-red transition-colors"></div>
+          <img
+            src="/Y21.png"
+            alt="Logo"
+            className="w-8 h-8 object-contain transition-transform duration-300"
+          />
           <span className="font-black text-lg tracking-tighter uppercase">
             RAHUL<span className="text-racing-red">.DEV</span>
           </span>
@@ -78,7 +78,6 @@ export default function Navbar() {
         </button>
 
       </nav>
-
 
       {/* === SIDEBAR OVERLAY (Backdrop) === */}
       <div 

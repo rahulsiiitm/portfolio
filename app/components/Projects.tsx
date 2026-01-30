@@ -10,7 +10,8 @@ const projects = [
     category: "AI / FLUTTER",
     description: "AI-powered farming advisory platform achieving 92% disease detection accuracy using TensorFlow, Gemini API, and an offline-first Firebase backend.",
     year: "2025",
-    image: "bg-zinc-900",
+    colorClass: "bg-zinc-900", 
+    bgImage: "/projects/AgriHive.webp", 
     links: {
       github: "https://github.com/rahulsiiitm/AgriHive-Frontend",
       githubBackend: "https://github.com/rahulsiiitm/Backend",
@@ -24,7 +25,8 @@ const projects = [
     category: "SECURITY / APP",
     description: "Mission-critical secure log management app developed for the CRPF featuring real-time data visualization and secure Firestore architecture.",
     year: "2025",
-    image: "bg-zinc-900",
+    colorClass: "bg-zinc-900",
+    bgImage: null, 
     links: null,
     confidential: true
   },
@@ -34,7 +36,8 @@ const projects = [
     category: "ROBOTICS / CV",
     description: "Autonomous UAV navigation system built in Gazebo using ROS and SLAM algorithms, integrating OpenCV CNNs for in-flight obstacle avoidance.",
     year: "2025",
-    image: "bg-zinc-800",
+    colorClass: "bg-zinc-800",
+    bgImage: null,
     links: {
       github: "https://github.com/rahulsiiitm/semantic_drone_project"
     },
@@ -46,7 +49,8 @@ const projects = [
     category: "GEN AI / WEB",
     description: "AI chatbot engineered with LangChain and Gemini API to facilitate semantic product search and intelligent customer guidance.",
     year: "2025",
-    image: "bg-zinc-800",
+    colorClass: "bg-zinc-800",
+    bgImage: "/projects/guidance.webp", 
     links: {
       github: "https://github.com/rahulsiiitm/Chatbot"
     }
@@ -120,7 +124,7 @@ export default function Projects() {
     cards.forEach((card) => {
       const image = card.querySelector(".project-image-inner") as HTMLElement | null;
       gsap.to(image, {
-        x: 100,
+        x: 50, 
         ease: "none",
         scrollTrigger: {
           trigger: card,
@@ -156,7 +160,8 @@ export default function Projects() {
 
       <div ref={redlineRef} className="absolute inset-0 bg-racing-red mix-blend-overlay opacity-0 pointer-events-none z-30 transition-opacity"></div>
 
-      <div className="absolute top-0 left-0 px-6 md:px-12 py-8 z-20 pointer-events-none">
+      {/* --- HUD HEADER (Left) --- */}
+      <div className="absolute top-24 left-0 px-6 md:px-12 z-20 pointer-events-none">
         <div className="flex items-center gap-3 mb-2">
           <span className="w-2 h-2 bg-racing-red rounded-full animate-pulse"></span>
           <span className="text-xs font-bold tracking-[0.2em] uppercase text-racing-red">Race Logic / v1.0</span>
@@ -166,7 +171,8 @@ export default function Projects() {
         </h2>
       </div>
 
-      <div className="absolute top-0 right-0 px-6 md:px-12 py-8 z-20 pointer-events-none text-right">
+      {/* --- HUD SPEEDOMETER (Right) --- */}
+      <div className="absolute top-24 right-0 px-6 md:px-12 z-20 pointer-events-none text-right">
         <div className="flex flex-col items-end">
           <p className="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-500 mb-1">Scroll Velocity</p>
           <div className="flex items-baseline gap-2">
@@ -186,17 +192,21 @@ export default function Projects() {
 
       <div
         ref={trackRef}
-        className="flex h-full items-center pl-6 md:pl-12"
+        // CHANGED: pb-8 (approx 32px). 
+        // Progress bar is 16px (h-4). 
+        // This leaves exactly 16px gap above the bar.
+        className="flex h-full items-end pl-6 md:pl-12 pb-8"
         style={{ width: "fit-content" }}
       >
 
         {projects.map((project) => (
           <div
             key={project.id}
-            className="project-card relative w-[90vw] md:w-[60vw] h-[75vh] md:h-[80vh] flex flex-col md:flex-row flex-shrink-0 mr-6 md:mr-16 border border-white/10 bg-zinc-900/80 backdrop-blur-sm group origin-bottom-left overflow-hidden"
+            className="project-card relative w-[90vw] md:w-[60vw] h-[60vh] md:h-[70vh] flex flex-col md:flex-row flex-shrink-0 mr-6 md:mr-16 border border-white/10 bg-zinc-900/80 backdrop-blur-sm group origin-bottom-left overflow-hidden shadow-2xl"
           >
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-racing-red to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
+            {/* CONFIDENTIAL BADGE */}
             {project.confidential && (
               <div className="absolute top-4 right-4 z-30 flex items-center gap-2 px-3 py-1.5 bg-red-500/20 backdrop-blur-md border border-red-500/40 rounded-full">
                 <svg className="w-3 h-3 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -206,6 +216,7 @@ export default function Projects() {
               </div>
             )}
 
+            {/* IN PROGRESS BADGE */}
             {project.inProgress && (
               <div className="absolute top-4 right-4 z-30 flex items-center gap-2 px-3 py-1.5 bg-amber-500/20 backdrop-blur-md border border-amber-500/40 rounded-full">
                 <svg className="w-3 h-3 text-amber-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -215,32 +226,45 @@ export default function Projects() {
               </div>
             )}
 
-            <div className={`w-full md:w-[60%] h-[50%] md:h-full ${project.image} relative overflow-hidden border-r border-white/10`}>
+            {/* IMAGE SECTION */}
+            <div className={`w-full md:w-[60%] h-[50%] md:h-full ${project.colorClass} relative overflow-hidden border-r border-white/10`}>
+              
+              {project.bgImage ? (
+                  <img 
+                    src={project.bgImage}
+                    alt={project.title}
+                    className="project-image-inner absolute w-[110%] h-[110%] -left-[5%] -top-[5%] object-cover opacity-60 transition-all duration-500 group-hover:opacity-80 group-hover:scale-105"
+                  />
+              ) : (
+                  <div className="project-image-inner absolute inset-[-10%] bg-cover bg-center bg-no-repeat opacity-50"></div>
+              )}
 
-              <div className="project-image-inner absolute inset-[-20%] bg-cover bg-center bg-no-repeat opacity-50"></div>
-
-              <div className="project-image-inner absolute inset-0 flex items-center justify-center">
+              {/* Huge Number Overlay */}
+              <div className="project-image-inner absolute inset-0 flex items-center justify-center pointer-events-none">
                 <span className="text-[10rem] md:text-[15rem] font-black text-white/5 select-none">
                   {project.id}
                 </span>
               </div>
 
+              {/* Hover Red Overlay */}
               <div className="absolute inset-0 bg-racing-red/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay"></div>
 
+              {/* Hover Action Button */}
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 scale-90 group-hover:scale-100">
                 <button
                   onClick={() => handleProjectClick(project)}
                   disabled={project.confidential}
-                  className={`w-20 h-20 ${project.confidential ? 'bg-gray-600 cursor-not-allowed' : 'bg-white hover:bg-racing-red hover:text-white'} text-black rounded-full flex items-center justify-center font-black text-2xl transition-colors`}
+                  className={`w-20 h-20 ${project.confidential ? 'bg-gray-600 cursor-not-allowed' : 'bg-white hover:bg-racing-red hover:text-white'} text-black rounded-full flex items-center justify-center font-black text-2xl transition-colors shadow-xl`}
                 >
                   {project.confidential ? '🔒' : '→'}
                 </button>
               </div>
             </div>
 
-            <div className="w-full md:w-[40%] h-[50%] md:h-full p-8 flex flex-col justify-between bg-black/40">
+            {/* CONTENT SECTION */}
+            <div className="w-full md:w-[40%] h-[50%] md:h-full p-6 md:p-8 flex flex-col justify-between bg-black/40">
 
-              <div className="flex justify-between items-start border-b border-white/10 pb-6">
+              <div className="flex justify-between items-start border-b border-white/10 pb-4">
                 <span className="px-3 py-1 border border-white/20 rounded-full text-[10px] font-bold uppercase tracking-widest text-racing-red">
                   {project.category}
                 </span>
@@ -248,15 +272,16 @@ export default function Projects() {
               </div>
 
               <div>
-                <h3 className="text-4xl md:text-5xl font-black uppercase leading-[0.9] mb-4 group-hover:text-racing-red transition-colors duration-300">
+                <h3 className="text-3xl md:text-5xl font-black uppercase leading-[0.9] mb-4 group-hover:text-racing-red transition-colors duration-300">
                   {project.title}
                 </h3>
-                <p className="text-sm md:text-base text-gray-400 font-medium leading-relaxed">
+                <p className="text-xs md:text-sm text-gray-400 font-medium leading-relaxed line-clamp-4">
                   {project.description}
                 </p>
               </div>
 
-              <div className="border-t border-white/10 pt-6 flex justify-between items-center text-xs font-mono text-gray-500 uppercase">
+              {/* ACTION BUTTONS */}
+              <div className="border-t border-white/10 pt-4 flex justify-between items-center text-xs font-mono text-gray-500 uppercase">
                 {project.confidential ? (
                   <>
                     <div className="flex items-center gap-2 text-red-400">

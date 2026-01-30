@@ -2,7 +2,6 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import Image from "next/image"; // Import Next.js Image component
 
 export default function Intro() {
     const container = useRef(null);
@@ -31,7 +30,7 @@ export default function Intro() {
         tl.fromTo(".intro-line",
             { y: 50, opacity: 0 },
             { y: 0, opacity: 1, stagger: 0.1, duration: 0.8, ease: "power4.out" },
-            "-=1.0" // Start while image is still revealing
+            "-=1.0"
         );
 
     }, []);
@@ -56,34 +55,39 @@ export default function Intro() {
                     {/* Manifesto */}
                     <div ref={textRef} className="text-4xl md:text-6xl font-bold leading-[1.1] uppercase tracking-tight">
                         <div className="overflow-hidden"><p className="intro-line">I do not just write code.</p></div>
+                        {/* Reverted back to "Velocity" as requested */}
                         <div className="overflow-hidden"><p className="intro-line">I engineer <span className="text-racing-red">Velocity</span>.</p></div>
 
                         <div className="mt-8 overflow-hidden">
                             <p className="intro-line text-xl md:text-2xl normal-case font-medium text-gray-600 max-w-xl leading-relaxed">
-                                Merging the precision of Machine Learning with the raw emotion of brutalist design. My work lives at the intersection where algorithms meet aesthetics.
+                                Merging the precision of <strong className="text-carbon-black">Deep Learning</strong> with the raw power of <strong className="text-carbon-black">Robotic Perception</strong>. My work lives where algorithms meet the real world.
                             </p>
                         </div>
                     </div>
 
-                    {/* Stats Grid */}
+                    {/* Stats Grid - Kept AI/ML focus */}
                     <div className="grid grid-cols-2 gap-8 mt-16 border-t border-gray-300 pt-8">
-                        <StatItem number="01" label="Frontend" value="Next.js / GSAP" />
-                        <StatItem number="02" label="AI / ML" value="Python / PyTorch" />
+                        <StatItem number="01" label="Neural Nets" value="TensorFlow / PyTorch" />
+                        <StatItem number="02" label="Robotics" value="ROS / SLAM / OpenCV" />
                     </div>
                 </div>
 
 
-                {/* === RIGHT COLUMN: PHOTO PLACEHOLDER === */}
+                {/* === RIGHT COLUMN: PHOTO === */}
                 <div className="w-full md:w-2/5 relative mt-10 md:mt-0">
 
-                    {/* THE IMAGE CONTAINER (Animated) */}
-                    <div ref={imageRef} className="relative aspect-[3/4] w-full bg-gray-200 overflow-hidden">
-
-                        <Image src="/profile.jpg" fill alt="Rahul" className="object-cover" />
-                        <div className="absolute inset-0 flex items-center justify-center border-2 border-dashed border-gray-400 m-4">
-                            <p className="text-gray-400 font-mono text-sm uppercase tracking-widest text-center">
-                            </p>
-                        </div>
+                    {/* THE IMAGE CONTAINER */}
+                    <div ref={imageRef} className="relative aspect-[3/4] w-full bg-gray-200 overflow-hidden shadow-2xl">
+                        
+                        {/* Fixed: Switched to standard <img> tag for Vite compatibility */}
+                        <img 
+                            src="/profile.jpg" 
+                            alt="Rahul Sharma" 
+                            className="w-full h-full object-cover hover:grayscale-0 transition-all duration-700" 
+                        />
+                        
+                        {/* Border Overlay */}
+                        <div className="absolute inset-0 flex items-center justify-center border-2 border-dashed border-white/30 m-4 pointer-events-none"></div>
 
                         {/* Decorative Corner Accent */}
                         <div className="absolute bottom-0 right-0 w-16 h-16 bg-racing-red z-10"></div>
