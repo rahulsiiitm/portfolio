@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef } from "react";
-import Image from "next/image"; // <--- 1. Import Next.js Image
 import gsap from "gsap";
 
 export default function Hero() {
@@ -12,19 +11,19 @@ export default function Hero() {
         // 1. Reveal the White Slanted Overlay
         gsap.fromTo(overlayRef.current,
             { x: "-100%" },
-            { x: "0%", duration: 1.0, ease: "power4.out" } // Reduced duration slightly
+            { x: "0%", duration: 1.2, ease: "power4.out" }
         );
 
-        // 2. Text Slide-in (REDUCED DELAY for better LCP)
+        // 2. Text Slide-in
         gsap.fromTo(textRef.current,
-            { x: -50, opacity: 0 }, // Reduced distance for snappier feel
-            { x: 0, opacity: 1, duration: 0.8, delay: 0.2, ease: "power3.out" } // Delay 0.5 -> 0.2
+            { x: -100, opacity: 0 },
+            { x: 0, opacity: 1, duration: 1, delay: 0.5, ease: "power3.out" }
         );
 
         // 3. Subtext Slide-in
         gsap.fromTo(subTextRef.current,
             { y: 20, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.8, delay: 0.4, ease: "power3.out" } // Delay 0.8 -> 0.4
+            { y: 0, opacity: 1, duration: 1, delay: 0.8, ease: "power3.out" }
         );
     }, []);
 
@@ -34,22 +33,12 @@ export default function Hero() {
             {/* === 0. THE STATIC GLOBAL GRID === */}
             <div className="fixed inset-0 z-20 pointer-events-none bg-grid-pattern opacity-40 mix-blend-multiply"></div>
 
-            {/* 1. BACKGROUND IMAGE (Optimized) */}
+            {/* 1. BACKGROUND IMAGE */}
             <div className="absolute right-0 top-0 w-full h-full flex items-center justify-end lg:block">
-                {/* NEXT/IMAGE OPTIMIZATION:
-                   - fill: Covers the container div
-                   - priority: Loads immediately (Fixes LCP)
-                   - sizes: Tells browser to download smaller versions on mobile
-                   - quality: 85 is a good balance
-                */}
-                <Image
+                <img
                     src="/livery.webp"
                     alt="Background Livery"
-                    fill
-                    priority
-                    quality={85}
-                    sizes="100vw"
-                    className="object-cover opacity-60 md:opacity-100"
+                    className="w-full h-full object-cover opacity-60 md:opacity-100"
                 />
             </div>
 
@@ -60,9 +49,10 @@ export default function Hero() {
             >
 
                 {/* 4. CONTENT CONTAINER */}
+                {/* Reverted strictly to flex-col justify-center. px-6 for mobile safety, px-40 for desktop */}
                 <div className="absolute inset-0 flex flex-col justify-center px-6 md:px-40 transform skew-x-12">
 
-                    {/* The "Tag" */}
+                    {/* The "Tag" - Removed extra margins */}
                     <div ref={subTextRef} className="flex items-center gap-4 mb-2">
                         <span className="h-[2px] w-8 md:w-10 bg-racing-red"></span>
                         <span className="text-xs md:text-sm font-bold tracking-[0.2em] uppercase text-gray-500">
@@ -70,7 +60,7 @@ export default function Hero() {
                         </span>
                     </div>
 
-                    {/* The Massive Name */}
+                    {/* The Massive Name - Removed extra margins */}
                     <div ref={textRef}>
                         <h1 className="text-6xl md:text-[10rem] font-black leading-[0.9] tracking-tighter text-carbon-black uppercase">
                             Rahul <br />
@@ -86,19 +76,19 @@ export default function Hero() {
                         </p>
                     </div>
 
-                    {/* Decorative Specs */}
+                    {/* Decorative Specs - Positioned absolutely so they don't affect flow */}
                     <div className="absolute bottom-10 left-6 md:left-40 flex gap-6 md:gap-10 text-[10px] md:text-xs font-mono text-gray-400">
                         <div>
                             <p>LOC</p>
-                            <p className="text-black font-bold">IMPHAL, IN</p>
+                            <p className="text-black ">IMPHAL, IN</p>
                         </div>
                         <div>
                             <p>STATUS</p>
-                            <p className="text-racing-red font-bold">ONLINE</p>
+                            <p className="text-racing-red ">ONLINE</p>
                         </div>
                         <div className="hidden sm:block">
                             <p>SYS</p>
-                            <p className="text-black font-bold">NEXT.JS / PYTHON</p>
+                            <p className="text-black ">NEXT.JS / PYTHON</p>
                         </div>
                     </div>
 
