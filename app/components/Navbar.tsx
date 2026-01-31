@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { usePathname } from "next/navigation";
+import { useLenis } from "lenis/react"; // <--- 1. IMPORT LENIS HOOK
 
 const menuLinks = [
   { label: "Home", href: "/", id: "01" },
@@ -15,32 +16,44 @@ const menuLinks = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isDarkText, setIsDarkText] = useState(false); // Default to white text (false)
+  const [isDarkText, setIsDarkText] = useState(false);
 
   const menuRef = useRef(null);
   const overlayRef = useRef(null);
   const pathname = usePathname();
+  const lenis = useLenis(); // <--- 2. GET LENIS INSTANCE
 
   useEffect(() => {
     setIsOpen(false);
   }, [pathname]);
 
+  // --- SMOOTH SCROLL HANDLER ---
+  const handleLinkClick = (e: any, href: string) => {
+    setIsOpen(false);
+
+    // If it's a hash link (#projects) and we are on the home page
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      lenis?.scrollTo(href); // <--- SMOOTH SCROLL TO ID
+    }
+    // If it's the Home link ("/") and we are already on home
+    else if (href === "/" && pathname === "/") {
+      e.preventDefault();
+      lenis?.scrollTo(0); // <--- SMOOTH SCROLL TO TOP
+    }
+  };
+
   // --- DYNAMIC BACKGROUND DETECTION ---
   useEffect(() => {
     const checkBackground = () => {
-      // Check point at top-center of viewport (where nav lives)
       const element = document.elementFromPoint(window.innerWidth / 2, 40);
-
       if (element) {
         let current: HTMLElement | null = element as HTMLElement;
         let bgColor = null;
 
-        // Traverse up DOM to find a background color
         while (current && current !== document.body) {
           const computed = window.getComputedStyle(current);
           const bg = computed.backgroundColor;
-
-          // Ignore transparent backgrounds
           if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
             bgColor = bg;
             break;
@@ -52,23 +65,17 @@ export default function Navbar() {
           const rgb = bgColor.match(/\d+/g);
           if (rgb) {
             const [r, g, b] = rgb.map(Number);
-            // Calculate Perceived Brightness
             const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-
-            // If background is bright (>128), Text should be Dark
             setIsDarkText(brightness > 128);
           }
         } else {
-          // Default to Dark Text if no background found (safest for white pages)
-          // Or false if your default body is black.
           setIsDarkText(false);
         }
       }
     };
 
     window.addEventListener("scroll", checkBackground);
-    checkBackground(); // Run on mount
-
+    checkBackground();
     return () => window.removeEventListener("scroll", checkBackground);
   }, []);
 
@@ -92,7 +99,6 @@ export default function Navbar() {
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
-  // Dynamic Classes
   const textColorClass = isDarkText ? "text-carbon-black" : "text-white";
   const hamburgerColorClass = isDarkText ? "bg-carbon-black" : "bg-white";
 
@@ -100,27 +106,18 @@ export default function Navbar() {
     <>
       <nav className="fixed top-0 left-0 w-full z-[100] px-6 md:px-12 py-6 flex justify-between items-center pointer-events-none transition-colors duration-300">
 
-        {/* LOGO LINK */}
-        <Link href="/" className="group flex items-center gap-2 pointer-events-auto">
-          {/* IMAGE: Always Original */}
+        {/* LOGO */}
+        <Link href="/" onClick={(e) => handleLinkClick(e, "/")} className="group flex items-center gap-2 pointer-events-auto">
           <img
             src="/Y21.png"
             alt="Logo"
             className="w-8 h-8 object-contain transition-transform duration-300 relative z-10"
           />
-
           <span className="font-black text-lg tracking-tighter uppercase flex items-center relative">
-
-            {/* RAHUL: Dynamic Color */}
             <span className={`relative z-10 transition-colors duration-300 ${textColorClass}`}>
               RAHUL
             </span>
-
-            {/* .DEV: Always Red */}
-            <span className="text-racing-red relative z-10">
-              .DEV
-            </span>
-
+            <span className="text-racing-red relative z-10">.DEV</span>
           </span>
         </Link>
 
@@ -163,7 +160,7 @@ export default function Navbar() {
             <Link
               key={link.id}
               href={link.href}
-              onClick={() => setIsOpen(false)}
+              onClick={(e) => handleLinkClick(e, link.href)} // <--- 3. ATTACH HANDLER
               className="menu-link-item group flex items-center gap-6"
             >
               <span className="font-mono text-xs text-gray-600 group-hover:text-racing-red transition-colors duration-300">{link.id}</span>
