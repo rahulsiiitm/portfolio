@@ -180,7 +180,7 @@ export default function About() {
                 <h2 className="text-5xl md:text-7xl font-black leading-[0.9] mb-12 uppercase tracking-tighter">
                     Bridging the Gap Between <br/>
                     <span className="text-racing-red">Silicon Logic</span> & <br/>
-                    <span className="text-transparent stroke-text">Human Emotion</span>.
+                    <span className="text-transparent stroke-text">Human Emotion</span>
                 </h2>
             </div>
 

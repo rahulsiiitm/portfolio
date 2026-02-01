@@ -54,9 +54,9 @@ export default function Intro() {
 
                     {/* Manifesto */}
                     <div ref={textRef} className="text-4xl md:text-6xl font-bold leading-[1.1] uppercase tracking-tight">
-                        <div className="overflow-hidden"><p className="intro-line">I do not just write code.</p></div>
+                        <div className="overflow-hidden"><p className="intro-line">I do not just write code</p></div>
                         {/* Reverted back to "Velocity" as requested */}
-                        <div className="overflow-hidden"><p className="intro-line">I engineer <span className="text-racing-red">Velocity</span>.</p></div>
+                        <div className="overflow-hidden"><p className="intro-line">I engineer <span className="text-racing-red">Velocity</span></p></div>
 
                         <div className="mt-8 overflow-hidden">
                             <p className="intro-line text-xl md:text-2xl normal-case font-medium text-gray-600 max-w-xl leading-relaxed">
