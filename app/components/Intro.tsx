@@ -38,59 +38,57 @@ export default function Intro() {
     return (
         <section
             ref={container}
-            className="relative w-full py-32 px-10 md:px-24 bg-off-white text-carbon-black overflow-hidden"
+            className="relative w-full py-20 sm:py-24 md:py-32 px-6 sm:px-10 md:px-24 bg-off-white text-carbon-black overflow-hidden"
         >
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-16 items-start">
+            <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-10 sm:gap-12 md:gap-16 items-start">
 
-                {/* === LEFT COLUMN: TEXT CONTENT === */}
+                {/* === LEFT COLUMN: TEXT CONTENT - MOBILE OPTIMIZED === */}
                 <div className="w-full md:w-3/5">
-                    {/* Header */}
-                    <div className="flex items-center gap-4 mb-12 intro-line">
-                        <span className="h-[2px] w-10 bg-racing-red"></span>
-                        <span className="text-sm font-bold tracking-[0.2em] uppercase text-gray-500">
+                    {/* Header - MOBILE OPTIMIZED */}
+                    <div className="flex items-center gap-3 md:gap-4 mb-8 sm:mb-10 md:mb-12 intro-line">
+                        <span className="h-[2px] w-8 md:w-10 bg-racing-red"></span>
+                        <span className="text-xs md:text-sm font-bold tracking-[0.15em] md:tracking-[0.2em] uppercase text-gray-500">
                             The Mission
                         </span>
                     </div>
 
-                    {/* Manifesto */}
-                    <div ref={textRef} className="text-4xl md:text-6xl font-bold leading-[1.1] uppercase tracking-tight">
+                    {/* Manifesto - MOBILE OPTIMIZED */}
+                    <div ref={textRef} className="text-3xl sm:text-4xl md:text-6xl font-bold leading-[1.1] uppercase tracking-tight">
                         <div className="overflow-hidden"><p className="intro-line">I do not just write code</p></div>
-                        {/* Reverted back to "Velocity" as requested */}
                         <div className="overflow-hidden"><p className="intro-line">I engineer <span className="text-racing-red">Velocity</span></p></div>
 
-                        <div className="mt-8 overflow-hidden">
-                            <p className="intro-line text-xl md:text-2xl normal-case font-medium text-gray-600 max-w-xl leading-relaxed">
+                        <div className="mt-6 sm:mt-7 md:mt-8 overflow-hidden">
+                            <p className="intro-line text-base sm:text-lg md:text-2xl normal-case font-medium text-gray-600 max-w-xl leading-relaxed">
                                 Merging the precision of <strong className="text-carbon-black">Deep Learning</strong> with the raw power of <strong className="text-carbon-black">Robotic Perception</strong>. My work lives where algorithms meet the real world.
                             </p>
                         </div>
                     </div>
 
-                    {/* Stats Grid - Kept AI/ML focus */}
-                    <div className="grid grid-cols-2 gap-8 mt-16 border-t border-gray-300 pt-8">
+                    {/* Stats Grid - MOBILE OPTIMIZED */}
+                    <div className="grid grid-cols-2 gap-6 sm:gap-7 md:gap-8 mt-12 sm:mt-14 md:mt-16 border-t border-gray-300 pt-6 sm:pt-7 md:pt-8">
                         <StatItem number="01" label="Neural Nets" value="TensorFlow / PyTorch" />
                         <StatItem number="02" label="Robotics" value="ROS / SLAM / OpenCV" />
                     </div>
                 </div>
 
 
-                {/* === RIGHT COLUMN: PHOTO === */}
-                <div className="w-full md:w-2/5 relative mt-10 md:mt-0">
+                {/* === RIGHT COLUMN: PHOTO - MOBILE OPTIMIZED === */}
+                <div className="w-full md:w-2/5 relative mt-6 sm:mt-8 md:mt-0">
 
-                    {/* THE IMAGE CONTAINER */}
+                    {/* THE IMAGE CONTAINER - MOBILE OPTIMIZED */}
                     <div ref={imageRef} className="relative aspect-[3/4] w-full bg-gray-200 overflow-hidden shadow-2xl">
-                        
-                        {/* Fixed: Switched to standard <img> tag for Vite compatibility */}
-                        <img 
-                            src="/profile.jpg" 
-                            alt="Rahul Sharma" 
-                            className="w-full h-full object-cover hover:grayscale-0 transition-all duration-700" 
-                        />
-                        
-                        {/* Border Overlay */}
-                        <div className="absolute inset-0 flex items-center justify-center border-2 border-dashed border-white/30 m-4 pointer-events-none"></div>
 
-                        {/* Decorative Corner Accent */}
-                        <div className="absolute bottom-0 right-0 w-16 h-16 bg-racing-red z-10"></div>
+                        <img
+                            src="/profile.jpg"
+                            alt="Rahul Sharma"
+                            className="w-full h-full object-cover hover:grayscale-0 transition-all duration-700"
+                        />
+
+                        {/* Border Overlay - MOBILE OPTIMIZED */}
+                        <div className="absolute inset-0 flex items-center justify-center border-2 border-dashed border-white/30 m-3 md:m-4 pointer-events-none"></div>
+
+                        {/* Decorative Corner Accent - MOBILE OPTIMIZED */}
+                        <div className="absolute bottom-0 right-0 w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-racing-red z-10"></div>
                     </div>
 
                 </div>
@@ -101,9 +99,9 @@ export default function Intro() {
 }
 
 const StatItem = ({ number, label, value }: any) => (
-    <div className="intro-line flex flex-col gap-2">
-        <span className="text-xs font-bold text-racing-red">{number}</span>
-        <span className="text-xs uppercase tracking-widest text-gray-500">{label}</span>
-        <span className="text-lg font-bold text-carbon-black">{value}</span>
+    <div className="intro-line flex flex-col gap-1.5 md:gap-2">
+        <span className="text-[10px] md:text-xs font-bold text-racing-red">{number}</span>
+        <span className="text-[10px] md:text-xs uppercase tracking-widest text-gray-500">{label}</span>
+        <span className="text-base sm:text-lg font-bold text-carbon-black">{value}</span>
     </div>
 );

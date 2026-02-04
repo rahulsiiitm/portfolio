@@ -152,7 +152,7 @@ export default function Footer() {
             id="contact"
             ref={footerRef}
             onMouseEnter={handleMouseEnter}
-            className="group relative w-full bg-red-600 text-white overflow-hidden flex flex-col pt-20 pb-0"
+            className="group relative w-full bg-red-600 text-white overflow-hidden flex flex-col pt-16 sm:pt-20 pb-0"
             style={{ clipPath: "polygon(0% 5%, 100% 0%, 100% 100%, 0% 100%)", marginTop: "-5vh" }}
         >
 
@@ -160,13 +160,13 @@ export default function Footer() {
             <div className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-overlay"
                 style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
 
-            {/* === THE GIANT F1 WHEEL === */}
+            {/* === THE GIANT F1 WHEEL - MOBILE OPTIMIZED === */}
             <div
                 ref={wheelRef}
-                className="absolute -left-[15%] top-[5%] w-[60vw] h-[60vw] md:w-[45vw] md:h-[45vw] opacity-20 pointer-events-none z-0 border-[4px] border-dashed border-white rounded-full flex items-center justify-center animate-spin-slow"
+                className="absolute -left-[25%] sm:-left-[15%] top-[5%] w-[80vw] h-[80vw] sm:w-[60vw] sm:h-[60vw] md:w-[45vw] md:h-[45vw] opacity-20 pointer-events-none z-0 border-[3px] md:border-[4px] border-dashed border-white rounded-full flex items-center justify-center animate-spin-slow"
             >
                 <div className="w-[85%] h-[85%] border-[1px] border-white/30 rounded-full flex items-center justify-center">
-                    <div className="w-[80%] h-[80%] border-[20px] border-white/20 rounded-full"></div>
+                    <div className="w-[80%] h-[80%] border-[15px] md:border-[20px] border-white/20 rounded-full"></div>
                 </div>
                 <div className="absolute w-full h-[2px] bg-white/20 rotate-0"></div>
                 <div className="absolute w-full h-[2px] bg-white/20 rotate-45"></div>
@@ -175,17 +175,17 @@ export default function Footer() {
             </div>
 
 
-            {/* MAIN CONTENT */}
-            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center max-w-7xl mx-auto w-full px-6 md:px-12 mb-20 flex-grow">
+            {/* MAIN CONTENT - MOBILE OPTIMIZED */}
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-24 items-center max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-12 mb-16 md:mb-20 flex-grow">
 
-                {/* LEFT: Typer Headline */}
+                {/* LEFT: Typer Headline - MOBILE OPTIMIZED */}
                 <div className="flex flex-col justify-center relative">
-                    <div className="flex items-center gap-4 mb-6 opacity-80">
-                        <span className="h-[2px] w-10 bg-white"></span>
-                        <span className="text-sm font-bold tracking-[0.3em] uppercase">Pit Lane / Contact</span>
+                    <div className="flex items-center gap-3 md:gap-4 mb-4 md:mb-6 opacity-80">
+                        <span className="h-[2px] w-8 md:w-10 bg-white"></span>
+                        <span className="text-xs md:text-sm font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase">Pit Lane / Contact</span>
                     </div>
 
-                    <h1 className="text-[14vw] lg:text-[7rem] leading-[0.8] font-black uppercase mb-8 italic transform -skew-x-6 min-h-[3ch]">
+                    <h1 className="text-[10vw] sm:text-[8vw] lg:text-[7rem] leading-[0.8] font-black uppercase mb-6 md:mb-8 italic transform -skew-x-6 min-h-[3ch]">
                         Let's <br /> Build <br />
                         <span className="text-transparent stroke-text">
                             {displayText}
@@ -193,49 +193,48 @@ export default function Footer() {
                         </span>
                     </h1>
 
-                    <p className="max-w-md text-lg font-medium opacity-90 leading-relaxed">
+                    <p className="max-w-md text-base md:text-lg font-medium opacity-90 leading-relaxed">
                         From <strong>IIIT Manipur</strong> to the world. Let's engineer solutions that break the speed limit.
                     </p>
                 </div>
 
-                {/* RIGHT: The "Pit Board" Form */}
+                {/* RIGHT: The "Pit Board" Form - MOBILE OPTIMIZED */}
                 <div
                     ref={formRef}
-                    className="w-full bg-white text-zinc-900 p-8 md:p-12 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative overflow-hidden transform -skew-x-2 rounded-sm"
+                    className="w-full bg-white text-zinc-900 p-6 sm:p-8 md:p-12 shadow-[0_30px_60px_rgba(0,0,0,0.5)] relative overflow-hidden transform -skew-x-2 rounded-sm"
                 >
-                    <div className="absolute top-0 right-0 w-3 h-full bg-red-600"></div>
+                    <div className="absolute top-0 right-0 w-2 md:w-3 h-full bg-red-600"></div>
 
-                    <h3 className="text-2xl font-black uppercase mb-8 tracking-tighter flex items-center gap-4">
-                        <span className="w-5 h-5 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></span>
+                    <h3 className="text-xl md:text-2xl font-black uppercase mb-6 md:mb-8 tracking-tighter flex items-center gap-3 md:gap-4">
+                        <span className="w-4 h-4 md:w-5 md:h-5 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></span>
                         Initialize Comms
                     </h3>
 
-                    <form onSubmit={onSubmit} className="flex flex-col gap-5">
+                    <form onSubmit={onSubmit} className="flex flex-col gap-4 md:gap-5">
                         <input type="hidden" name="access_key" value={process.env.NEXT_PUBLIC_WEB3FORMS_KEY} />
                         <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 form-element">
-                            <input type="text" name="name" required className="w-full bg-gray-100 p-4 text-sm font-bold uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all placeholder-gray-400" placeholder="NAME" />
-                            <input type="email" name="email" required className="w-full bg-gray-100 p-4 text-sm font-bold uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all placeholder-gray-400" placeholder="EMAIL" />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5 form-element">
+                            <input type="text" name="name" required className="w-full bg-gray-100 p-3 md:p-4 text-xs md:text-sm font-bold uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all placeholder-gray-400" placeholder="NAME" />
+                            <input type="email" name="email" required className="w-full bg-gray-100 p-3 md:p-4 text-xs md:text-sm font-bold uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all placeholder-gray-400" placeholder="EMAIL" />
                         </div>
                         <div className="form-element">
-                            <textarea name="message" required rows={3} className="w-full bg-gray-100 p-4 text-sm font-medium uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all resize-none placeholder-gray-400" placeholder="PROJECT BRIEF..."></textarea>
+                            <textarea name="message" required rows={3} className="w-full bg-gray-100 p-3 md:p-4 text-xs md:text-sm font-medium uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all resize-none placeholder-gray-400" placeholder="PROJECT BRIEF..."></textarea>
                         </div>
 
-                        {/* --- BUTTON WITH ENGINE SHAKE --- */}
+                        {/* --- BUTTON WITH ENGINE SHAKE - MOBILE OPTIMIZED --- */}
                         <button 
                             type="submit" 
                             disabled={isSubmitting} 
                             onMouseEnter={playHoverSound}
-                            // Added custom hover class `hover:animate-engine-start`
-                            className="form-element mt-2 py-5 px-6 bg-black text-white text-base font-black uppercase tracking-widest hover:bg-red-600 hover:animate-engine-start transition-colors duration-300 flex justify-between items-center group/btn cursor-pointer"
+                            className="form-element mt-1 md:mt-2 py-4 md:py-5 px-5 md:px-6 bg-black text-white text-sm md:text-base font-black uppercase tracking-widest hover:bg-red-600 hover:animate-engine-start transition-colors duration-300 flex justify-between items-center group/btn cursor-pointer"
                         >
                             <span>{isSubmitting ? "Transmitting..." : "Start Engine"}</span>
                             <span className="group-hover/btn:translate-x-2 transition-transform">→</span>
                         </button>
 
                         {result && (
-                            <div className={`text-center p-3 text-[10px] font-bold uppercase tracking-widest border-l-4 ${result.includes("Error") ? "bg-red-100 border-red-600 text-red-600" : "bg-green-100 border-green-500 text-green-700"}`}>
+                            <div className={`text-center p-2.5 md:p-3 text-[9px] md:text-[10px] font-bold uppercase tracking-widest border-l-4 ${result.includes("Error") ? "bg-red-100 border-red-600 text-red-600" : "bg-green-100 border-green-500 text-green-700"}`}>
                                 {result}
                             </div>
                         )}
@@ -243,10 +242,10 @@ export default function Footer() {
                 </div>
             </div>
 
-            {/* === STATIC COMMAND BAR === */}
-            <div className="w-full bg-black py-8 px-6 md:px-12 border-t-4 border-white/20 z-20 flex flex-col md:flex-row justify-between items-center gap-6">
+            {/* === STATIC COMMAND BAR - MOBILE OPTIMIZED === */}
+            <div className="w-full bg-black py-6 md:py-8 px-4 sm:px-6 md:px-12 border-t-4 border-white/20 z-20 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6">
 
-                <div className="text-[10px] md:text-xs font-mono text-gray-500 tracking-widest uppercase">
+                <div className="text-[9px] md:text-xs font-mono text-gray-500 tracking-widest uppercase text-center md:text-left">
                     © 2026 Rahul Sharma // Imphal, IN
                 </div>
 
@@ -259,7 +258,7 @@ export default function Footer() {
                     <span>TEMP: 34°C</span>
                 </div>
 
-                <div className="flex gap-8 text-xs font-bold uppercase tracking-[0.2em] text-white">
+                <div className="flex gap-4 sm:gap-6 md:gap-8 text-xs font-bold uppercase tracking-[0.15em] md:tracking-[0.2em] text-white">
                     <a href="https://linkedin.com/in/rahulsiiitm" target="_blank" className="hover:text-red-600 transition-colors">
                         LinkedIn
                     </a>
@@ -285,7 +284,6 @@ export default function Footer() {
                 }
 
                 /* --- ENGINE START SHAKE ANIMATION --- */
-                /* Total Duration: 3s. 0-2s (approx 66%) is intense, 2s-3s (66%-100%) decays */
                 @keyframes engine-shake {
                     0% { transform: translate(2px, 2px) rotate(1deg); }
                     5% { transform: translate(-2px, -3px) rotate(-1deg); }
@@ -300,8 +298,6 @@ export default function Footer() {
                     50% { transform: translate(-4px, -2px) rotate(1deg); }
                     55% { transform: translate(4px, 3px) rotate(-1deg); }
                     60% { transform: translate(2px, -2px) rotate(2deg); }
-                    
-                    /* GRADUAL DECAY STARTING (2.0s mark) */
                     70% { transform: translate(-1px, 2px) rotate(-1deg); }
                     80% { transform: translate(1px, -1px) rotate(0.5deg); }
                     90% { transform: translate(0.5px, 0.5px) rotate(-0.5deg); }

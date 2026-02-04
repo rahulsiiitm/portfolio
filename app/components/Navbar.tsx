@@ -3,7 +3,7 @@ import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import gsap from "gsap";
 import { usePathname } from "next/navigation";
-import { useLenis } from "lenis/react"; // <--- 1. IMPORT LENIS HOOK
+import { useLenis } from "lenis/react";
 
 const menuLinks = [
   { label: "Home", href: "/", id: "01" },
@@ -21,7 +21,7 @@ export default function Navbar() {
   const menuRef = useRef(null);
   const overlayRef = useRef(null);
   const pathname = usePathname();
-  const lenis = useLenis(); // <--- 2. GET LENIS INSTANCE
+  const lenis = useLenis();
 
   useEffect(() => {
     setIsOpen(false);
@@ -31,15 +31,13 @@ export default function Navbar() {
   const handleLinkClick = (e: any, href: string) => {
     setIsOpen(false);
 
-    // If it's a hash link (#projects) and we are on the home page
     if (href.startsWith("#")) {
       e.preventDefault();
-      lenis?.scrollTo(href); // <--- SMOOTH SCROLL TO ID
+      lenis?.scrollTo(href);
     }
-    // If it's the Home link ("/") and we are already on home
     else if (href === "/" && pathname === "/") {
       e.preventDefault();
-      lenis?.scrollTo(0); // <--- SMOOTH SCROLL TO TOP
+      lenis?.scrollTo(0);
     }
   };
 
@@ -104,16 +102,17 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 w-full z-[100] px-6 md:px-12 py-6 flex justify-between items-center pointer-events-none transition-colors duration-300">
+      {/* NAVBAR - MOBILE OPTIMIZED */}
+      <nav className="fixed top-0 left-0 w-full z-[100] px-4 sm:px-6 md:px-12 py-4 sm:py-5 md:py-6 flex justify-between items-center pointer-events-none transition-colors duration-300">
 
-        {/* LOGO */}
-        <Link href="/" onClick={(e) => handleLinkClick(e, "/")} className="group flex items-center gap-2 pointer-events-auto">
+        {/* LOGO - MOBILE OPTIMIZED */}
+        <Link href="/" onClick={(e) => handleLinkClick(e, "/")} className="group flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
           <img
             src="/Y21.png"
             alt="Logo"
-            className="w-8 h-8 object-contain transition-transform duration-300 relative z-10"
+            className="w-7 h-7 sm:w-8 sm:h-8 object-contain transition-transform duration-300 relative z-10"
           />
-          <span className="font-black text-lg tracking-tighter uppercase flex items-center relative">
+          <span className="font-black text-base sm:text-lg tracking-tighter uppercase flex items-center relative">
             <span className={`relative z-10 transition-colors duration-300 ${textColorClass}`}>
               RAHUL
             </span>
@@ -121,15 +120,15 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* TOGGLE BUTTON */}
+        {/* TOGGLE BUTTON - MOBILE OPTIMIZED */}
         <button
           onClick={toggleMenu}
-          className={`group flex items-center gap-3 cursor-pointer outline-none pointer-events-auto transition-colors duration-300 ${textColorClass}`}
+          className={`group flex items-center gap-2 sm:gap-3 cursor-pointer outline-none pointer-events-auto transition-colors duration-300 ${textColorClass}`}
         >
           <span className="hidden md:block font-mono text-xs font-bold uppercase tracking-widest group-hover:text-racing-red transition-colors">
             {isOpen ? "Close" : "Chapters"}
           </span>
-          <div className="relative w-8 h-8 flex flex-col justify-center gap-1.5 items-end">
+          <div className="relative w-7 h-7 sm:w-8 sm:h-8 flex flex-col justify-center gap-1.5 items-end">
             <span className={`w-full h-[2px] transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-2 bg-racing-red' : hamburgerColorClass}`}></span>
             <span className={`w-2/3 h-[2px] transition-all duration-300 ${isOpen ? 'opacity-0' : `group-hover:w-full ${hamburgerColorClass}`}`}></span>
             <span className={`w-full h-[2px] transition-all duration-300 ${isOpen ? '-rotate-45 -translate-y-2 bg-racing-red' : hamburgerColorClass}`}></span>
@@ -145,36 +144,39 @@ export default function Navbar() {
         className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] opacity-0 pointer-events-none transition-opacity"
       ></div>
 
-      {/* MENU PANEL */}
+      {/* MENU PANEL - MOBILE OPTIMIZED */}
       <div
         ref={menuRef}
-        className="fixed top-0 right-0 h-screen w-full md:w-[450px] bg-zinc-950 border-l border-white/10 z-[100] transform translate-x-full shadow-2xl flex flex-col"
+        className="fixed top-0 right-0 h-screen w-full sm:w-[380px] md:w-[450px] bg-zinc-950 border-l border-white/10 z-[100] transform translate-x-full shadow-2xl flex flex-col"
       >
-        <div className="p-12 border-b border-white/10 flex justify-between items-center text-white">
-          <span className="font-mono text-xs text-gray-500 uppercase tracking-widest">/// Index</span>
-          <button onClick={() => setIsOpen(false)} className="hover:text-racing-red transition-colors text-xs font-bold uppercase tracking-widest">[ ESC ]</button>
+        {/* HEADER - MOBILE OPTIMIZED */}
+        <div className="p-8 sm:p-10 md:p-12 border-b border-white/10 flex justify-between items-center text-white">
+          <span className="font-mono text-[10px] md:text-xs text-gray-500 uppercase tracking-widest">/// Index</span>
+          <button onClick={() => setIsOpen(false)} className="hover:text-racing-red transition-colors text-[10px] md:text-xs font-bold uppercase tracking-widest">[ ESC ]</button>
         </div>
 
-        <div className="flex-1 flex flex-col justify-center px-12 gap-8">
+        {/* LINKS - MOBILE OPTIMIZED */}
+        <div className="flex-1 flex flex-col justify-center px-8 sm:px-10 md:px-12 gap-6 sm:gap-7 md:gap-8">
           {menuLinks.map((link) => (
             <Link
               key={link.id}
               href={link.href}
-              onClick={(e) => handleLinkClick(e, link.href)} // <--- 3. ATTACH HANDLER
-              className="menu-link-item group flex items-center gap-6"
+              onClick={(e) => handleLinkClick(e, link.href)}
+              className="menu-link-item group flex items-center gap-4 sm:gap-5 md:gap-6"
             >
-              <span className="font-mono text-xs text-gray-600 group-hover:text-racing-red transition-colors duration-300">{link.id}</span>
-              <span className="text-3xl font-bold text-gray-400 uppercase tracking-wide group-hover:text-white group-hover:translate-x-2 transition-all duration-300">{link.label}</span>
+              <span className="font-mono text-[10px] md:text-xs text-gray-600 group-hover:text-racing-red transition-colors duration-300">{link.id}</span>
+              <span className="text-2xl sm:text-3xl font-bold text-gray-400 uppercase tracking-wide group-hover:text-white group-hover:translate-x-2 transition-all duration-300">{link.label}</span>
             </Link>
           ))}
         </div>
 
-        <div className="p-12 border-t border-white/10 text-white">
-          <div className="flex gap-6 mb-4">
+        {/* FOOTER - MOBILE OPTIMIZED */}
+        <div className="p-8 sm:p-10 md:p-12 border-t border-white/10 text-white">
+          <div className="flex gap-4 sm:gap-5 md:gap-6 mb-3 md:mb-4">
             <a href="https://github.com/rahulsiiitm" target="_blank" className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">GitHub</a>
             <a href="https://linkedin.com/in/rahulsharma2k4" target="_blank" className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">LinkedIn</a>
           </div>
-          <p className="font-mono text-[10px] text-gray-700">SYSTEM: ONLINE <br /> V.2.0.4</p>
+          <p className="font-mono text-[9px] md:text-[10px] text-gray-700">SYSTEM: ONLINE <br /> V.2.0.4</p>
         </div>
         <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none" style={{ filter: 'invert(1)' }}></div>
       </div>
