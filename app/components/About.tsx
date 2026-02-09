@@ -228,7 +228,7 @@ export default function About() {
                     onMouseEnter={playHoverSound}
                     className="inline-flex items-center gap-3 md:gap-4 px-6 md:px-8 py-3 md:py-4 bg-black text-white font-bold uppercase tracking-[0.15em] md:tracking-[0.2em] text-xs md:text-sm hover:bg-racing-red transition-colors duration-300 group shadow-xl cursor-pointer"
                 >
-                    <span>Download Telemetry</span>
+                    <span>Download Resume</span>
                     <span className="group-hover:translate-y-1 transition-transform duration-300">↓</span>
                 </a>
             </div>
