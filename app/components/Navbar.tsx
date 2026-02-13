@@ -27,8 +27,8 @@ export default function Navbar() {
     setIsOpen(false);
   }, [pathname]);
 
-  // --- SMOOTH SCROLL HANDLER ---
-  const handleLinkClick = (e: any, href: string) => {
+  // --- SMOOTH SCROLL HANDLER - FIXED TYPE ---
+  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     setIsOpen(false);
 
     if (href.startsWith("#")) {
@@ -123,6 +123,7 @@ export default function Navbar() {
         {/* TOGGLE BUTTON - MOBILE OPTIMIZED */}
         <button
           onClick={toggleMenu}
+          aria-label={isOpen ? "Close menu" : "Open menu"}
           className={`group flex items-center gap-2 sm:gap-3 cursor-pointer outline-none pointer-events-auto transition-colors duration-300 ${textColorClass}`}
         >
           <span className="hidden md:block font-mono text-xs font-bold uppercase tracking-widest group-hover:text-racing-red transition-colors">
@@ -173,8 +174,8 @@ export default function Navbar() {
         {/* FOOTER - MOBILE OPTIMIZED */}
         <div className="p-8 sm:p-10 md:p-12 border-t border-white/10 text-white">
           <div className="flex gap-4 sm:gap-5 md:gap-6 mb-3 md:mb-4">
-            <a href="https://github.com/rahulsiiitm" target="_blank" className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">GitHub</a>
-            <a href="https://linkedin.com/in/rahulsharma2k4" target="_blank" className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">LinkedIn</a>
+            <a href="https://github.com/rahulsiiitm" target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">GitHub</a>
+            <a href="https://linkedin.com/in/rahulsharma2k4" target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">LinkedIn</a>
           </div>
           <p className="font-mono text-[9px] md:text-[10px] text-gray-700">SYSTEM: ONLINE <br /> V.2.0.4</p>
         </div>

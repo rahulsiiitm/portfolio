@@ -4,6 +4,12 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from 'next/image';
 
+interface StatItemProps {
+    number: string;
+    label: string;
+    value: string;
+}
+
 export default function Intro() {
     const container = useRef(null);
     const textRef = useRef(null);
@@ -81,8 +87,10 @@ export default function Intro() {
 
                         <Image
                             src="/profile.jpg"
-                            alt="Rahul Sharma"
+                            alt="Rahul Sharma - Full Stack & AI Engineer"
                             fill
+                            sizes="(max-width: 768px) 100vw, 40vw"
+                            priority
                             className="object-cover hover:grayscale-0 transition-all duration-700"
                         />
 
@@ -100,7 +108,7 @@ export default function Intro() {
     );
 }
 
-const StatItem = ({ number, label, value }: any) => (
+const StatItem = ({ number, label, value }: StatItemProps) => (
     <div className="intro-line flex flex-col gap-1.5 md:gap-2">
         <span className="text-[10px] md:text-xs font-bold text-racing-red">{number}</span>
         <span className="text-[10px] md:text-xs uppercase tracking-widest text-gray-500">{label}</span>
