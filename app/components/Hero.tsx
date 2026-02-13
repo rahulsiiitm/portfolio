@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import Image from 'next/image';
 
 export default function Hero() {
     const overlayRef = useRef(null);
@@ -35,10 +36,13 @@ export default function Hero() {
 
             {/* 1. BACKGROUND IMAGE */}
             <div className="absolute right-0 top-0 w-full h-full flex items-center justify-end lg:block">
-                <img
+                <Image
                     src="/livery.webp"
-                    alt="Background Livery"
-                    className="w-full h-full object-cover opacity-60 md:opacity-100"
+                    alt="Background"
+                    fill
+                    priority
+                    quality={85}
+                    sizes="100vw"
                 />
             </div>
 

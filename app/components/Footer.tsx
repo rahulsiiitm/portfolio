@@ -71,14 +71,19 @@ export default function Footer() {
                 "-=0.4"
             );
 
+        // 4. CLEANUP
         return () => {
             document.removeEventListener("click", unlockAudio);
             document.removeEventListener("touchstart", unlockAudio);
+            if (audioRef.current) {
+                audioRef.current.pause();
+                audioRef.current = null;
+            }
         };
 
     }, []);
 
-    // 4. Typer Logic
+    // 5. Typer Logic
     useEffect(() => {
         const handleTyping = () => {
             const fullWord = TYPER_WORDS[currentWordIndex];
@@ -99,7 +104,7 @@ export default function Footer() {
         return () => clearTimeout(timer);
     }, [displayText, isDeleting, currentWordIndex]);
 
-    // 5. Wheel Spin
+    // 6. Wheel Spin
     const handleMouseEnter = () => {
         gsap.to(wheelRef.current, { rotation: "+=360", duration: 1.5, ease: "power2.out" });
     };
@@ -107,14 +112,14 @@ export default function Footer() {
     // --- PLAY SOUND FUNCTION ---
     const playHoverSound = () => {
         if (!audioUnlocked) return;
-        
+
         if (audioRef.current) {
             audioRef.current.currentTime = 0;
             audioRef.current.play().catch((e) => console.log("Play blocked", e));
         }
     };
 
-    // 6. SUBMISSION LOGIC
+    // 7. SECURE SUBMISSION LOGIC
     const onSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setIsSubmitting(true);
@@ -122,24 +127,31 @@ export default function Footer() {
         playHoverSound();
 
         const formData = new FormData(event.target as HTMLFormElement);
-        formData.append("subject", "New Message from Rahul's Portfolio");
+        const data = {
+            name: formData.get('name') as string,
+            email: formData.get('email') as string,
+            message: formData.get('message') as string,
+        };
 
         try {
-            const response = await fetch("https://api.web3forms.com/submit", {
-                method: "POST",
-                body: formData
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
             });
 
-            const data = await response.json();
+            const result = await response.json();
 
-            if (data.success) {
-                setResult("Transmission Successful. We'll be in touch.");
+            if (result.success) {
+                setResult(result.message);
                 (event.target as HTMLFormElement).reset();
             } else {
-                console.error("Error", data);
-                setResult(data.message || "Connection Failed. Retrying...");
+                setResult(result.message || "Connection Failed. Retrying...");
             }
         } catch (error) {
+            console.error('Submission error:', error);
             setResult("Network Error. Check connectivity.");
         } finally {
             setIsSubmitting(false);
@@ -211,30 +223,54 @@ export default function Footer() {
                     </h3>
 
                     <form onSubmit={onSubmit} className="flex flex-col gap-4 md:gap-5">
-                        <input type="hidden" name="access_key" value={process.env.NEXT_PUBLIC_WEB3FORMS_KEY} />
                         <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5 form-element">
-                            <input type="text" name="name" required className="w-full bg-gray-100 p-3 md:p-4 text-xs md:text-sm font-bold uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all placeholder-gray-400" placeholder="NAME" />
-                            <input type="email" name="email" required className="w-full bg-gray-100 p-3 md:p-4 text-xs md:text-sm font-bold uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all placeholder-gray-400" placeholder="EMAIL" />
+                            <input
+                                type="text"
+                                name="name"
+                                required
+                                aria-label="Name"
+                                className="w-full bg-gray-100 p-3 md:p-4 text-xs md:text-sm font-bold uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all placeholder-gray-400"
+                                placeholder="NAME"
+                            />
+                            <input
+                                type="email"
+                                name="email"
+                                required
+                                aria-label="Email"
+                                className="w-full bg-gray-100 p-3 md:p-4 text-xs md:text-sm font-bold uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all placeholder-gray-400"
+                                placeholder="EMAIL"
+                            />
                         </div>
                         <div className="form-element">
-                            <textarea name="message" required rows={3} className="w-full bg-gray-100 p-3 md:p-4 text-xs md:text-sm font-medium uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all resize-none placeholder-gray-400" placeholder="PROJECT BRIEF..."></textarea>
+                            <textarea
+                                name="message"
+                                required
+                                rows={3}
+                                aria-label="Message"
+                                className="w-full bg-gray-100 p-3 md:p-4 text-xs md:text-sm font-medium uppercase focus:bg-white focus:ring-2 focus:ring-red-600 outline-none transition-all resize-none placeholder-gray-400"
+                                placeholder="PROJECT BRIEF..."
+                            ></textarea>
                         </div>
 
                         {/* --- BUTTON WITH ENGINE SHAKE - MOBILE OPTIMIZED --- */}
-                        <button 
-                            type="submit" 
-                            disabled={isSubmitting} 
+                        <button
+                            type="submit"
+                            disabled={isSubmitting}
                             onMouseEnter={playHoverSound}
-                            className="form-element mt-1 md:mt-2 py-4 md:py-5 px-5 md:px-6 bg-black text-white text-sm md:text-base font-black uppercase tracking-widest hover:bg-red-600 hover:animate-engine-start transition-colors duration-300 flex justify-between items-center group/btn cursor-pointer"
+                            aria-label="Submit form"
+                            className="form-element mt-1 md:mt-2 py-4 md:py-5 px-5 md:px-6 bg-black text-white text-sm md:text-base font-black uppercase tracking-widest hover:bg-red-600 hover:animate-engine-start transition-colors duration-300 flex justify-between items-center group/btn cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <span>{isSubmitting ? "Transmitting..." : "Start Engine"}</span>
                             <span className="group-hover/btn:translate-x-2 transition-transform">→</span>
                         </button>
 
                         {result && (
-                            <div className={`text-center p-2.5 md:p-3 text-[9px] md:text-[10px] font-bold uppercase tracking-widest border-l-4 ${result.includes("Error") ? "bg-red-100 border-red-600 text-red-600" : "bg-green-100 border-green-500 text-green-700"}`}>
+                            <div
+                                role="alert"
+                                className={`text-center p-2.5 md:p-3 text-[9px] md:text-[10px] font-bold uppercase tracking-widest border-l-4 ${result.includes("Error") || result.includes("Failed") ? "bg-red-100 border-red-600 text-red-600" : "bg-green-100 border-green-500 text-green-700"}`}
+                            >
                                 {result}
                             </div>
                         )}
@@ -258,17 +294,17 @@ export default function Footer() {
                     <span>TEMP: 34°C</span>
                 </div>
 
-                <div className="flex gap-4 sm:gap-6 md:gap-8 text-xs font-bold uppercase tracking-[0.15em] md:tracking-[0.2em] text-white">
-                    <a href="https://linkedin.com/in/rahulsiiitm" target="_blank" className="hover:text-red-600 transition-colors">
+                <nav className="flex gap-4 sm:gap-6 md:gap-8 text-xs font-bold uppercase tracking-[0.15em] md:tracking-[0.2em] text-white" aria-label="Social links">
+                    <a href="https://linkedin.com/in/rahulsiiitm" target="_blank" rel="noopener noreferrer" className="hover:text-red-600 transition-colors">
                         LinkedIn
                     </a>
-                    <a href="https://github.com/rahulsiiitm" target="_blank" className="hover:text-red-600 transition-colors">
+                    <a href="https://github.com/rahulsiiitm" target="_blank" rel="noopener noreferrer" className="hover:text-red-600 transition-colors">
                         GitHub
                     </a>
                     <a href="mailto:rahulsharma.hps@gmail.com" className="hover:text-red-600 transition-colors">
                         Email
                     </a>
-                </div>
+                </nav>
 
             </div>
 

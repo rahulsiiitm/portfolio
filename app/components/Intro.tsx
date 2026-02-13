@@ -2,6 +2,7 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Image from 'next/image';
 
 export default function Intro() {
     const container = useRef(null);
@@ -78,10 +79,11 @@ export default function Intro() {
                     {/* THE IMAGE CONTAINER - MOBILE OPTIMIZED */}
                     <div ref={imageRef} className="relative aspect-[3/4] w-full bg-gray-200 overflow-hidden shadow-2xl">
 
-                        <img
+                        <Image
                             src="/profile.jpg"
                             alt="Rahul Sharma"
-                            className="w-full h-full object-cover hover:grayscale-0 transition-all duration-700"
+                            fill
+                            className="object-cover hover:grayscale-0 transition-all duration-700"
                         />
 
                         {/* Border Overlay - MOBILE OPTIMIZED */}
