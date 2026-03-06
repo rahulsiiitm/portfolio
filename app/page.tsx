@@ -1,11 +1,14 @@
 import Hero from "./components/Hero";
 import About from "./components/About";
 import Intro from "./components/Intro";
-import Projects from "./components/Projects";
+// import Projects from "./components/Projects";
 import TechStack from "./components/TechStack"; // Import this
 import Experience from "./components/Experience";
 import Achievements from "./components/Achievements";
-import Footer from "./components/Footer";
+// import Footer from "./components/Footer";
+import dynamic from 'next/dynamic'
+const Projects = dynamic(() => import('./components/Projects'))
+const Footer = dynamic(() => import('./components/Footer'))
 
 export default function Home() {
   return (

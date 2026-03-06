@@ -1,14 +1,21 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import localFont from "next/font/local"; // 1. Import localFont
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import SmoothScrolling from "./components/SmoothScrolling";
 import Navbar from "./components/Navbar";
-import SecretSketchbook from "./components/SecretSketchbook";
-import { ErrorBoundary } from "./components/ErrorBoundary";
+// import Preloader from "./components/Preloader";
 
 const inter = Inter({ subsets: ["latin"] });
+
+// 2. Configure Ammonite
+const ammonite = localFont({
+  src: "./fonts/Ammonite.otf", // Make sure this matches your file name/extension exactly
+  variable: "--font-ammonite",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Rahul Sharma | Full Stack & AI Engineer",
@@ -40,6 +47,7 @@ export const viewport: Viewport = {
   themeColor: "#000000",
 };
 
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -47,23 +55,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </head>
-      <body className={inter.className}>
-        <ErrorBoundary>
-          <SmoothScrolling>
-            <Navbar />
-            {children}
-          </SmoothScrolling>
-
-          {/* Secret Easter Egg Component */}
-          <SecretSketchbook />
-
-          <Analytics />
-          <SpeedInsights />
-        </ErrorBoundary>
+      {/* 3. Inject the variable into the body tag */}
+      <body className={`${inter.className} ${ammonite.variable}`}>
+        {/* <Preloader /> */}
+        <SmoothScrolling>
+          <Navbar />
+          {children}
+        </SmoothScrolling>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -103,7 +103,7 @@ export default function Projects() {
 
             // Glow Opacity Logic
             const redlineOpacity = gsap.utils.clamp(0, 0.8, (normalizedSpeed - 100) / 350);
-            
+
             // Batch update all glow elements efficiently
             gsap.set(".project-speed-glow", { opacity: redlineOpacity });
 
@@ -111,7 +111,7 @@ export default function Projects() {
             if (!isMobile && velocity > 50) {
               const skewAmount = self.getVelocity() / 300;
               const clampedSkew = gsap.utils.clamp(-10, 10, skewAmount);
-              
+
               gsap.to(".project-card", {
                 skewX: -clampedSkew,
                 duration: 0.3,
@@ -214,7 +214,8 @@ export default function Projects() {
           <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-racing-red rounded-full animate-pulse"></span>
           <span className="text-[10px] md:text-xs font-bold tracking-[0.15em] md:tracking-[0.2em] uppercase text-racing-red">Race Logic / v1.0</span>
         </div>
-        <h2 className="text-2xl sm:text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none">
+        {/* Changed tracking-tighter to tracking-wide */}
+        <h2 className="text-2xl sm:text-4xl md:text-6xl font-ammonite lowercase tracking-wide leading-none">
           Selected <span className="text-transparent stroke-text">Works</span>
         </h2>
       </div>
@@ -268,7 +269,7 @@ export default function Projects() {
             className="project-card relative w-[85vw] sm:w-[75vw] md:w-[60vw] h-[65vh] sm:h-[68vh] md:h-[70vh] flex flex-col md:flex-row flex-shrink-0 mr-4 md:mr-16 border border-white/10 bg-zinc-900/80 backdrop-blur-sm group origin-bottom-left overflow-hidden shadow-2xl will-change-transform"
           >
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-racing-red to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            
+
             {/* Speed Glow (Optimized Class) */}
             <div className="project-speed-glow absolute inset-0 bg-racing-red mix-blend-overlay opacity-0 pointer-events-none z-20 transition-opacity will-change-opacity"></div>
 

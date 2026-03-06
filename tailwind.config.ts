@@ -20,6 +20,9 @@ const config: Config = {
       },
       backgroundSize: {
         "grid-pattern": "40px 40px",
+      },
+      fontFamily: {
+        ammonite: ["var(--font-ammonite)"],
       }
     },
   },
