@@ -7,23 +7,46 @@ const projects = [
   {
     id: "01",
     title: "AgriHive",
-    category: "AI / FLUTTER",
-    description: "AI-powered farming advisory platform achieving 92% disease detection accuracy using TensorFlow, Gemini API, and an offline-first Firebase backend.",
+    category: "AI / AGRI-TECH",
+    description: "Multilingual AI farming assistant achieving 92% disease detection accuracy. Engineered with TensorFlow, Gemini API, and an offline-first Firebase architecture for rural accessibility.",
     year: "2025",
     colorClass: "bg-zinc-900",
     bgImage: "/projects/AgriHive.webp",
     links: {
       github: "https://github.com/rahulsiiitm/AgriHive-Frontend",
-      githubBackend: "https://github.com/rahulsiiitm/Backend",
       demo: "https://agrihive-c8f6b.web.app/",
       download: "https://drive.google.com/uc?export=download&id=1mOW06ng4V848ZiInPcajH08s4yVApNqz"
     }
   },
   {
     id: "02",
+    title: "ICAIAC 2026",
+    category: "WEB / RESEARCH",
+    description: "Official platform for the International Conference on AI & Computing at IIIT Manipur. High-performance Next.js site optimized for heavy research traffic and data management.",
+    year: "2026",
+    colorClass: "bg-zinc-800",
+    bgImage: "/projects/icaiac.png",
+    links: {
+      website: "https://icaiac-2026.vercel.app/"
+    }
+  },
+  {
+    id: "03",
+    title: "E-Parchi",
+    category: "HEALTH / APP",
+    description: "Digital prescription and hospital management system streamlining patient-doctor interactions. Scalable full-stack architecture focused on security and real-time updates.",
+    year: "2026",
+    colorClass: "bg-zinc-900",
+    bgImage: "/projects/eparchi.png",
+    links: {
+      demo: "https://e-parchi.vercel.app/"
+    }
+  },
+  {
+    id: "04",
     title: "AEGIS (CRPF)",
-    category: "SECURITY / APP",
-    description: "Mission-critical secure log management app developed for the CRPF featuring real-time data visualization and secure Firestore architecture.",
+    category: "SECURITY / ARCHITECTURE",
+    description: "Mission-critical secure log and personnel management system for the Central Reserve Police Force. Features multi-role authentication and high-integrity Firestore architecture.",
     year: "2025",
     colorClass: "bg-zinc-900",
     bgImage: "/projects/crpf.png",
@@ -31,31 +54,52 @@ const projects = [
     confidential: true
   },
   {
-    id: "03",
-    title: "Auto Drone Module",
-    category: "ROBOTICS / CV",
-    description: "Autonomous UAV navigation system built in Gazebo using ROS and SLAM algorithms, integrating OpenCV CNNs for in-flight obstacle avoidance.",
-    year: "2025",
+    id: "05",
+    title: "Fatigue Detector",
+    category: "HARDWARE / AI",
+    description: "Wearable EMG/IMU glove detecting muscle fatigue in real-time. Integrating IoT signal processing with AI to predict physical strain for athletes and industrial workers.",
+    year: "2026",
     colorClass: "bg-zinc-800",
-    bgImage: "/projects/auto.png",
-    links: {
-      github: "https://github.com/rahulsiiitm/semantic_drone_project"
-    },
+    bgImage: "/projects/fatigue.png",
+    links: null,
     inProgress: true
   },
   {
-    id: "04",
-    title: "Walmart Bot",
-    category: "GEN AI / WEB",
-    description: "AI chatbot engineered with LangChain and Gemini API to facilitate semantic product search and intelligent customer guidance.",
-    year: "2025",
-    colorClass: "bg-zinc-800",
-    bgImage: "/projects/guidance.webp",
+    id: "06",
+    title: "Lab Archive",
+    category: "GITHUB / MISC",
+    description: "A collection of experimental modules including autonomous drone navigation (ROS/SLAM), Walmart semantic search bots, and computer graphics algorithms.",
+    year: "2024-26",
+    colorClass: "bg-zinc-950",
+    bgImage: "/projects/bg2.jpg",
     links: {
-      github: "https://github.com/rahulsiiitm/Chatbot"
-    }
-  },
+      github: "https://github.com/rahulsiiitm"
+    },
+    isArchive: true
+  }
 ];
+
+// Unified type for project links
+type ProjectLinks = {
+  github?: string;
+  demo?: string;
+  website?: string;
+  download?: string;
+} | null;
+
+type Project = {
+  id: string;
+  title: string;
+  category: string;
+  description: string;
+  year: string;
+  colorClass: string;
+  bgImage: string;
+  links: ProjectLinks;
+  confidential?: boolean;
+  inProgress?: boolean;
+  isArchive?: boolean;
+};
 
 export default function Projects() {
   const containerRef = useRef<HTMLElement>(null);
@@ -75,7 +119,6 @@ export default function Projects() {
       const viewportWidth = window.innerWidth;
       const isMobile = window.innerWidth < 768;
 
-      // --- HORIZONTAL SCROLL LOGIC ---
       const scrollTween = gsap.to(trackRef.current, {
         x: -(totalWidth - viewportWidth),
         ease: "none",
@@ -87,31 +130,23 @@ export default function Projects() {
           end: isMobile ? "+=2000" : "+=3500",
           invalidateOnRefresh: true,
 
-          // --- OPTIMIZED UPDATE LOOP ---
           onUpdate: (self) => {
             const velocity = Math.abs(self.getVelocity());
-            const normalizedSpeed = Math.min(Math.round(velocity / 10), 450); // Normalize to a max of 450 KM/H for display
+            const normalizedSpeed = Math.min(Math.round(velocity / 10), 450);
 
-            // Direct DOM manipulation is faster than GSAP for text/simple styles
             if (speedDisplayRef.current) {
               speedDisplayRef.current.textContent = normalizedSpeed.toString().padStart(3, '0');
             }
-
             if (progressBarRef.current) {
               progressBarRef.current.style.width = `${self.progress * 100}%`;
             }
 
-            // Glow Opacity Logic
             const redlineOpacity = gsap.utils.clamp(0, 0.8, (normalizedSpeed - 100) / 350);
-
-            // Batch update all glow elements efficiently
             gsap.set(".project-speed-glow", { opacity: redlineOpacity });
 
-            // Skew Effect (Only on Desktop & High Velocity)
             if (!isMobile && velocity > 50) {
               const skewAmount = self.getVelocity() / 300;
               const clampedSkew = gsap.utils.clamp(-10, 10, skewAmount);
-
               gsap.to(".project-card", {
                 skewX: -clampedSkew,
                 duration: 0.3,
@@ -129,7 +164,6 @@ export default function Projects() {
         },
       });
 
-      // --- BACKGROUND PARALLAX ---
       if (f1ImageRef.current) {
         gsap.to(f1ImageRef.current, {
           x: -200,
@@ -143,7 +177,6 @@ export default function Projects() {
         });
       }
 
-      // --- SCROLL INDICATOR FADE ---
       if (scrollIndicatorRef.current) {
         gsap.to(scrollIndicatorRef.current, {
           opacity: 0,
@@ -157,7 +190,6 @@ export default function Projects() {
         });
       }
 
-      // --- IMAGE PARALLAX (Desktop Only) ---
       if (!isMobile) {
         const cards = gsap.utils.toArray<HTMLElement>(".project-card");
         cards.forEach((card) => {
@@ -182,10 +214,16 @@ export default function Projects() {
     return () => ctx.revert();
   }, []);
 
-  const handleProjectClick = (project: typeof projects[0]) => {
+  /** Primary clickable URL for a project (used by the center arrow button) */
+  const getPrimaryLink = (project: Project): string | null => {
+    if (!project.links) return null;
+    return project.links.demo ?? project.links.website ?? project.links.github ?? null;
+  };
+
+  const handleProjectClick = (project: Project) => {
     if (project.confidential || project.inProgress) return;
-    if (project.links?.demo) window.open(project.links.demo, '_blank');
-    else if (project.links?.github) window.open(project.links.github, '_blank');
+    const url = getPrimaryLink(project);
+    if (url) window.open(url, '_blank');
   };
 
   return (
@@ -205,22 +243,20 @@ export default function Projects() {
           backgroundPosition: "center",
         }}
       />
+      <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none" />
 
-      <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none"></div>
-
-      {/* --- HUD HEADER --- */}
+      {/* HUD Header */}
       <div className="absolute top-20 md:top-24 left-0 px-4 md:px-12 z-20 pointer-events-none">
         <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
-          <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-racing-red rounded-full animate-pulse"></span>
+          <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-racing-red rounded-full animate-pulse" />
           <span className="text-[10px] md:text-xs font-bold tracking-[0.15em] md:tracking-[0.2em] uppercase text-racing-red">Race Logic / v1.0</span>
         </div>
-        {/* Changed tracking-tighter to tracking-wide */}
         <h2 className="text-2xl sm:text-4xl md:text-6xl font-ammonite lowercase tracking-wide leading-none">
           Selected <span className="text-transparent stroke-text">Works</span>
         </h2>
       </div>
 
-      {/* --- HUD SPEEDOMETER --- */}
+      {/* HUD Speedometer */}
       <div className="absolute top-20 md:top-24 right-0 px-4 md:px-12 z-20 pointer-events-none text-right">
         <div className="flex flex-col items-end">
           <p className="text-[8px] md:text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-gray-500 mb-0.5 md:mb-1">Scroll Velocity</p>
@@ -237,7 +273,7 @@ export default function Projects() {
         className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 pointer-events-none will-change-transform"
       >
         <div className="relative flex items-center justify-center">
-          <div className="absolute w-14 h-14 rounded-full border border-racing-red opacity-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+          <div className="absolute w-14 h-14 rounded-full border border-racing-red opacity-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]" />
           <div className="w-12 h-12 rounded-full border border-racing-red/50 bg-black/40 backdrop-blur-md flex items-center justify-center shadow-[0_0_15px_rgba(255,0,0,0.3)]">
             <svg className="w-5 h-5 text-racing-red animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
@@ -250,14 +286,16 @@ export default function Projects() {
         </div>
       </div>
 
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-2 bg-[repeating-linear-gradient(90deg,transparent,transparent_20px,#222_20px,#222_40px)] opacity-50 z-10"></div>
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-2 bg-[repeating-linear-gradient(90deg,transparent,transparent_20px,#222_20px,#222_40px)] opacity-50 z-10" />
 
+      {/* Progress Bar */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-2/3 md:w-1/2 max-w-md h-2 md:h-2.5 bg-zinc-800/50 z-20 border border-white/10 rounded-full overflow-hidden backdrop-blur-sm">
-        <div ref={progressBarRef} className="h-full bg-racing-red w-0 rounded-full shadow-[0_0_12px_rgba(255,0,0,0.6)] will-change-auto"></div>
+        <div ref={progressBarRef} className="h-full bg-racing-red w-0 rounded-full shadow-[0_0_12px_rgba(255,0,0,0.6)] will-change-auto" />
       </div>
 
-      <div className="absolute inset-0 z-0 bg-grid-pattern opacity-10 pointer-events-none" style={{ filter: 'invert(1)' }}></div>
+      <div className="absolute inset-0 z-0 bg-grid-pattern opacity-10 pointer-events-none" style={{ filter: 'invert(1)' }} />
 
+      {/* Horizontal Track */}
       <div
         ref={trackRef}
         className="flex h-full items-end pl-4 md:pl-12 pb-12 md:pb-16 will-change-transform"
@@ -268,12 +306,10 @@ export default function Projects() {
             key={project.id}
             className="project-card relative w-[85vw] sm:w-[75vw] md:w-[60vw] h-[65vh] sm:h-[68vh] md:h-[70vh] flex flex-col md:flex-row flex-shrink-0 mr-4 md:mr-16 border border-white/10 bg-zinc-900/80 backdrop-blur-sm group origin-bottom-left overflow-hidden shadow-2xl will-change-transform"
           >
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-racing-red to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-racing-red to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="project-speed-glow absolute inset-0 bg-racing-red mix-blend-overlay opacity-0 pointer-events-none z-20 transition-opacity will-change-opacity" />
 
-            {/* Speed Glow (Optimized Class) */}
-            <div className="project-speed-glow absolute inset-0 bg-racing-red mix-blend-overlay opacity-0 pointer-events-none z-20 transition-opacity will-change-opacity"></div>
-
-            {/* CONFIDENTIAL BADGE */}
+            {/* Badges */}
             {project.confidential && (
               <div className="absolute top-3 right-3 md:top-4 md:right-4 z-30 flex items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-red-500/20 backdrop-blur-md border border-red-500/40 rounded-full">
                 <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -282,8 +318,6 @@ export default function Projects() {
                 <span className="text-[10px] md:text-xs font-medium text-red-300">NDA</span>
               </div>
             )}
-
-            {/* IN PROGRESS BADGE */}
             {project.inProgress && (
               <div className="absolute top-3 right-3 md:top-4 md:right-4 z-30 flex items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-amber-500/20 backdrop-blur-md border border-amber-500/40 rounded-full">
                 <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-amber-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -293,30 +327,22 @@ export default function Projects() {
               </div>
             )}
 
-            {/* IMAGE SECTION */}
+            {/* Image Section */}
             <div className={`w-full md:w-[60%] h-[45%] md:h-full ${project.colorClass} relative overflow-hidden border-b md:border-b-0 md:border-r border-white/10`}>
-              {project.bgImage ? (
+              {project.bgImage && (
                 <img
                   src={project.bgImage}
                   alt={project.title}
                   className="project-image-inner absolute w-[110%] h-[110%] -left-[5%] -top-[5%] object-cover opacity-60 transition-all duration-500 group-hover:opacity-80 group-hover:scale-105 will-change-transform"
                   loading="lazy"
                 />
-              ) : (
-                <div className="project-image-inner absolute inset-[-10%] bg-cover bg-center bg-no-repeat opacity-50"></div>
               )}
-
-              {/* Huge Number Overlay */}
               <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                 <span className="text-[8rem] sm:text-[10rem] md:text-[15rem] font-black text-white/5 select-none">
                   {project.id}
                 </span>
               </div>
-
-              {/* Hover Red Overlay */}
-              <div className="absolute inset-0 bg-racing-red/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay"></div>
-
-              {/* Hover Action Button */}
+              <div className="absolute inset-0 bg-racing-red/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay" />
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 scale-90 group-hover:scale-100">
                 <button
                   onClick={() => handleProjectClick(project)}
@@ -328,7 +354,7 @@ export default function Projects() {
               </div>
             </div>
 
-            {/* CONTENT SECTION */}
+            {/* Content Section */}
             <div className="w-full md:w-[40%] h-[55%] md:h-full p-4 sm:p-6 md:p-8 flex flex-col justify-between bg-black/40">
               <div className="flex justify-between items-start border-b border-white/10 pb-3 md:pb-4">
                 <span className="px-2 md:px-3 py-0.5 md:py-1 border border-white/20 rounded-full text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-racing-red">
@@ -346,7 +372,7 @@ export default function Projects() {
                 </p>
               </div>
 
-              {/* ACTION BUTTONS */}
+              {/* Action Buttons */}
               <div className="border-t border-white/10 pt-3 md:pt-4 flex justify-between items-center text-[10px] md:text-xs font-mono text-gray-500 uppercase">
                 {project.confidential ? (
                   <>
@@ -360,16 +386,10 @@ export default function Projects() {
                   </>
                 ) : project.inProgress ? (
                   <>
-                    {project.links?.github && (
-                      <a
-                        href={project.links.github}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded transition-colors text-white text-[10px] md:text-xs"
-                      >
-                        <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                        </svg>
+                    {project.links && project.links.github && (
+                      <a href={project.links.github} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded transition-colors text-white text-[10px] md:text-xs">
+                        <GitHubIcon />
                         CODE
                       </a>
                     )}
@@ -379,25 +399,26 @@ export default function Projects() {
                   <>
                     <div className="flex gap-1.5 md:gap-2">
                       {project.links?.github && (
-                        <a
-                          href={project.links.github}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded transition-colors text-white text-[10px] md:text-xs"
-                        >
-                          <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                          </svg>
+                        <a href={project.links.github} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded transition-colors text-white text-[10px] md:text-xs">
+                          <GitHubIcon />
                           <span className="hidden sm:inline">CODE</span>
                         </a>
                       )}
+                      {/* "website" link type — shown as SITE with a globe icon */}
+                      {project.links?.website && (
+                        <a href={project.links.website} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-racing-red hover:bg-red-600 text-white rounded transition-colors text-[10px] md:text-xs">
+                          <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
+                          </svg>
+                          <span className="hidden sm:inline">SITE</span>
+                        </a>
+                      )}
+                      {/* "demo" link type */}
                       {project.links?.demo && (
-                        <a
-                          href={project.links.demo}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-racing-red hover:bg-red-600 text-white rounded transition-colors text-[10px] md:text-xs"
-                        >
+                        <a href={project.links.demo} target="_blank" rel="noopener noreferrer"
+                          className="flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-racing-red hover:bg-red-600 text-white rounded transition-colors text-[10px] md:text-xs">
                           <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                           </svg>
@@ -405,10 +426,8 @@ export default function Projects() {
                         </a>
                       )}
                       {project.links?.download && (
-                        <a
-                          href={project.links.download}
-                          className="flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded transition-colors text-white text-[10px] md:text-xs"
-                        >
+                        <a href={project.links.download}
+                          className="flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded transition-colors text-white text-[10px] md:text-xs">
                           <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                           </svg>
@@ -423,20 +442,30 @@ export default function Projects() {
             </div>
           </div>
         ))}
-        <div className="w-[10vw]"></div>
+        <div className="w-[10vw]" />
       </div>
+
       <style jsx>{`
         .stroke-text {
           -webkit-text-stroke: 1px white;
           color: transparent;
         }
         .perspective-1000 {
-            perspective: 1000px;
+          perspective: 1000px;
         }
         .bg-racing-red {
           background-color: #ff0000;
         }
       `}</style>
     </section>
+  );
+}
+
+// Extracted to avoid repetition
+function GitHubIcon() {
+  return (
+    <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+    </svg>
   );
 }
