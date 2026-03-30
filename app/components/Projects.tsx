@@ -2,6 +2,8 @@
 import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRouter } from 'next/navigation';
+import { ArrowRight, ChevronRight, Layers } from "lucide-react";
 
 const projects = [
   {
@@ -12,93 +14,41 @@ const projects = [
     year: "2025",
     colorClass: "bg-zinc-900",
     bgImage: "/projects/AgriHive.webp",
-    links: {
-      github: "https://github.com/rahulsiiitm/AgriHive-Frontend",
-      demo: "https://agrihive-c8f6b.web.app/",
-      download: "https://drive.google.com/uc?export=download&id=1mOW06ng4V848ZiInPcajH08s4yVApNqz"
-    }
+    slug: "agrihive",
+    links: { github: "#", demo: "#" }
   },
   {
     id: "02",
-    title: "ICAIAC 2026",
-    category: "WEB / RESEARCH",
-    description: "Official platform for the International Conference on AI & Computing at IIIT Manipur. High-performance Next.js site optimized for heavy research traffic and data management.",
-    year: "2026",
-    colorClass: "bg-zinc-800",
-    bgImage: "/projects/icaiac.png",
-    links: {
-      website: "https://icaiac-2026.vercel.app/"
-    }
-  },
-  {
-    id: "03",
-    title: "E-Parchi",
-    category: "HEALTH / APP",
-    description: "Digital prescription and hospital management system streamlining patient-doctor interactions. Scalable full-stack architecture focused on security and real-time updates.",
-    year: "2026",
-    colorClass: "bg-zinc-900",
-    bgImage: "/projects/eparchi.png",
-    links: {
-      demo: "https://e-parchi.vercel.app/"
-    }
-  },
-  {
-    id: "04",
     title: "AEGIS (CRPF)",
-    category: "SECURITY / ARCHITECTURE",
+    category: "SECURITY / ARCH",
     description: "Mission-critical secure log and personnel management system for the Central Reserve Police Force. Features multi-role authentication and high-integrity Firestore architecture.",
     year: "2025",
     colorClass: "bg-zinc-900",
     bgImage: "/projects/crpf.png",
+    slug: "aegis",
     links: null,
     confidential: true
   },
   {
-    id: "05",
+    id: "03",
     title: "Fatigue Detector",
     category: "HARDWARE / AI",
     description: "Wearable EMG/IMU glove detecting muscle fatigue in real-time. Integrating IoT signal processing with AI to predict physical strain for athletes and industrial workers.",
     year: "2026",
     colorClass: "bg-zinc-800",
     bgImage: "/projects/fatigue.png",
+    slug: "fatigue",
     links: null,
     inProgress: true
-  },
-  {
-    id: "06",
-    title: "Lab Archive",
-    category: "GITHUB / MISC",
-    description: "A collection of experimental modules including autonomous drone navigation (ROS/SLAM), Walmart semantic search bots, and computer graphics algorithms.",
-    year: "2024-26",
-    colorClass: "bg-zinc-950",
-    bgImage: "/projects/bg2.jpg",
-    links: {
-      github: "https://github.com/rahulsiiitm"
-    },
-    isArchive: true
   }
 ];
 
-// Unified type for project links
-type ProjectLinks = {
-  github?: string;
-  demo?: string;
-  website?: string;
-  download?: string;
-} | null;
+type ProjectLinks = { github?: string; demo?: string; website?: string; download?: string; } | null;
 
 type Project = {
-  id: string;
-  title: string;
-  category: string;
-  description: string;
-  year: string;
-  colorClass: string;
-  bgImage: string;
-  links: ProjectLinks;
-  confidential?: boolean;
-  inProgress?: boolean;
-  isArchive?: boolean;
+  id: string; title: string; category: string; description: string; year: string;
+  colorClass: string; bgImage: string; links: ProjectLinks; slug?: string;
+  confidential?: boolean; inProgress?: boolean; isArchive?: boolean;
 };
 
 export default function Projects() {
@@ -107,7 +57,7 @@ export default function Projects() {
   const progressBarRef = useRef<HTMLDivElement>(null);
   const speedDisplayRef = useRef<HTMLSpanElement>(null);
   const f1ImageRef = useRef<HTMLDivElement>(null);
-  const scrollIndicatorRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -117,7 +67,7 @@ export default function Projects() {
 
       const totalWidth = trackRef.current.offsetWidth;
       const viewportWidth = window.innerWidth;
-      const isMobile = window.innerWidth < 768;
+      const isMobile = viewportWidth < 768;
 
       const scrollTween = gsap.to(trackRef.current, {
         x: -(totalWidth - viewportWidth),
@@ -125,11 +75,10 @@ export default function Projects() {
         scrollTrigger: {
           trigger: containerRef.current,
           pin: true,
-          scrub: 0.5,
+          scrub: isMobile ? 1 : 0.5,
           start: "top top",
-          end: isMobile ? "+=2000" : "+=3500",
+          end: isMobile ? "+=1200" : "+=2500",
           invalidateOnRefresh: true,
-
           onUpdate: (self) => {
             const velocity = Math.abs(self.getVelocity());
             const normalizedSpeed = Math.min(Math.round(velocity / 10), 450);
@@ -141,69 +90,52 @@ export default function Projects() {
               progressBarRef.current.style.width = `${self.progress * 100}%`;
             }
 
-            const redlineOpacity = gsap.utils.clamp(0, 0.8, (normalizedSpeed - 100) / 350);
-            gsap.set(".project-speed-glow", { opacity: redlineOpacity });
+            // Skip heavy effects on mobile
+            if (!isMobile) {
+              const redlineOpacity = gsap.utils.clamp(0, 0.8, (normalizedSpeed - 100) / 350);
+              gsap.set(".project-speed-glow", { opacity: redlineOpacity });
 
-            if (!isMobile && velocity > 50) {
-              const skewAmount = self.getVelocity() / 300;
-              const clampedSkew = gsap.utils.clamp(-10, 10, skewAmount);
-              gsap.to(".project-card", {
-                skewX: -clampedSkew,
-                duration: 0.3,
-                ease: "power2.out",
-                overwrite: "auto"
-              });
+              if (velocity > 50) {
+                const skewAmount = self.getVelocity() / 300;
+                const clampedSkew = gsap.utils.clamp(-10, 10, skewAmount);
+                gsap.to(".project-card", { skewX: -clampedSkew, duration: 0.3, ease: "power2.out", overwrite: "auto" });
+              }
             }
           },
-
           onLeave: () => {
             if (!isMobile) gsap.to(".project-card", { skewX: 0, duration: 0.3, ease: "power2.out" });
             if (speedDisplayRef.current) speedDisplayRef.current.textContent = "000";
-            gsap.to(".project-speed-glow", { opacity: 0, duration: 0.2 });
+            if (!isMobile) gsap.to(".project-speed-glow", { opacity: 0, duration: 0.2 });
           }
         },
       });
 
-      if (f1ImageRef.current) {
+      if (f1ImageRef.current && !isMobile) {
         gsap.to(f1ImageRef.current, {
-          x: -200,
-          ease: "none",
+          x: -200, ease: "none",
           scrollTrigger: {
             trigger: containerRef.current,
             start: "top top",
-            end: isMobile ? "+=2000" : "+=3500",
-            scrub: 0.5,
+            end: "+=3500",
+            scrub: 0.5
           }
         });
       }
 
-      if (scrollIndicatorRef.current) {
-        gsap.to(scrollIndicatorRef.current, {
-          opacity: 0,
-          y: -30,
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top top",
-            end: "top -150",
-            scrub: 0.5,
-          }
-        });
-      }
-
+      // Parallax on cards — desktop only
       if (!isMobile) {
         const cards = gsap.utils.toArray<HTMLElement>(".project-card");
         cards.forEach((card) => {
           const image = card.querySelector(".project-image-inner") as HTMLElement | null;
           if (image) {
             gsap.to(image, {
-              x: 50,
-              ease: "none",
+              x: 50, ease: "none",
               scrollTrigger: {
                 trigger: card,
                 containerAnimation: scrollTween,
                 start: "left right",
                 end: "right left",
-                scrub: 0.5,
+                scrub: 0.5
               }
             });
           }
@@ -214,258 +146,189 @@ export default function Projects() {
     return () => ctx.revert();
   }, []);
 
-  /** Primary clickable URL for a project (used by the center arrow button) */
-  const getPrimaryLink = (project: Project): string | null => {
-    if (!project.links) return null;
-    return project.links.demo ?? project.links.website ?? project.links.github ?? null;
-  };
-
   const handleProjectClick = (project: Project) => {
-    if (project.confidential || project.inProgress) return;
-    const url = getPrimaryLink(project);
-    if (url) window.open(url, '_blank');
+    if (project.slug) router.push(`/projects/${project.slug}`);
   };
 
   return (
     <section
       id="projects"
       ref={containerRef}
-      className="relative h-screen bg-black text-white overflow-hidden perspective-1000"
+      className="relative h-screen bg-black text-white overflow-hidden"
     >
-      {/* Background Image */}
+      {/* Background — static on mobile for perf */}
       <div
         ref={f1ImageRef}
-        className="absolute top-0 -left-[10%] w-[120%] h-full z-0 pointer-events-none will-change-transform"
+        className="absolute top-0 -left-[10%] w-[120%] h-full z-0 pointer-events-none"
         style={{
           backgroundImage: "url('/bg2.jpg')",
           backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
           backgroundPosition: "center",
+          willChange: "transform"
         }}
       />
-      <div className="absolute inset-0 bg-black/40 z-0 pointer-events-none" />
+      <div className="absolute inset-0 bg-black/50 z-0 pointer-events-none" />
+      <div className="absolute inset-0 z-0 bg-grid-pattern opacity-10 pointer-events-none" style={{ filter: 'invert(1)' }} />
 
       {/* HUD Header */}
-      <div className="absolute top-20 md:top-24 left-0 px-4 md:px-12 z-20 pointer-events-none">
-        <div className="flex items-center gap-2 md:gap-3 mb-1 md:mb-2">
-          <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-racing-red rounded-full animate-pulse" />
-          <span className="text-[10px] md:text-xs font-bold tracking-[0.15em] md:tracking-[0.2em] uppercase text-racing-red">Race Logic / v1.0</span>
+      <div className="absolute top-16 sm:top-20 md:top-24 left-0 px-4 sm:px-8 md:px-12 z-20 pointer-events-none">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="w-1.5 h-1.5 bg-red-600 rounded-full animate-pulse" />
+          <span className="text-[9px] sm:text-[10px] font-bold tracking-[0.15em] uppercase text-red-500">
+            Race Logic / v1.0
+          </span>
         </div>
-        <h2 className="text-2xl sm:text-4xl md:text-6xl font-ammonite lowercase tracking-wide leading-none">
-          Selected <span className="text-transparent stroke-text">Works</span>
+        <h2 className="text-xl sm:text-3xl md:text-5xl lg:text-6xl font-black uppercase tracking-wide leading-none">
+          Selected <span className="stroke-text">Works</span>
         </h2>
       </div>
 
       {/* HUD Speedometer */}
-      <div className="absolute top-20 md:top-24 right-0 px-4 md:px-12 z-20 pointer-events-none text-right">
-        <div className="flex flex-col items-end">
-          <p className="text-[8px] md:text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase text-gray-500 mb-0.5 md:mb-1">Scroll Velocity</p>
-          <div className="flex items-baseline gap-1 md:gap-2">
-            <span ref={speedDisplayRef} className="text-3xl sm:text-5xl md:text-6xl font-black font-mono text-racing-red leading-none">000</span>
-            <span className="text-[10px] md:text-sm font-bold text-gray-500">KM/H</span>
-          </div>
+      <div className="absolute top-16 sm:top-20 md:top-24 right-0 px-4 sm:px-8 md:px-12 z-20 pointer-events-none text-right">
+        <p className="text-[8px] sm:text-[9px] font-bold tracking-[0.2em] uppercase text-gray-500 mb-0.5">
+          Scroll Velocity
+        </p>
+        <div className="flex items-baseline gap-1 justify-end">
+          <span
+            ref={speedDisplayRef}
+            className="text-2xl sm:text-4xl md:text-5xl font-black font-mono text-red-500 leading-none tabular-nums"
+          >
+            000
+          </span>
+          <span className="text-[9px] sm:text-xs font-bold text-gray-500">KM/H</span>
         </div>
       </div>
-
-      {/* Scroll Indicator */}
-      <div
-        ref={scrollIndicatorRef}
-        className="absolute bottom-12 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-4 pointer-events-none will-change-transform"
-      >
-        <div className="relative flex items-center justify-center">
-          <div className="absolute w-14 h-14 rounded-full border border-racing-red opacity-0 animate-[ping_1.5s_cubic-bezier(0,0,0.2,1)_infinite]" />
-          <div className="w-12 h-12 rounded-full border border-racing-red/50 bg-black/40 backdrop-blur-md flex items-center justify-center shadow-[0_0_15px_rgba(255,0,0,0.3)]">
-            <svg className="w-5 h-5 text-racing-red animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
-          </div>
-        </div>
-        <div className="flex flex-col items-center">
-          <span className="text-xs font-black tracking-[0.3em] uppercase text-white drop-shadow-md">SCROLL</span>
-          <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-racing-red">TO RACE</span>
-        </div>
-      </div>
-
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-2 bg-[repeating-linear-gradient(90deg,transparent,transparent_20px,#222_20px,#222_40px)] opacity-50 z-10" />
 
       {/* Progress Bar */}
-      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-2/3 md:w-1/2 max-w-md h-2 md:h-2.5 bg-zinc-800/50 z-20 border border-white/10 rounded-full overflow-hidden backdrop-blur-sm">
-        <div ref={progressBarRef} className="h-full bg-racing-red w-0 rounded-full shadow-[0_0_12px_rgba(255,0,0,0.6)] will-change-auto" />
+      <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-2/3 md:w-1/2 max-w-md h-1.5 md:h-2 bg-zinc-800/60 z-20 border border-white/10 rounded-full overflow-hidden">
+        <div
+          ref={progressBarRef}
+          className="h-full bg-red-600 w-0 rounded-full shadow-[0_0_8px_rgba(255,0,0,0.5)]"
+          style={{ willChange: "width" }}
+        />
       </div>
-
-      <div className="absolute inset-0 z-0 bg-grid-pattern opacity-10 pointer-events-none" style={{ filter: 'invert(1)' }} />
 
       {/* Horizontal Track */}
       <div
         ref={trackRef}
-        className="flex h-full items-end pl-4 md:pl-12 pb-12 md:pb-16 will-change-transform"
-        style={{ width: "fit-content" }}
+        className="flex h-full items-end pl-4 sm:pl-8 md:pl-12 pb-10 sm:pb-12 md:pb-16"
+        style={{ width: "fit-content", willChange: "transform" }}
       >
         {projects.map((project) => (
           <div
             key={project.id}
-            className="project-card relative w-[85vw] sm:w-[75vw] md:w-[60vw] h-[65vh] sm:h-[68vh] md:h-[70vh] flex flex-col md:flex-row flex-shrink-0 mr-4 md:mr-16 border border-white/10 bg-zinc-900/80 backdrop-blur-sm group origin-bottom-left overflow-hidden shadow-2xl will-change-transform"
+            className="project-card relative flex-shrink-0 mr-4 sm:mr-8 md:mr-16 border border-white/10 bg-zinc-900/80 group origin-bottom-left overflow-hidden shadow-2xl
+              w-[80vw] sm:w-[70vw] md:w-[58vw]
+              h-[62vh] sm:h-[66vh] md:h-[70vh]
+              flex flex-col md:flex-row"
           >
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-racing-red to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="project-speed-glow absolute inset-0 bg-racing-red mix-blend-overlay opacity-0 pointer-events-none z-20 transition-opacity will-change-opacity" />
+            {/* Top red line on hover */}
+            <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-red-600 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+            {/* Speed glow — desktop only via CSS */}
+            <div className="project-speed-glow hidden md:block absolute inset-0 bg-red-600 mix-blend-overlay opacity-0 pointer-events-none z-20 will-change-opacity" />
 
             {/* Badges */}
             {project.confidential && (
-              <div className="absolute top-3 right-3 md:top-4 md:right-4 z-30 flex items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-red-500/20 backdrop-blur-md border border-red-500/40 rounded-full">
-                <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                </svg>
-                <span className="text-[10px] md:text-xs font-medium text-red-300">NDA</span>
+              <div className="absolute top-2.5 right-2.5 z-30 px-2 py-1 bg-red-500/20 border border-red-500/40 rounded-full">
+                <span className="text-[9px] font-semibold text-red-300">NDA</span>
               </div>
             )}
             {project.inProgress && (
-              <div className="absolute top-3 right-3 md:top-4 md:right-4 z-30 flex items-center gap-1.5 md:gap-2 px-2 md:px-3 py-1 md:py-1.5 bg-amber-500/20 backdrop-blur-md border border-amber-500/40 rounded-full">
-                <svg className="w-2.5 h-2.5 md:w-3 md:h-3 text-amber-400 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
-                <span className="text-[10px] md:text-xs font-medium text-amber-300">Ongoing</span>
+              <div className="absolute top-2.5 right-2.5 z-30 px-2 py-1 bg-amber-500/20 border border-amber-500/40 rounded-full">
+                <span className="text-[9px] font-semibold text-amber-300">Ongoing</span>
               </div>
             )}
 
-            {/* Image Section */}
-            <div className={`w-full md:w-[60%] h-[45%] md:h-full ${project.colorClass} relative overflow-hidden border-b md:border-b-0 md:border-r border-white/10`}>
+            {/* Image */}
+            <div
+              className={`w-full md:w-[58%] h-[42%] md:h-full ${project.colorClass} relative overflow-hidden border-b md:border-b-0 md:border-r border-white/10 cursor-pointer`}
+              onClick={() => handleProjectClick(project)}
+            >
               {project.bgImage && (
                 <img
                   src={project.bgImage}
                   alt={project.title}
-                  className="project-image-inner absolute w-[110%] h-[110%] -left-[5%] -top-[5%] object-cover opacity-60 transition-all duration-500 group-hover:opacity-80 group-hover:scale-105 will-change-transform"
+                  className="project-image-inner absolute w-[110%] h-[110%] -left-[5%] -top-[5%] object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500"
                   loading="lazy"
+                  decoding="async"
                 />
               )}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <span className="text-[8rem] sm:text-[10rem] md:text-[15rem] font-black text-white/5 select-none">
-                  {project.id}
-                </span>
-              </div>
-              <div className="absolute inset-0 bg-racing-red/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay" />
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 scale-90 group-hover:scale-100">
-                <button
-                  onClick={() => handleProjectClick(project)}
-                  disabled={project.confidential}
-                  className={`w-16 h-16 md:w-20 md:h-20 ${project.confidential ? 'bg-gray-600 cursor-not-allowed' : 'bg-white hover:bg-racing-red hover:text-white'} text-black rounded-full flex items-center justify-center font-black text-xl md:text-2xl transition-colors shadow-xl`}
-                >
-                  {project.confidential ? '🔒' : '→'}
-                </button>
+              <span className="absolute inset-0 flex items-center justify-center text-[6rem] sm:text-[8rem] md:text-[12rem] font-black text-white/5 select-none pointer-events-none">
+                {project.id}
+              </span>
+              <div className="absolute inset-0 bg-red-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay" />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 scale-90 group-hover:scale-100 pointer-events-none">
+                <div className="w-12 h-12 md:w-16 md:h-16 bg-white text-black rounded-full flex items-center justify-center shadow-xl">
+                  <ArrowRight size={22} />
+                </div>
               </div>
             </div>
 
-            {/* Content Section */}
-            <div className="w-full md:w-[40%] h-[55%] md:h-full p-4 sm:p-6 md:p-8 flex flex-col justify-between bg-black/40">
-              <div className="flex justify-between items-start border-b border-white/10 pb-3 md:pb-4">
-                <span className="px-2 md:px-3 py-0.5 md:py-1 border border-white/20 rounded-full text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-racing-red">
+            {/* Content */}
+            <div className="w-full md:w-[42%] h-[58%] md:h-full p-4 sm:p-5 md:p-8 flex flex-col justify-between bg-black/40">
+              <div className="flex justify-between items-center border-b border-white/10 pb-3">
+                <span className="px-2 py-0.5 border border-white/20 rounded-full text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-red-500">
                   {project.category}
                 </span>
-                <span className="font-mono text-[10px] md:text-xs text-gray-500">{project.year}</span>
+                <span className="font-mono text-[9px] sm:text-[10px] text-gray-500">{project.year}</span>
               </div>
 
               <div>
-                <h3 className="text-2xl sm:text-3xl md:text-5xl font-black uppercase leading-[0.9] mb-3 md:mb-4 group-hover:text-racing-red transition-colors duration-300">
+                <h3 className="text-xl sm:text-2xl md:text-4xl font-black uppercase leading-[0.9] mb-2 md:mb-4 group-hover:text-red-500 transition-colors duration-300">
                   {project.title}
                 </h3>
-                <p className="text-xs sm:text-sm text-gray-400 font-medium leading-relaxed line-clamp-3 md:line-clamp-4">
+                <p className="text-[11px] sm:text-xs md:text-sm text-gray-400 leading-relaxed line-clamp-3 md:line-clamp-4">
                   {project.description}
                 </p>
               </div>
 
-              {/* Action Buttons */}
-              <div className="border-t border-white/10 pt-3 md:pt-4 flex justify-between items-center text-[10px] md:text-xs font-mono text-gray-500 uppercase">
-                {project.confidential ? (
-                  <>
-                    <div className="flex items-center gap-1.5 md:gap-2 text-red-400">
-                      <svg className="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                      </svg>
-                      <span className="hidden sm:inline">Restricted</span>
-                    </div>
-                    <span className="text-[9px] md:text-xs">Pro. ID // {project.id}</span>
-                  </>
-                ) : project.inProgress ? (
-                  <>
-                    {project.links && project.links.github && (
-                      <a href={project.links.github} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded transition-colors text-white text-[10px] md:text-xs">
-                        <GitHubIcon />
-                        CODE
-                      </a>
-                    )}
-                    <span className="hidden sm:inline text-[9px] md:text-xs">Pro. ID // {project.id}</span>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex gap-1.5 md:gap-2">
-                      {project.links?.github && (
-                        <a href={project.links.github} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded transition-colors text-white text-[10px] md:text-xs">
-                          <GitHubIcon />
-                          <span className="hidden sm:inline">CODE</span>
-                        </a>
-                      )}
-                      {/* "website" link type — shown as SITE with a globe icon */}
-                      {project.links?.website && (
-                        <a href={project.links.website} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-racing-red hover:bg-red-600 text-white rounded transition-colors text-[10px] md:text-xs">
-                          <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9" />
-                          </svg>
-                          <span className="hidden sm:inline">SITE</span>
-                        </a>
-                      )}
-                      {/* "demo" link type */}
-                      {project.links?.demo && (
-                        <a href={project.links.demo} target="_blank" rel="noopener noreferrer"
-                          className="flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-racing-red hover:bg-red-600 text-white rounded transition-colors text-[10px] md:text-xs">
-                          <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                          </svg>
-                          <span className="hidden sm:inline">DEMO</span>
-                        </a>
-                      )}
-                      {project.links?.download && (
-                        <a href={project.links.download}
-                          className="flex items-center gap-1 px-2 md:px-3 py-1 md:py-1.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded transition-colors text-white text-[10px] md:text-xs">
-                          <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                          </svg>
-                          <span className="hidden sm:inline">APK</span>
-                        </a>
-                      )}
-                    </div>
-                    <span className="hidden sm:inline group-hover:translate-x-2 transition-transform duration-300 text-white font-bold text-[9px] md:text-xs">Pro. ID // {project.id}</span>
-                  </>
+              <div className="border-t border-white/10 pt-3 flex justify-between items-center">
+                {project.slug && (
+                  <button
+                    onClick={() => handleProjectClick(project)}
+                    className="flex items-center gap-1.5 px-3 py-2 bg-white text-black hover:bg-red-600 hover:text-white transition-colors text-[9px] sm:text-[10px] font-black uppercase tracking-widest"
+                  >
+                    View Case Study <ChevronRight size={12} />
+                  </button>
                 )}
+                <span className="hidden sm:inline text-gray-500 font-mono text-[9px] group-hover:translate-x-1 transition-transform duration-300">
+                  ID // {project.id}
+                </span>
               </div>
             </div>
           </div>
         ))}
-        <div className="w-[10vw]" />
+
+        {/* Archive Bridge Card */}
+        <div className="project-card relative flex-shrink-0 mr-4 sm:mr-8 md:mr-16 border-2 border-dashed border-white/10 bg-zinc-950/40 group hover:border-red-600/50 transition-all duration-500
+          w-[80vw] sm:w-[42vw] md:w-[32vw]
+          h-[62vh] sm:h-[66vh] md:h-[70vh]
+          flex flex-col items-center justify-center"
+        >
+          <div className="flex flex-col items-center text-center p-6 sm:p-8">
+            <div className="w-14 h-14 md:w-16 md:h-16 rounded-full border border-white/10 flex items-center justify-center mb-6 group-hover:bg-red-600 group-hover:border-red-600 transition-all duration-500">
+              <Layers size={26} className="text-gray-500 group-hover:text-white transition-colors" />
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter mb-2">Full Archive</h3>
+            <p className="text-[10px] font-mono text-gray-500 uppercase tracking-[0.15em] mb-8 max-w-[200px] leading-relaxed">
+              Complete system directory // 12+ Modules
+            </p>
+            <button
+              onClick={() => router.push('/archive')}
+              className="w-full py-3 bg-white text-black text-[10px] font-black uppercase tracking-[0.25em] hover:bg-red-600 hover:text-white transition-all group-hover:scale-105 active:scale-95 shadow-xl"
+            >
+              Explore All
+            </button>
+          </div>
+        </div>
+
+        <div className="w-[8vw] md:w-[10vw] flex-shrink-0" />
       </div>
 
-      <style jsx>{`
-        .stroke-text {
-          -webkit-text-stroke: 1px white;
-          color: transparent;
-        }
-        .perspective-1000 {
-          perspective: 1000px;
-        }
-        .bg-racing-red {
-          background-color: #ff0000;
-        }
-      `}</style>
+      <style>{`
+  .stroke-text { -webkit-text-stroke: 1px white; color: transparent; }
+`}</style>
     </section>
-  );
-}
-
-// Extracted to avoid repetition
-function GitHubIcon() {
-  return (
-    <svg className="w-2.5 h-2.5 md:w-3 md:h-3" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-    </svg>
   );
 }

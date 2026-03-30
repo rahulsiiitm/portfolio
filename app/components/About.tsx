@@ -222,7 +222,7 @@ export default function About() {
                     {/* Download Button - MOBILE OPTIMIZED */}
                     <div ref={buttonRef} className="mt-6 md:mt-7 relative z-10">
                         <a
-                            href="https://drive.google.com/file/d/1GaUFx-KT4HekLrgq1jmTVeSRy-z6HGdu/view?usp=sharing"
+                            href="https://drive.google.com/file/d/1Nchv-PcWmT2M9f3E_-CVuRFDWz6ShUsz/view?usp=sharing"
                             download="Rahul_Sharma_Resume.pdf"
                             target="_blank"
                             rel="noopener noreferrer"  // ← Add this
