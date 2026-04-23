@@ -1,5 +1,5 @@
 "use client";
-import { useLayoutEffect, useRef } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRouter } from 'next/navigation';
@@ -148,8 +148,15 @@ export default function Projects() {
     return () => ctx.revert();
   }, []);
 
+  const [inspectProject, setInspectProject] = useState<Project | null>(null);
+
   const handleProjectClick = (project: Project) => {
     if (project.slug) router.push(`/projects/${project.slug}`);
+  };
+
+  const openInspect = (e: React.MouseEvent, project: Project) => {
+    e.stopPropagation();
+    setInspectProject(project);
   };
 
   return (
@@ -294,9 +301,14 @@ export default function Projects() {
                     View Case Study <ChevronRight size={12} />
                   </button>
                 )}
-                <span className="hidden sm:inline text-gray-500 font-mono text-[9px] group-hover:translate-x-1 transition-transform duration-300">
-                  ID // {project.id}
-                </span>
+                
+                <button 
+                  onClick={(e) => openInspect(e, project)}
+                  className="px-2 py-1.5 border border-white/10 bg-white/5 hover:bg-red-600 hover:border-red-600 text-[8px] sm:text-[9px] font-mono font-bold text-zinc-400 hover:text-white transition-all duration-300 uppercase tracking-widest flex items-center gap-1.5"
+                >
+                  <Layers size={10} />
+                  Inspect
+                </button>
               </div>
             </div>
           </div>
@@ -329,8 +341,103 @@ export default function Projects() {
       </div>
 
       <style>{`
-  .stroke-text { -webkit-text-stroke: 1px white; color: transparent; }
-`}</style>
+        .stroke-text { -webkit-text-stroke: 1px white; color: transparent; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+      `}</style>
+
+      {/* --- TELEMETRY OVERLAY MODAL --- */}
+      {inspectProject && (
+        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 md:p-10 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
+          <div className="relative w-full max-w-4xl bg-zinc-900 border border-white/20 shadow-2xl overflow-hidden rounded-sm flex flex-col md:flex-row h-[80vh] md:h-auto max-h-[90vh] pointer-events-auto">
+            
+            <div className="absolute top-0 left-0 w-full h-1 bg-red-600 z-30"></div>
+            
+            <div className="w-full md:w-1/3 bg-black relative border-b md:border-b-0 md:border-r border-white/10 overflow-hidden min-h-[200px]">
+              {inspectProject.bgImage && (
+                <img 
+                  src={inspectProject.bgImage} 
+                  alt={inspectProject.title} 
+                  className="w-full h-full object-cover opacity-40 grayscale"
+                />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent"></div>
+              <div className="absolute bottom-6 left-6">
+                <span className="text-[10px] font-mono font-bold text-red-500 uppercase tracking-widest mb-2 block">TELEMETRY_STREAM</span>
+                <h4 className="text-3xl font-black italic text-white uppercase leading-none">{inspectProject.title}</h4>
+              </div>
+            </div>
+
+            <div className="flex-1 p-6 md:p-10 flex flex-col overflow-y-auto custom-scrollbar">
+              <div className="flex justify-between items-start mb-8">
+                <div>
+                  <h5 className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest mb-1">SYSTEM_ARCHITECTURE</h5>
+                  <p className="text-sm font-medium text-white/80">{inspectProject.category}</p>
+                </div>
+                <button 
+                  onClick={() => setInspectProject(null)}
+                  className="text-zinc-500 hover:text-white font-mono text-xs uppercase tracking-widest flex items-center gap-2"
+                >
+                  [ CLOSE_X ]
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
+                <div className="space-y-6">
+                   <div>
+                      <h6 className="text-[9px] font-mono font-bold text-red-500 uppercase tracking-widest mb-2">RAW_SPECIFICATIONS</h6>
+                      <div className="space-y-1 font-mono text-[11px] text-zinc-400">
+                        <p className="flex justify-between border-b border-white/5 pb-1"><span>UID:</span> <span className="text-white">PROJECT_{inspectProject.id}</span></p>
+                        <p className="flex justify-between border-b border-white/5 pb-1"><span>YEAR:</span> <span className="text-white">{inspectProject.year}</span></p>
+                        <p className="flex justify-between border-b border-white/5 pb-1"><span>STATUS:</span> <span className="text-green-500">LIVE_OPTIMIZED</span></p>
+                        <p className="flex justify-between border-b border-white/5 pb-1"><span>SLUG:</span> <span className="text-white">/{inspectProject.slug}</span></p>
+                      </div>
+                   </div>
+                   
+                   <div>
+                      <h6 className="text-[9px] font-mono font-bold text-red-500 uppercase tracking-widest mb-2">CORE_LOGIC_SUMMARY</h6>
+                      <p className="text-xs text-zinc-400 leading-relaxed italic">
+                        "{inspectProject.description}"
+                      </p>
+                   </div>
+                </div>
+
+                <div className="space-y-6">
+                   <div className="bg-black/40 p-4 border border-white/5 rounded-sm">
+                      <h6 className="text-[9px] font-mono font-bold text-zinc-500 uppercase tracking-widest mb-3">SYSTEM_LOG</h6>
+                      <div className="space-y-2 font-mono text-[9px] text-zinc-500">
+                        <p className="flex gap-3 text-zinc-400">
+                          <span className="text-red-500">[00:01:24]</span>
+                          <span>PERCEPTION_NODES_ACTIVE</span>
+                        </p>
+                        <p className="flex gap-3">
+                          <span className="text-green-500">[00:01:25]</span>
+                          <span>DEDUCTIVE_REASONING_SYNCED</span>
+                        </p>
+                        <p className="flex gap-3 text-zinc-600">
+                          <span className="text-zinc-600">[00:01:27]</span>
+                          <span>TELEMETRY_BUFFER_FULL</span>
+                        </p>
+                      </div>
+                   </div>
+
+                   <button
+                    onClick={() => {
+                      if (inspectProject.slug) router.push(`/projects/${inspectProject.slug}`);
+                      setInspectProject(null);
+                    }}
+                    className="w-full py-4 bg-white text-black text-center text-[10px] font-black uppercase tracking-[0.4em] hover:bg-red-600 hover:text-white transition-all duration-300 block"
+                   >
+                    Enter_Deep_Dive
+                   </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
+
   );
 }
