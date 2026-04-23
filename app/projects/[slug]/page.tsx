@@ -141,7 +141,14 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
             )}
 
             {project.links && (
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <div className="flex flex-col sm:flex-row flex-wrap gap-3 pt-2">
+                {project.links.pypi && (
+                  <a href={project.links.pypi} target="_blank" rel="noopener noreferrer" 
+                     className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-md text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-blue-700 transition-colors shadow-sm">
+                    <ExternalLink size={14} />
+                    PyPI Package
+                  </a>
+                )}
                 {project.links.demo && (
                   <a href={project.links.demo} target="_blank" rel="noopener noreferrer" 
                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-600 text-white rounded-md text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-red-700 transition-colors shadow-sm">

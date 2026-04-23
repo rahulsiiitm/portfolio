@@ -1,37 +1,6 @@
 "use client";
 
-const results = [
-    {
-        pos: "MOU", // Displaying MOU as the "Position" for impact
-        label: "SIGNED PARTNERSHIP",
-        event: "MANIPUR IT HUB",
-        desc: "Collaborated to enhance agri-tech based application",
-        gap: "OFFICIAL",
-        tyre: "S",
-        tyreColor: "border-red-500 text-red-500",
-        accent: "bg-racing-red",
-    },
-    {
-        pos: "P5", // "P5" implies Top 5 Finalist
-        label: "FINALIST",
-        event: "INTER-IIIT HACKATHON (UDBHAV) - 2026",
-        desc: "Represented IIIT Manipur // Udbhav",
-        gap: "QUALIFIED",
-        tyre: "M",
-        tyreColor: "border-yellow-400 text-yellow-400",
-        accent: "bg-white",
-    },
-    {
-        pos: "7.65",
-        label: "ACADEMIC",
-        event: "IIIT MANIPUR (CSE)",
-        desc: "Current CGPA // Batch 2027",
-        gap: "CONSISTENT",
-        tyre: "H",
-        tyreColor: "border-white text-white",
-        accent: "bg-gray-500",
-    },
-];
+import results from "../../data/achievements.json";
 
 export default function Achievements() {
     return (

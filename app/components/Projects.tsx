@@ -5,9 +5,28 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRouter } from 'next/navigation';
 import { ArrowRight, ChevronRight, Layers } from "lucide-react";
 
-const projects = [
+type ProjectLinks = { github?: string; demo?: string; website?: string; download?: string; pypi?: string; } | null;
+
+type Project = {
+  id: string; title: string; category: string; description: string; year: string;
+  colorClass: string; bgImage: string; links: ProjectLinks; slug?: string;
+  confidential?: boolean; inProgress?: boolean; isArchive?: boolean;
+};
+
+const projects: Project[] = [
   {
     id: "01",
+    title: "VidChain",
+    category: "FORENSIC AI / RAG",
+    description: "Multimodal RAG framework for forensic video intelligence. Built the IRIS engine to enable cross-video entity tracking and natural language forensic queries at the edge.",
+    year: "2026",
+    colorClass: "bg-red-950",
+    bgImage: "/projects/vidchain.webp",
+    slug: "vidchain",
+    links: { github: "https://github.com/rahulsiiitm/videochain-python", pypi: "https://pypi.org/project/VidChain/" }
+  },
+  {
+    id: "02",
     title: "AgriHive",
     category: "AI / AGRI-TECH",
     description: "Multilingual AI farming assistant achieving 92% disease detection accuracy. Engineered with TensorFlow, Gemini API, and an offline-first Firebase architecture for rural accessibility.",
@@ -18,7 +37,7 @@ const projects = [
     links: { github: "#", demo: "#" }
   },
   {
-    id: "02",
+    id: "03",
     title: "AEGIS (CRPF)",
     category: "SECURITY / ARCH",
     description: "Mission-critical secure log and personnel management system for the Central Reserve Police Force. Features multi-role authentication and high-integrity Firestore architecture.",
@@ -28,28 +47,11 @@ const projects = [
     slug: "aegis",
     links: null,
     confidential: true
-  },
-  {
-    id: "03",
-    title: "Fatigue Detector",
-    category: "HARDWARE / AI",
-    description: "Wearable EMG/IMU glove detecting muscle fatigue in real-time. Integrating IoT signal processing with AI to predict physical strain for athletes and industrial workers.",
-    year: "2026",
-    colorClass: "bg-zinc-800",
-    bgImage: "/projects/fatigue.png",
-    slug: "fatigue",
-    links: null,
-    inProgress: true
   }
 ];
 
-type ProjectLinks = { github?: string; demo?: string; website?: string; download?: string; } | null;
 
-type Project = {
-  id: string; title: string; category: string; description: string; year: string;
-  colorClass: string; bgImage: string; links: ProjectLinks; slug?: string;
-  confidential?: boolean; inProgress?: boolean; isArchive?: boolean;
-};
+
 
 export default function Projects() {
   const containerRef = useRef<HTMLElement>(null);

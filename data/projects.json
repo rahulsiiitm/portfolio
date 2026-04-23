@@ -1,5 +1,28 @@
 [
   {
+    "slug": "vidchain",
+    "year": "2026",
+    "category": "Forensic AI",
+    "title": "VidChain",
+    "tagline": "Multimodal RAG framework for forensic video intelligence — 'LangChain for Videos'.",
+    "role": "Lead AI Architect",
+    "stack": ["Python", "PyTorch", "FastAPI", "GraphRAG", "OpenCV"],
+    "stats": [
+      { "label": "Engine", "value": "IRIS" },
+      { "label": "Reasoning", "value": "GraphRAG" },
+      { "label": "Deployment", "value": "Edge/Local" },
+      { "label": "Intelligence", "value": "Multimodal" }
+    ],
+    "context": "Forensic video analysis typically requires manual scrubbing through massive datasets, making it impossible to perform cross-video entity tracking or complex reasoning in real-time.",
+    "solution": "Architected a local-first, edge-optimized RAG framework using the IRIS engine. Integrated multi-sensor fusion and GraphRAG to allow for complex natural language queries across distributed video nodes, enabling automated suspect tracking and event deduction.",
+    "codeSnippet": "# IRIS Engine: Cross-Modal Reasoning\ndef forensic_query(query, streams):\n    context = engine.extract_multimodal_context(streams)\n    graph = graph_rag.construct(context)\n    result = graph.query(query, reasoning_mode='deductive')\n    return result # Forensic evidence generated",
+    "links": {
+      "github": "https://github.com/rahulsiiitm/videochain-python",
+      "pypi": "https://pypi.org/project/VidChain/",
+      "demo": null
+    }
+  },
+  {
     "slug": "tokenizer-pipeline",
     "year": "2026",
     "category": "AI / NLP",
@@ -107,25 +130,6 @@
     "links": null
   },
   {
-    "slug": "fatigue",
-    "year": "2026",
-    "category": "IoT / AI",
-    "title": "Fatigue Detector",
-    "tagline": "Wearable EMG/IMU sensor integration for real-time fatigue analysis.",
-    "role": "IoT & AI Engineer",
-    "stack": ["Python", "C++", "TensorFlow", "Arduino"],
-    "stats": [
-      { "label": "Sensors", "value": "EMG/IMU" },
-      { "label": "Latency", "value": "Real-time" },
-      { "label": "Field", "value": "Wearables" },
-      { "label": "Status", "value": "WIP" }
-    ],
-    "context": "Monitoring muscle fatigue in real-time is vital for both high-performance athletics and preventing industrial workplace injuries.",
-    "solution": "Developing a wearable glove integrating EMG (Electromyography) and IMU sensors. Using Python for signal processing and a CNN-RNN model to predict the fatigue index based on muscle voltage fluctuations.",
-    "codeSnippet": "// Signal Processing (Python)\ndef calculate_fatigue_index(emg_signal, imu_data):\n    rms_value = np.sqrt(np.mean(emg_signal**2))\n    # Predictive model inference\n    fatigue_score = model.predict([rms_value, imu_data])\n    return fatigue_score",
-    "links": null
-  },
-  {
     "slug": "autonomous-drone",
     "year": "2025",
     "category": "Robotics",
@@ -183,28 +187,6 @@
     "context": "Manual data entry from PDF financial reports is time-consuming and error-prone, requiring a programmatic extraction method.",
     "solution": "Developed a Python utility using Pandas and PyPDF2 to identify and parse table structures from unstructured PDFs, exporting high-fidelity data into formatted Excel sheets automatically.",
     "codeSnippet": "# PDF to Dataframe Extraction\nimport pandas as pd\ndef parse_pdf_table(file_path):\n    tables = camelot.read_pdf(file_path)\n    df = tables[0].df\n    df.to_excel('output.xlsx', index=False)",
-    "links": {
-      "github": "https://github.com/rahulsiiitm",
-      "demo": null
-    }
-  },
-  {
-    "slug": "contact-system",
-    "year": "2023",
-    "category": "Web Dev",
-    "title": "Auth Manager",
-    "tagline": "Full-stack CRUD application with secure session-based authentication.",
-    "role": "Web Developer",
-    "stack": ["PHP", "MySQL", "Bootstrap"],
-    "stats": [
-      { "label": "Auth", "value": "Secure" },
-      { "label": "Database", "value": "MySQL" },
-      { "label": "Type", "value": "CRUD" },
-      { "label": "Logic", "value": "Vanilla" }
-    ],
-    "context": "Basic contact management requires a secure, authenticated environment to manage and persist user-specific logistical data safely.",
-    "solution": "Built a full-stack CRUD application using vanilla PHP and MySQL. Implemented secure user authentication and session management to protect data integrity and user privacy.",
-    "codeSnippet": "// PHP Secure Session Management\nsession_start();\nif (!isset($_SESSION['user_id'])) {\n    header('Location: login.php');\n    exit();\n}\n// Prepared Statements for SQLi Protection",
     "links": {
       "github": "https://github.com/rahulsiiitm",
       "demo": null

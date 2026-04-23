@@ -1,0 +1,20 @@
+[
+  {
+    "id": "01",
+    "period": "JUN - AUG 2025",
+    "role": "UI/UX Intern",
+    "company": "AliveHire",
+    "location": "Remote",
+    "desc": "Designed high-fidelity wireframes and interactive prototypes. Collaborated with developers to implement pixel-perfect user interfaces for the core recruitment platform.",
+    "tags": ["Figma", "Prototyping", "UX Research"]
+  },
+  {
+    "id": "02",
+    "period": "2023 - PRESENT",
+    "role": "AI & App Developer",
+    "company": "Freelance / Academic",
+    "location": "Manipur, IN",
+    "desc": "Developing AI-integrated web and mobile apps. Built solutions for agriculture (AgriHive), retail guidance, and event management.",
+    "tags": ["Flutter", "TensorFlow", "Firebase"]
+  }
+]
