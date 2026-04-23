@@ -66,15 +66,16 @@ export default function Intro() {
 
                         <div className="mt-6 sm:mt-7 md:mt-8 overflow-hidden">
                             <p className="intro-line text-base sm:text-lg md:text-2xl normal-case font-medium text-gray-600 max-w-xl leading-relaxed">
-                                Merging the precision of <strong className="text-carbon-black">Deep Learning</strong> with the raw power of <strong className="text-carbon-black">Robotic Perception</strong>. My work lives where algorithms meet the real world.
+                                Merging the precision of <strong className="text-carbon-black">Deep Learning</strong> with the raw power of <strong className="text-carbon-black">Scalable Architecture</strong>. My work lives where data meets the interface.
                             </p>
                         </div>
                     </div>
 
-                    {/* Stats Grid - MOBILE OPTIMIZED */}
-                    <div className="grid grid-cols-2 gap-6 sm:gap-7 md:gap-8 mt-12 sm:mt-14 md:mt-16 border-t border-gray-300 pt-6 sm:pt-7 md:pt-8">
-                        <StatItem number="01" label="Neural Nets" value="TensorFlow / PyTorch" />
-                        <StatItem number="02" label="Robotics" value="ROS / SLAM / OpenCV" />
+                    {/* Stats Grid - EXPANDED TO 3 PILLARS */}
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-6 sm:gap-7 md:gap-8 mt-12 sm:mt-14 md:mt-16 border-t border-gray-300 pt-6 sm:pt-7 md:pt-8">
+                        <StatItem number="01" label="Intelligence" value="PyTorch / GraphRAG" />
+                        <StatItem number="02" label="Systems" value="Next.js / FastAPI" />
+                        <StatItem number="03" label="Edge Ops" value="Docker / Vercel" />
                     </div>
                 </div>
 

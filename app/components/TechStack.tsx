@@ -43,7 +43,7 @@ const stack = [
     sub: "SYSTEM_OPS",
     icon: <Terminal className="w-5 h-5 md:w-6 md:h-6" />,
     stats: { label: "UPTIME", val: "99.9%" },
-    items: ["Git / GitHub", "Docker", "Firebase", "AirSim", "Linux"],
+    items: ["Git / GitHub", "Docker", "Firebase", "AWS / Vercel", "Linux"],
     desc: "Deployment pipelines and environment management.",
   },
 ];
