@@ -6,8 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import SmoothScrolling from "./components/SmoothScrolling";
 import Navbar from "./components/Navbar";
-import Preloader from "./components/Preloader";
-import PageTransition from "./components/PageTransition";
+// import Preloader from "./components/Preloader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -58,12 +57,10 @@ export default function RootLayout({
     <html lang="en">
       {/* 3. Inject the variable into the body tag */}
       <body className={`${inter.className} ${ammonite.variable}`}>
-        <Preloader />
+        {/* <Preloader /> */}
         <SmoothScrolling>
           <Navbar />
-          <PageTransition>
-            {children}
-          </PageTransition>
+          {children}
         </SmoothScrolling>
         <Analytics />
         <SpeedInsights />
