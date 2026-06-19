@@ -3,6 +3,7 @@ import About from "./components/About";
 import Intro from "./components/Intro";
 // import Projects from "./components/Projects";
 import TechStack from "./components/TechStack"; // Import this
+import Marquee from "./components/Marquee";
 import Experience from "./components/Experience";
 import Achievements from "./components/Achievements";
 // import Footer from "./components/Footer";
@@ -16,6 +17,7 @@ export default function Home() {
       <Hero />
       <About />
       <Intro />
+      <Marquee />
       <Projects />
       <TechStack /> 
       <Experience />

@@ -85,11 +85,19 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                   <span className="text-[9px] font-mono font-bold text-white tracking-widest uppercase">DEMO_RECORDING</span>
               </div>
               
-              <video autoPlay loop muted playsInline className="w-full h-full object-cover">
-                  <div className="w-full h-full flex items-center justify-center text-zinc-500 font-mono text-xs tracking-widest bg-zinc-900">
-                      [ VIDEO ASSET REQUIRED ]
-                  </div>
-              </video>
+              {project.video ? (
+                <iframe 
+                  className="w-full h-full"
+                  src={project.video} 
+                  title={`${project.title} Demo`}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowFullScreen
+                ></iframe>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-zinc-500 font-mono text-xs tracking-widest bg-zinc-900">
+                    [ VIDEO ASSET REQUIRED ]
+                </div>
+              )}
             </div>
 
             <div className="pt-4 border-t border-zinc-200 bg-white/50 backdrop-blur-sm p-6 rounded-md ring-1 ring-zinc-100">

@@ -105,6 +105,7 @@
     "context": "Farmers in rural India often lack access to immediate, localized agricultural advice, and internet connectivity is highly unreliable in remote areas.",
     "solution": "Engineered an offline-first mobile application using Flutter. Integrated a quantized TensorFlow Lite model for on-device inference, allowing for crop disease detection without network dependency.",
     "codeSnippet": "import 'package:tflite_flutter/tflite_flutter.dart';\n\nclass DiseaseClassifier {\n  late Interpreter _interpreter;\n\n  Future<void> loadModel() async {\n    _interpreter = await Interpreter.fromAsset('model_unquant.tflite');\n    print('Edge AI: Model Loaded');\n  }\n}",
+    "video": "https://www.youtube.com/embed/H99Cmcmv37c",
     "links": {
       "github": "https://github.com/rahulsiiitm/AgriHive-Frontend",
       "demo": "https://agrihive-c8f6b.web.app/"
@@ -190,6 +191,28 @@
     "links": {
       "github": "https://github.com/rahulsiiitm",
       "demo": null
+    }
+  },
+  {
+    "slug": "ocr-portal",
+    "year": "2024",
+    "category": "Web Systems",
+    "title": "OCR Portal",
+    "tagline": "A minimalist multi-language OCR web portal with direct DOCX export.",
+    "role": "Full Stack Developer",
+    "stack": ["Next.js", "Flask", "Python", "Tesseract"],
+    "stats": [
+      { "label": "Engine", "value": "Tesseract" },
+      { "label": "Languages", "value": "Multi" },
+      { "label": "Export", "value": "DOCX" },
+      { "label": "UI", "value": "Minimal" }
+    ],
+    "context": "Extracting text from images in multiple languages often requires heavy desktop software or paid web services.",
+    "solution": "Built a clean, responsive web application using Next.js and Flask. Integrated Tesseract OCR to support English, Hindi, Sanskrit, and more, allowing users to drag-and-drop images and export the extracted text directly as formatted DOCX files.",
+    "codeSnippet": "# Flask Tesseract Integration\n@app.route('/upload', methods=['POST'])\ndef upload_image():\n    file = request.files['image']\n    img = Image.open(file)\n    text = pytesseract.image_to_string(img, lang='eng+hin')\n    return jsonify({'text': text})",
+    "links": {
+      "github": "https://github.com/rahulsiiitm/ocr-portal",
+      "demo": "https://ocr-portal.vercel.app/"
     }
   }
 ]
