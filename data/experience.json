@@ -1,6 +1,15 @@
 [
   {
     "id": "01",
+    "period": "JUN - JUL 2026",
+    "role": "Applied AI Intern",
+    "company": "IIT Roorkee",
+    "location": "Roorkee, IN",
+    "desc": "Working with the Academic Affairs IT department to develop and deploy 'Sutra', a production-ready RAG-based knowledge assistant for the institute's servers.",
+    "tags": ["RAG", "LLM", "Python", "FAISS"]
+  },
+  {
+    "id": "02",
     "period": "JUN - AUG 2025",
     "role": "UI/UX Intern",
     "company": "AliveHire",
@@ -9,7 +18,7 @@
     "tags": ["Figma", "Prototyping", "UX Research"]
   },
   {
-    "id": "02",
+    "id": "03",
     "period": "2023 - PRESENT",
     "role": "AI & App Developer",
     "company": "Freelance / Academic",
