@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import localFont from "next/font/local"; // 1. Import localFont
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Script from "next/script";
 import "./globals.css";
 import SmoothScrolling from "./components/SmoothScrolling";
 import Navbar from "./components/Navbar";
@@ -55,6 +56,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* 1. Load the CSS */}
+        <link rel="stylesheet" href="/sutra/widget.css" />
+      </head>
       {/* 3. Inject the variable into the body tag */}
       <body className={`${inter.className} ${ammonite.variable}`}>
         {/* <Preloader /> */}
@@ -64,6 +69,14 @@ export default function RootLayout({
         </SmoothScrolling>
         <Analytics />
         <SpeedInsights />
+
+        {/* 2. Create the container for the chatbot */}
+        <div id="sutra-root"></div>
+        <Script id="sutra-config" strategy="beforeInteractive">
+          {`window.API_BASE_URL = "http://localhost:45123";`}
+        </Script>
+        
+        <Script src="/sutra/widget.js" type="module" strategy="afterInteractive" />
       </body>
     </html>
   );
