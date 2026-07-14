@@ -6,6 +6,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import SmoothScrolling from "./components/SmoothScrolling";
 import Navbar from "./components/Navbar";
+import ChatWidget from "./components/Chatbot/ChatWidget";
 // import Preloader from "./components/Preloader";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -62,6 +63,7 @@ export default function RootLayout({
           <Navbar />
           {children}
         </SmoothScrolling>
+        <ChatWidget />
         <Analytics />
         <SpeedInsights />
       </body>
