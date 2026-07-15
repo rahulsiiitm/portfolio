@@ -21,7 +21,7 @@ const projects: Project[] = [
     description: "Multimodal RAG framework for forensic video intelligence. Built the IRIS engine to enable cross-video entity tracking and natural language forensic queries at the edge.",
     year: "2026",
     colorClass: "bg-red-950",
-    bgImage: "/projects/vidchain.webp",
+    bgImage: "/projects/image.png",
     slug: "vidchain",
     links: { github: "https://github.com/rahulsiiitm/videochain-python", pypi: "https://pypi.org/project/VidChain/" }
   },
