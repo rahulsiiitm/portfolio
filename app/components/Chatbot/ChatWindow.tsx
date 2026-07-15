@@ -105,9 +105,24 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   };
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
+
+  useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      const { scrollTop, scrollHeight, clientHeight } = el;
+      const atTop = scrollTop <= 0 && e.deltaY < 0;
+      const atBottom = scrollTop + clientHeight >= scrollHeight - 1 && e.deltaY > 0;
+      if (atTop || atBottom) e.preventDefault();
+      e.stopPropagation();
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => el.removeEventListener("wheel", onWheel);
+  }, []);
 
   const suggestions = [
     { label: "Tell me about Rahul", icon: <User size={14} className="text-racing-red" /> },
@@ -179,7 +194,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-black/95 relative -mt-1 rounded-t-2xl z-20">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overscroll-contain p-4 custom-scrollbar bg-black/95 relative -mt-1 rounded-t-2xl z-20">
         <MatrixRain />
         <ScanlineOverlay />
         <div className="absolute inset-0 opacity-60 bg-[url('/web-watermark.png')] bg-no-repeat bg-right-bottom pointer-events-none mix-blend-screen bg-[length:150%_auto]"></div>
