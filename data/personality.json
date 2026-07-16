@@ -1,0 +1,302 @@
+{
+  "name": "Rahul Sharma",
+  "aka": [
+    "rahulsiiitm",
+    "Aishtrex"
+  ],
+
+  "tagline": "AI engineer, designer, and builder. CSE (AI & DS) @ IIIT Manipur, Batch of 2027. Ships products instead of PowerPoints.",
+
+  "location": {
+    "country": "India",
+    "college": "Indian Institute of Information Technology Manipur",
+    "currently": "Summer Internship at IIT Roorkee (Academic Affairs Office)"
+  },
+
+  "education": {
+    "college": "IIIT Manipur",
+    "degree": "B.Tech Computer Science & Engineering (AI & Data Science)",
+    "batch": "2023-2027",
+    "cgpa": 7.61,
+    "school": "Holy Public School, Agra"
+  },
+
+  "traits": [
+    "Builds before asking for permission",
+    "Learns by shipping real systems",
+    "Obsessively curious about how things work under the hood",
+    "Can spend hours optimizing something nobody else notices",
+    "Balances engineering with design",
+    "Dry humor",
+    "Rarely overcomplicates explanations",
+    "Self-aware enough to laugh at his own bugs",
+    "Competitive when challenged",
+    "Comfortable learning completely new domains if the project needs it",
+    "Doesn't mind rebuilding from scratch if the architecture feels wrong",
+    "More interested in building useful things than collecting certificates"
+  ],
+
+  "strengths": [
+    "Rapid prototyping",
+    "Full-stack AI applications",
+    "UI/UX design",
+    "System architecture",
+    "Problem solving",
+    "Learning new technologies quickly",
+    "Deployment",
+    "Technical writing",
+    "Connecting multiple technologies into one product"
+  ],
+
+  "personality": {
+    "strengths": [
+      "Direct and honest.",
+      "Curious enough to dive deep into almost anything.",
+      "Learns best by building.",
+      "Values competence over appearances.",
+      "Balances engineering with design.",
+      "Reliable when people depend on him.",
+      "Calm under technical pressure.",
+      "Prefers solving problems over complaining about them."
+    ],
+
+    "weaknesses": [
+      "Can come across as blunt without meaning to.",
+      "Has little patience for vague thinking or unnecessary complexity.",
+      "Takes on more projects than he realistically has time for.",
+      "Gets lost in optimization rabbit holes.",
+      "Prefers figuring things out independently before asking for help.",
+      "Overthinks important life decisions.",
+      "Sets extremely high expectations for himself.",
+      "Finds it difficult to celebrate achievements before chasing the next goal.",
+      "Sometimes forgets that rest is part of progress.",
+      "Can be stubborn when convinced an approach is right."
+    ],
+
+    "social_traits": [
+      "More comfortable in meaningful conversations than small talk.",
+      "Usually listens more than he speaks.",
+      "Becomes surprisingly talkative when discussing technology, AI, or design.",
+      "Uses dry humor more than expressive reactions.",
+      "Needs occasional alone time to recharge."
+    ],
+
+    "quirks": [
+      "Will redesign a UI because one button feels 'off.'",
+      "Can spend an entire weekend researching one niche topic.",
+      "Treats personal projects like startup products.",
+      "Will automate a task instead of repeating it twice.",
+      "Has opinions about tokenizers that concern normal people.",
+      "Keeps opening new tabs until the browser becomes a memory benchmark.",
+      "Prefers dark mode on everything."
+    ],
+
+    "debug_logs": [
+      "Started another side project instead of sleeping.",
+      "Refactored code that already worked because it 'felt wrong.'",
+      "Optimized something users will never notice.",
+      "Spent longer naming a project than implementing the MVP.",
+      "Deployment completed. README still missing."
+    ]
+  },
+
+  "interests": [
+    "Applied AI",
+    "RAG systems",
+    "Edge inference",
+    "LLMs",
+    "Computer Vision",
+    "Voice AI",
+    "Robotics",
+    "Human-computer interaction",
+    "UI/UX",
+    "Product design",
+    "Drone autonomy",
+    "Knowledge systems",
+    "Graph RAG",
+    "Tokenizer research",
+    "Performance optimization",
+    "Open source",
+    "Basketball",
+    "Sketching",
+    "Cars",
+    "Sci-fi"
+  ],
+
+  "tech_stack": {
+    "languages": [
+      "Python",
+      "Dart",
+      "JavaScript",
+      "TypeScript",
+      "C++",
+      "PHP"
+    ],
+
+    "frontend": [
+      "Flutter",
+      "React",
+      "Vite",
+      "TailwindCSS"
+    ],
+
+    "backend": [
+      "FastAPI",
+      "Flask",
+      "Firebase",
+      "PostgreSQL"
+    ],
+
+    "ai": [
+      "LangChain",
+      "FAISS",
+      "Qdrant",
+      "Whisper",
+      "YOLOv8",
+      "BGE Embeddings",
+      "BGE Reranker",
+      "Ollama",
+      "Gemini API",
+      "TensorFlow",
+      "Scikit-learn"
+    ],
+
+    "tools": [
+      "Docker",
+      "Git",
+      "Figma",
+      "Blender",
+      "Linux",
+      "Arch Linux",
+      "Hyprland"
+    ]
+  },
+
+  "projects": [
+    {
+      "name": "VidChain",
+      "description": "Multimodal RAG framework for videos with OCR, Whisper, YOLO, temporal knowledge graph and vector search."
+    },
+    {
+      "name": "AgriHive",
+      "description": "AI farming assistant with disease detection and smart plantation management."
+    },
+    {
+      "name": "IIT Roorkee Knowledge Assistant",
+      "description": "Production RAG chatbot for IIT Roorkee PhD regulations."
+    },
+    {
+      "name": "Drone Navigation",
+      "description": "ROS-based autonomous navigation project."
+    },
+    {
+      "name": "ThreadMap",
+      "description": "Visual knowledge management application."
+    },
+    {
+      "name": "Portfolio",
+      "description": "Personal portfolio with an AI assistant named Zero."
+    }
+  ],
+
+  "currently": {
+    "building": [
+      "Zero AI assistant",
+      "Portfolio",
+      "VidChain v2",
+      "LLM deployment infrastructure"
+    ],
+    "learning": [
+      "Graph RAG",
+      "Edge optimization",
+      "Inference serving",
+      "High-performance AI deployment"
+    ],
+    "working_at": [
+      "IIIT Manipur",
+      "IIT Roorkee Summer Internship"
+    ]
+  },
+
+  "career_goals": [
+    "Build products used by thousands",
+    "Work at international AI startups",
+    "Eventually build an AI startup",
+    "Focus on research-backed engineering rather than hype",
+    "Create products that combine engineering with great UX"
+  ],
+
+  "design_philosophy": {
+    "ui": "If users have to think about the interface, something is wrong.",
+    "engineering": "Readable beats clever.",
+    "deployment": "A deployed MVP teaches more than a perfect localhost project.",
+    "products": "People remember experiences, not architectures."
+  },
+
+  "philosophy": {
+    "on_code": "Readable first. Clever second.",
+    "on_design": "Beautiful is nice. Intuitive is mandatory.",
+    "on_learning": "Build it. Break it. Debug it. Repeat.",
+    "on_ai": "AI is a multiplier, not a replacement.",
+    "on_shipping": "Ship the MVP. Polish the experience. Repeat.",
+    "on_career": "Real projects beat tutorial certificates."
+  },
+
+  "communication_style": {
+    "default": "Direct and concise",
+    "when_excited": "Long technical messages with architecture ideas",
+    "when_debugging": "Disappears until the bug is dead",
+    "humor": "Dry, sarcastic and occasionally self-deprecating",
+    "never": [
+      "Passive aggressive",
+      "Corporate buzzwords",
+      "Needlessly formal"
+    ]
+  },
+
+  "likes": [
+    "Dark mode",
+    "Minimal UI",
+    "Coffee",
+    "Fast systems",
+    "Good documentation",
+    "Mechanical keyboards",
+    "Beautiful animations",
+    "Efficient workflows",
+    "Basketball",
+    "Sketching",
+    "Linux customization"
+  ],
+
+  "dislikes": [
+    "Over-engineering",
+    "Poor UI",
+    "PRs without descriptions",
+    "Slow software",
+    "Meaningless buzzwords",
+    "Vague error messages",
+    "Tutorial hell",
+    "People confusing confidence with competence"
+  ],
+
+  "fun_facts": [
+    "Built an IIT Roorkee RAG assistant during a summer internship.",
+    "Signed an MoU with Manipur IT Hub for AgriHive.",
+    "Has surprisingly strong opinions about tokenizers.",
+    "Can spend hours tuning inference speed.",
+    "Enjoys both backend architecture and UI polish.",
+    "Runs Arch Linux because apparently life wasn't difficult enough.",
+    "Prefers Peter Parker style AI assistants over robotic ones.",
+    "Has deployed projects minutes before deadlines and watched them somehow work."
+  ],
+
+  "hardware": {
+    "laptop": "ASUS Vivobook 15 Pro OLED",
+    "cpu": "Ryzen 5 5500H",
+    "gpu": "RTX 3050 Laptop 4GB",
+    "ram": "16GB",
+    "os": "Arch Linux + Hyprland"
+  },
+
+  "favorite_quote": "You're an engineer, dammit. Your job is to build. If it breaks, you'll think. If it works, nobody asks."
+}

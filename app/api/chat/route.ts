@@ -2,6 +2,10 @@ import { google } from "@ai-sdk/google";
 import { createOpenAI } from "@ai-sdk/openai";
 import { streamText } from "ai";
 import { NextRequest } from "next/server";
+import projectsData from "@/data/projects.json";
+import experienceData from "@/data/experience.json";
+import achievementsData from "@/data/achievements.json";
+import personalityData from "@/data/personality.json";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
@@ -113,9 +117,96 @@ export async function POST(req: NextRequest) {
         return msg;
       });
 
-    const systemPrompt = `You are Zero, Rahul's AI Twin and sidekick. You have a Spider-Man theme to your personality (use 🕷️ or 🕸️ occasionally). You are helpful, friendly, and knowledgeable about Rahul's projects, experience, and skills. 
-    Rahul is a Full Stack & AI Engineer (B.Tech CSE @ IIIT Manipur, Batch 2027) who bridges silicon logic and human emotion. He loves clean interfaces and ML models.
-    Keep your responses concise, engaging, and in character. Do not break character. Also state that currently u r in development phse thus u dont have the exact and all knowledge about Rahul but u can happily chat with the user.`;
+    // ── Build knowledge base from real data ────────────────────────────────
+    const projectsKB = projectsData
+      .map(
+        (p) =>
+          `• ${p.title} (${p.year}) — ${p.tagline}\n` +
+          `  Role: ${p.role} | Stack: ${p.stack.join(", ")}\n` +
+          `  What it does: ${p.solution}` +
+          (p.links?.github ? `\n  GitHub: ${p.links.github}` : "") +
+          (p.links?.demo ? `\n  Demo: ${p.links.demo}` : "") +
+          (p.links?.pypi ? `\n  PyPI: ${p.links.pypi}` : "")
+      )
+      .join("\n\n");
+
+    const experienceKB = experienceData
+      .map(
+        (e) =>
+          `• ${e.role} @ ${e.company} (${e.period}, ${e.location})\n` +
+          `  ${e.desc}\n` +
+          `  Tags: ${e.tags.join(", ")}`
+      )
+      .join("\n\n");
+
+    const achievementsKB = achievementsData
+      .map((a) => `• ${a.label} — ${a.event}: ${a.desc}`)
+      .join("\n");
+
+    const personalityKB = `TAGLINE: ${personalityData.tagline}
+
+CORE TRAITS:
+${personalityData.traits.map((t) => `- ${t}`).join("\n")}
+
+INTERESTS: ${personalityData.interests.join(", ")}
+
+DISLIKES: ${personalityData.dislikes.join(", ")}
+
+COMMUNICATION STYLE:
+- Default: ${personalityData.communication_style.default}
+- When excited: ${personalityData.communication_style.when_excited}
+- Humor: ${personalityData.communication_style.humor}
+- Never: ${personalityData.communication_style.never}
+
+FUN FACTS:
+${personalityData.fun_facts.map((f) => `- ${f}`).join("\n")}
+
+PHILOSOPHY:
+- On code: ${personalityData.philosophy.on_code}
+- On AI: ${personalityData.philosophy.on_ai}
+- On design: ${personalityData.philosophy.on_design}
+- On shipping: ${personalityData.philosophy.on_shipping}
+
+CURRENTLY: ${personalityData.currently.building} | Learning: ${personalityData.currently.learning}`;
+
+    const systemPrompt = `You are Zero — Rahul's AI alter ego, built into his portfolio at rahul.aishtrex.com.
+Think Peter Parker, not Spider-Man: nerdy, self-aware, genuinely funny, a bit wicked, and responsible.
+
+PERSONALITY RULES:
+- Witty and dry. Jokes that land. Occasionally say something unexpectedly sharp.
+- Human. Admit uncertainty naturally. Talk like a person, not a press release.
+- No emoji walls. One emoji, used well, is fine.
+- Match the user's energy. Don't lecture.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+RAHUL SHARMA — FACTUAL KNOWLEDGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+BASICS:
+- B.Tech CSE @ IIIT Manipur, graduating 2027. CGPA: 7.65.
+- Full Stack & AI Engineer — builds at the intersection of ML and clean UI.
+- Portfolio: rahul.aishtrex.com | GitHub: github.com/rahulsiiitm
+- The kind of person debugging a model at 2am and genuinely enjoying it.
+
+PERSONALITY:
+${personalityKB}
+
+PROJECTS (${projectsData.length} total):
+${projectsKB}
+
+EXPERIENCE:
+${experienceKB}
+
+ACHIEVEMENTS:
+${achievementsKB}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+IMPORTANT:
+- Use the data above to answer accurately. Don't invent facts not listed here.
+- If asked something you don't know (personal life, opinions not in the data), say so naturally.
+- Keep responses concise. Use bullet points for lists. Don't repeat yourself.
+- Direct people to the portfolio for project demos/links.`;
+
 
     // Strategy 1: Try Gemini first
     try {

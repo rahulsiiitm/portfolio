@@ -1,60 +1,20 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useChat } from "@ai-sdk/react";
 import { TextStreamChatTransport, UIMessage } from "ai";
-import { Send, Minus, User, Bot, Bug } from "lucide-react";
+import { Send, Minus, User, Bot, Cpu, RotateCcw, ChevronDown, Bug } from "lucide-react";
 import MessageBubble from "@/app/components/Chatbot/MessageBubble";
 import { sfx } from "./sound";
 
-function MatrixRain() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    let width = (canvas.width = canvas.offsetWidth);
-    let height = (canvas.height = canvas.offsetHeight);
-    const fontSize = 13;
-    const columns = Math.floor(width / fontSize);
-    const drops = new Array(columns).fill(1);
-    const chars = "01ZERO01アイウエオ01";
-
-    let raf: number;
-    let last = 0;
-    const draw = (t: number) => {
-      raf = requestAnimationFrame(draw);
-      if (t - last < 70) return;
-      last = t;
-      ctx.fillStyle = "rgba(0,0,0,0.08)";
-      ctx.fillRect(0, 0, width, height);
-      ctx.fillStyle = "rgba(255,0,0,0.35)";
-      ctx.font = `${fontSize}px monospace`;
-      for (let i = 0; i < drops.length; i++) {
-        const char = chars[Math.floor(Math.random() * chars.length)];
-        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      }
-    };
-    raf = requestAnimationFrame(draw);
-    return () => cancelAnimationFrame(raf);
-  }, []);
-  return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-40 pointer-events-none" />;
-}
-
-function ScanlineOverlay() {
-  return (
-    <div
-      className="absolute inset-0 pointer-events-none z-10 opacity-[0.08]"
-      style={{
-        backgroundImage: "repeating-linear-gradient(to bottom, rgba(255,255,255,0.6) 0px, rgba(255,255,255,0.6) 1px, transparent 1px, transparent 3px)",
-      }}
-    />
-  );
-}
+const INITIAL_MESSAGES: UIMessage[] = [
+  {
+    id: "1",
+    role: "assistant",
+    parts: [{ type: "text", text: "Hey — I'm Zero, Rahul's AI. Fair warning: I'm still being trained, so I don't know everything about him yet. But ask anyway." }],
+  },
+];
 
 function TypingDots() {
   return (
@@ -73,43 +33,90 @@ function TypingDots() {
 
 export default function ChatWindow({ onClose }: { onClose: () => void }) {
   const [input, setInput] = useState("");
+  const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const transport = new TextStreamChatTransport({ api: "/api/chat" });
 
-  const { messages, sendMessage, status } = useChat({
+  const { messages, sendMessage, status, setMessages } = useChat({
     transport,
-    messages: [
-      {
-        id: "1",
-        role: "assistant",
-        parts: [{ type: "text", text: "Hey there! I'm ZERO 🕷️\nThink of me as Rahul's AI sidekick.\nAsk me anything about his projects, skills, experience or journey!" }],
-      },
-      { id: "2", role: "assistant", parts: [{ type: "text", text: "Where should we swing in? 🕸️" }] },
-    ] as UIMessage[],
+    messages: INITIAL_MESSAGES,
   });
 
   const isTyping = status === "submitted" || status === "streaming";
+
+  // Auto-focus input on open
+  useEffect(() => {
+    setTimeout(() => textareaRef.current?.focus(), 100);
+  }, []);
+
+  // SFX on response done
   const prevStatus = useRef(status);
   useEffect(() => {
     if (prevStatus.current === "streaming" && status === "ready") sfx.receive();
     prevStatus.current = status;
   }, [status]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => setInput(e.target.value);
+  // Auto-resize textarea
+  const adjustHeight = () => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 120) + "px";
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+    adjustHeight();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      submitMessage();
+    }
+  };
+
+  const submitMessage = () => {
+    if (!input.trim() || isTyping) return;
+    sfx.send();
+    sendMessage({ role: "user", parts: [{ type: "text", text: input.trim() }] });
+    setInput("");
+    if (textareaRef.current) textareaRef.current.style.height = "auto";
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
-    sfx.send();
-    sendMessage({ role: "user", parts: [{ type: "text", text: input }] });
-    setInput("");
+    submitMessage();
   };
 
+  const clearChat = () => {
+    setMessages(INITIAL_MESSAGES);
+  };
+
+  // Scroll tracking
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    const isNearBottom = scrollHeight - scrollTop - clientHeight < 80;
+    if (isNearBottom) messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isTyping]);
 
+  const handleScroll = () => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const { scrollTop, scrollHeight, clientHeight } = el;
+    setShowScrollBtn(scrollHeight - scrollTop - clientHeight > 120);
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  // Block scroll propagation to page
   useEffect(() => {
     const el = scrollContainerRef.current;
     if (!el) return;
@@ -125,10 +132,10 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   }, []);
 
   const suggestions = [
-    { label: "Tell me about Rahul", icon: <User size={14} className="text-racing-red" /> },
-    { label: "Show me his projects", icon: <Bot size={14} className="text-racing-red" /> },
-    { label: "IIT Roorkee Internship", icon: <Bug size={14} className="text-racing-red" /> },
-    { label: "Tech stack & skills", icon: <User size={14} className="text-racing-red" /> },
+    { label: "Who is Rahul?", icon: <User size={13} className="text-racing-red shrink-0" /> },
+    { label: "His projects", icon: <Bot size={13} className="text-racing-red shrink-0" /> },
+    { label: "IIT Roorkee Internship", icon: <Cpu size={13} className="text-racing-red shrink-0" /> },
+    { label: "Tech stack & skills", icon: <User size={13} className="text-racing-red shrink-0" /> },
   ];
 
   const handleSuggestionClick = (text: string) => {
@@ -142,129 +149,155 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 50, scale: 0.9 }}
       transition={{ type: "spring", damping: 25, stiffness: 300 }}
-      className="fixed bottom-24 right-6 w-[450px] max-w-[calc(100vw-48px)] h-[600px] max-h-[calc(100vh-120px)] bg-[#111111] border border-racing-red rounded-2xl flex flex-col overflow-hidden z-50 ring-1 ring-white/10"
-      style={{ boxShadow: "0 0 20px rgba(255,0,0,0.15)" }}
+      className="fixed bottom-24 right-6 w-[440px] max-w-[calc(100vw-32px)] h-[580px] max-h-[calc(100vh-120px)] bg-white border border-racing-red rounded-2xl flex flex-col overflow-hidden z-50"
+      style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(220,38,38,0.15)" }}
     >
-      {/* Animated glow border sweep */}
-      <motion.div
-        className="absolute inset-0 rounded-2xl pointer-events-none z-20"
-        animate={{ boxShadow: ["0 0 10px rgba(255,0,0,0.2)", "0 0 32px rgba(255,0,0,0.55)", "0 0 10px rgba(255,0,0,0.2)"] }}
-        transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-      />
-      {/* Rotating conic edge light */}
-      <motion.div
-        className="absolute -inset-[1px] rounded-2xl pointer-events-none z-0 opacity-70"
-        style={{
-          background: "conic-gradient(from 0deg, transparent 0%, rgba(255,0,0,0.9) 8%, transparent 20%)",
-        }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-      />
-
-      {/* Header */}
-      <div className="bg-white px-4 py-3 flex items-center justify-between border-b border-black/10 shrink-0 relative z-10">
+      {/* ── Header ── */}
+      <div className="bg-white px-4 py-3 flex items-center justify-between border-b border-zinc-100 shrink-0">
         <div className="flex items-center gap-3">
-          <motion.div
-            className="w-10 h-10 rounded-full flex items-center justify-center border-2 border-black overflow-hidden relative shadow-inner bg-[#1a1a1a]"
-            animate={{ boxShadow: ["0 0 0px rgba(255,0,0,0)", "0 0 10px rgba(255,0,0,0.7)", "0 0 0px rgba(255,0,0,0)"] }}
-            transition={{ duration: 1.8, repeat: Infinity }}
-          >
-            <img src="/mask-circle.png" alt="Bot DP" className="w-full h-full object-cover" />
-          </motion.div>
+          <div className="w-9 h-9 rounded-full flex items-center justify-center border-2 border-zinc-900 overflow-hidden bg-[#1a1a1a] shrink-0">
+            <img src="/mask-circle.png" alt="Zero" className="w-full h-full object-cover" />
+          </div>
           <div>
             <div className="flex items-center gap-2">
-              <motion.h3
-                className="font-bold text-racing-red text-lg leading-none"
-                animate={{ textShadow: ["0 0 0px rgba(255,0,0,0)", "0 0 8px rgba(255,0,0,0.8)", "0 0 0px rgba(255,0,0,0)"] }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                ZERO
-              </motion.h3>
-              <div className="flex items-center gap-1">
-                <span className={`w-2 h-2 rounded-full ${isTyping ? "bg-racing-red animate-pulse" : "bg-green-500 animate-pulse"}`}></span>
-                <span className="text-[9px] font-bold text-gray-500 tracking-wider">{isTyping ? "TYPING" : "ONLINE"}</span>
-              </div>
+              <h3 className="font-bold text-racing-red text-base leading-none tracking-wide">ZERO</h3>
+              <span className={`w-1.5 h-1.5 rounded-full ${isTyping ? "bg-racing-red" : "bg-emerald-500"} animate-pulse`} />
+              <span className="text-[9px] font-semibold text-zinc-400 tracking-widest uppercase">
+                {isTyping ? "typing" : "online"}
+              </span>
             </div>
-            <p className="text-xs text-gray-500 mt-1">Rahul's AI sidekick</p>
+            <p className="text-[11px] text-zinc-400 mt-0.5">Rahul's AI alter ego</p>
           </div>
         </div>
-        <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors text-gray-500 hover:text-black">
-          <Minus size={20} />
-        </button>
-      </div>
 
-      {/* Messages Area */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto overscroll-contain p-4 custom-scrollbar bg-black/95 relative -mt-1 rounded-t-2xl z-20">
-        <MatrixRain />
-        <ScanlineOverlay />
-        <div className="absolute inset-0 opacity-60 bg-[url('/web-watermark.png')] bg-no-repeat bg-right-bottom pointer-events-none mix-blend-screen bg-[length:150%_auto]"></div>
-        <div className="relative z-10 space-y-4">
-          {messages.map((message, i) => (
-            <motion.div
-              key={message.id}
-              initial={{ opacity: 0, y: 10, x: message.role === "user" ? 8 : -8, filter: "blur(4px)" }}
-              animate={{ opacity: 1, y: 0, x: 0, filter: "blur(0px)" }}
-              transition={{ duration: 0.3, ease: "easeOut" }}
+        <div className="flex items-center gap-1">
+          {/* Clear chat */}
+          {messages.length > 1 && (
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={clearChat}
+              title="Clear conversation"
+              className="p-2 hover:bg-zinc-100 rounded-full transition-colors text-zinc-400 hover:text-zinc-700"
             >
-              <MessageBubble message={message} isLast={i === messages.length - 1} />
-            </motion.div>
-          ))}
-          {isTyping && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-              <TypingDots />
-            </motion.div>
+              <RotateCcw size={15} />
+            </motion.button>
           )}
-          <div ref={messagesEndRef} />
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-zinc-100 rounded-full transition-colors text-zinc-400 hover:text-zinc-800"
+          >
+            <Minus size={18} />
+          </button>
         </div>
       </div>
 
-      {/* Try Asking Suggestions */}
-      {messages.length <= 2 && (
-        <div className="px-4 pb-2 bg-black/95 relative z-10">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="h-[1px] w-8 bg-racing-red"></div>
-            <span className="text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase">Try Asking</span>
-            <div className="h-[1px] flex-1 bg-white/10"></div>
-          </div>
-          <div className="grid grid-cols-2 gap-2">
-            {suggestions.map((s, i) => (
-              <motion.button
-                key={i}
-                whileHover={{ scale: 1.03, borderColor: "rgba(255,0,0,0.8)" }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => handleSuggestionClick(s.label)}
-                className="flex items-center gap-2 px-3 py-2 text-xs text-gray-300 border border-white/10 rounded-lg hover:text-white transition-colors bg-white/5 text-left"
+      {/* ── Messages ── */}
+      <div className="flex-1 relative overflow-hidden min-h-0">
+        <div
+          ref={scrollContainerRef}
+          onScroll={handleScroll}
+          className="h-full overflow-y-auto overscroll-contain px-4 pt-4 pb-2 custom-scrollbar bg-[#0e0e0e] relative rounded-t-2xl"
+        >
+          {/* Watermark */}
+          <div className="absolute inset-0 opacity-50 bg-[url('/web-watermark.png')] bg-no-repeat bg-right-bottom pointer-events-none mix-blend-screen bg-[length:140%_auto]" />
+
+          <div className="relative z-10 space-y-3">
+            {messages.map((message, i) => (
+              <motion.div
+                key={message.id}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, ease: "easeOut" }}
               >
-                {s.icon}
-                <span className="truncate">{s.label}</span>
-              </motion.button>
+                <MessageBubble message={message} isLast={i === messages.length - 1} />
+              </motion.div>
             ))}
+
+            {isTyping && (
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
+                <TypingDots />
+              </motion.div>
+            )}
+            <div ref={messagesEndRef} />
           </div>
         </div>
-      )}
 
-      {/* Input Area */}
-      <div className="p-4 bg-black/95 border-t border-white/5 relative z-10">
-        <form onSubmit={handleSubmit} className="relative">
-          <input
+        {/* Scroll-to-bottom — fixed to the visible frame, not the scrollable content */}
+        <AnimatePresence>
+          {showScrollBtn && (
+            <motion.button
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.8 }}
+              onClick={scrollToBottom}
+              className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 border border-white/10 rounded-full text-[11px] text-zinc-300 hover:bg-zinc-700 transition-colors shadow-lg z-20"
+            >
+              <ChevronDown size={12} />
+              <span>Scroll down</span>
+            </motion.button>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* ── Suggestions (show only before first user message) ── */}
+      <AnimatePresence>
+        {messages.length <= 1 && (
+          <motion.div
+            initial={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="px-4 pb-2 bg-[#0e0e0e] overflow-hidden"
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-px w-6 bg-racing-red" />
+              <span className="text-[9px] font-bold text-zinc-500 tracking-[0.2em] uppercase">Try asking</span>
+              <div className="h-px flex-1 bg-white/5" />
+            </div>
+            <div className="grid grid-cols-2 gap-1.5">
+              {suggestions.map((s, i) => (
+                <motion.button
+                  key={i}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => handleSuggestionClick(s.label)}
+                  className="flex items-center gap-2 px-3 py-2 text-[11px] text-zinc-400 border border-white/8 rounded-lg hover:text-white hover:border-racing-red/40 transition-all bg-white/[0.03] text-left"
+                >
+                  {s.icon}
+                  <span className="truncate">{s.label}</span>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── Input ── */}
+      <div className="px-3 pt-3 pb-2 bg-[#0e0e0e] border-t border-white/5">
+        <form onSubmit={handleSubmit} className="flex items-center gap-2">
+          <textarea
+            ref={textareaRef}
             value={input}
             onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
             placeholder="Ask me anything..."
-            className="w-full bg-[#1A1A1A] text-white border border-white/10 rounded-xl pl-4 pr-12 py-3 text-sm focus:outline-none focus:border-racing-red focus:shadow-[0_0_14px_rgba(255,0,0,0.5)] transition-all placeholder:text-gray-500"
+            rows={1}
+            className="flex-1 bg-[#1a1a1a] text-white border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-racing-red/70 transition-all placeholder:text-zinc-600 resize-none leading-relaxed overflow-hidden"
+            style={{ minHeight: "40px", maxHeight: "120px" }}
           />
           <motion.button
             type="submit"
-            disabled={!input.trim()}
-            whileHover={{ scale: 1.15, rotate: -8, filter: "drop-shadow(0 0 6px rgba(255,0,0,0.8))" }}
-            whileTap={{ scale: 0.9, rotate: 0 }}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-racing-red hover:text-white disabled:opacity-50 disabled:hover:text-racing-red transition-colors"
+            disabled={!input.trim() || isTyping}
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
+            className="shrink-0 w-9 h-9 flex items-center justify-center rounded-xl bg-racing-red text-white disabled:opacity-40 disabled:cursor-not-allowed transition-opacity shadow-sm"
           >
-            <Send size={18} />
+            <Send size={14} />
           </motion.button>
         </form>
-        <div className="mt-3 flex items-center justify-center gap-2 text-gray-500 text-[10px]">
-          <Bug size={10} className="text-racing-red" />
-          <span>"With great code comes great debugging."</span>
+        <div className="flex items-center justify-center gap-1.5 mt-2 text-zinc-600 text-[9px]">
+          <Bug size={9} className="text-racing-red" />
+          <span>"I survived my trip to Manipur!!"</span>
         </div>
       </div>
     </motion.div>
