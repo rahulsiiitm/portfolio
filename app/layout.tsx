@@ -21,13 +21,16 @@ const ammonite = localFont({
 
 const BASE_URL = "https://rahul.aishtrex.com";
 
+const OG_IMAGE = `${BASE_URL}/profile.jpg`;
+
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
     default: "Rahul Sharma | Full Stack & AI Engineer",
     template: "%s | Rahul Sharma",
   },
-  description: "Full Stack & AI Engineer specializing in machine learning, robotics, and modern web development. Building intelligent products that merge deep learning with clean interfaces.",
+  // ≤155 chars for Google snippet
+  description: "Full Stack & AI Engineer — machine learning, robotics & modern web. Building intelligent products that merge deep learning with clean UI.",
   keywords: ["Full Stack Developer", "AI Engineer", "Machine Learning", "Robotics", "React", "Next.js", "Python", "TensorFlow"],
   authors: [{ name: "Rahul Sharma", url: BASE_URL }],
   creator: "Rahul Sharma",
@@ -37,16 +40,18 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Rahul Sharma | Full Stack & AI Engineer",
-    description: "Engineering intelligence into design. Portfolio of AI and full-stack projects.",
+    description: "Engineering intelligence into design — portfolio of AI and full-stack projects.",
     url: BASE_URL,
-    siteName: "Rahul Sharma Portfolio",
+    siteName: "Rahul Sharma",
     type: "website",
     locale: "en_US",
     images: [
       {
-        url: "/profile.jpg",
+        url: OG_IMAGE,          // absolute URL — required by crawlers
+        secureUrl: OG_IMAGE,
         width: 1200,
         height: 630,
+        type: "image/jpeg",
         alt: "Rahul Sharma — Full Stack & AI Engineer",
       },
     ],
@@ -55,7 +60,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Rahul Sharma | Full Stack & AI Engineer",
     description: "Engineering intelligence into design.",
-    images: ["/profile.jpg"],
+    images: [OG_IMAGE],        // absolute URL — required by X/Twitter crawler
   },
   robots: {
     index: true,
