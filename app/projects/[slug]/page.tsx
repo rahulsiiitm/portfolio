@@ -1,7 +1,40 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink, Code2, Play, Terminal } from "lucide-react";
 import projectsData from "../../../data/projects.json";
+
+const BASE_URL = "https://rahul.aishtrex.com";
+
+export async function generateMetadata(
+  { params }: { params: Promise<{ slug: string }> }
+): Promise<Metadata> {
+  const resolvedParams = await params;
+  const project = projectsData.find((p) => p.slug === resolvedParams.slug);
+
+  if (!project) {
+    return { title: "Project Not Found" };
+  }
+
+  return {
+    title: project.title,
+    description: project.tagline,
+    alternates: {
+      canonical: `${BASE_URL}/projects/${project.slug}`,
+    },
+    openGraph: {
+      title: `${project.title} | Rahul Sharma`,
+      description: project.tagline,
+      url: `${BASE_URL}/projects/${project.slug}`,
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${project.title} | Rahul Sharma`,
+      description: project.tagline,
+    },
+  };
+}
 
 export async function generateStaticParams() {
   return projectsData.map((p) => ({
