@@ -49,10 +49,28 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
     setTimeout(() => textareaRef.current?.focus(), 100);
   }, []);
 
-  // SFX on response done
+  // SFX on response done + empty-response fallback
   const prevStatus = useRef(status);
   useEffect(() => {
-    if (prevStatus.current === "streaming" && status === "ready") sfx.receive();
+    if (prevStatus.current === "streaming" && status === "ready") {
+      sfx.receive();
+      // If the API returned blank (quota exceeded / overload), inject a funny message
+      setMessages((prev) => {
+        const last = prev[prev.length - 1];
+        if (!last || last.role !== "assistant") return prev;
+        const text = last.parts
+          .filter((p) => p.type === "text")
+          .map((p) => (p as { type: "text"; text: string }).text)
+          .join("");
+        if (text.trim() !== "") return prev;
+        const fallback = "🏎️ *[Zero has left the pits]*\n\nIf you're seeing this, my free API credits are probably cooked. Classic me. Try again in a bit — I'll be back before the next lap. *hehehe*";
+        return prev.map((m) =>
+          m.id === last.id
+            ? { ...m, parts: [{ type: "text", text: fallback }] }
+            : m
+        );
+      });
+    }
     prevStatus.current = status;
   }, [status]);
 
@@ -193,15 +211,15 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* ── Messages ── */}
-      <div className="flex-1 relative overflow-hidden min-h-0">
+      <div className="flex-1 relative overflow-hidden min-h-0 bg-[#0e0e0e] rounded-t-2xl">
+        {/* Watermark — fixed to the frame, not the scroll content */}
+        <div className="absolute inset-0 opacity-50 bg-[url('/web-watermark.png')] bg-no-repeat bg-right-bottom pointer-events-none mix-blend-screen bg-[length:140%_auto] z-0" />
+
         <div
           ref={scrollContainerRef}
           onScroll={handleScroll}
-          className="h-full overflow-y-auto overscroll-contain px-4 pt-4 pb-2 custom-scrollbar bg-[#0e0e0e] relative rounded-t-2xl"
+          className="h-full overflow-y-auto overscroll-contain px-4 pt-4 pb-2 custom-scrollbar bg-transparent relative"
         >
-          {/* Watermark */}
-          <div className="absolute inset-0 opacity-50 bg-[url('/web-watermark.png')] bg-no-repeat bg-right-bottom pointer-events-none mix-blend-screen bg-[length:140%_auto]" />
-
           <div className="relative z-10 space-y-3">
             {messages.map((message, i) => (
               <motion.div

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Fragment, useState } from "react";
 import { Copy, Check } from "lucide-react";
 
-// Minimal markdown renderer: **bold**, `code`, *italic*, bullet lines, line breaks
+// Minimal markdown renderer: **bold**, `code`, *italic*, [link](url), bullet lines, line breaks
 function renderFormatted(text: string) {
   const lines = text.split("\n");
   return lines.map((line, li) => {
@@ -13,8 +13,22 @@ function renderFormatted(text: string) {
     const isBullet = /^[-*]\s+/.test(trimmed);
     const content = isBullet ? trimmed.replace(/^[-*]\s+/, "") : line;
 
-    const parts = content.split(/(\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g).filter(Boolean);
+    const parts = content.split(/(\[(?:[^\]]+)\]\((?:[^)]+)\)|\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g).filter(Boolean);
     const rendered = parts.map((part, pi) => {
+      // Markdown link: [label](url)
+      const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+      if (linkMatch)
+        return (
+          <a
+            key={pi}
+            href={linkMatch[2]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-racing-red underline underline-offset-2 decoration-racing-red/50 hover:decoration-racing-red transition-colors break-all"
+          >
+            {linkMatch[1]}
+          </a>
+        );
       if (part.startsWith("**") && part.endsWith("**"))
         return <strong key={pi} className="font-bold text-white">{part.slice(2, -2)}</strong>;
       if (part.startsWith("`") && part.endsWith("`"))

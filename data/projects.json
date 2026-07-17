@@ -133,21 +133,24 @@
   {
     "slug": "autonomous-drone",
     "year": "2025",
-    "category": "Robotics",
-    "title": "Drone Navigator",
-    "tagline": "UAV navigation system utilizing SLAM and CNN-based obstacle avoidance.",
-    "role": "Robotics Engineer",
-    "stack": ["ROS", "SLAM", "OpenCV", "Gazebo"],
+    "category": "Robotics / Edge AI",
+    "title": "Vyoma",
+    "tagline": "Custom ROS 2 drone autopilot with YOLOv8 semantic vision and context-aware navigation on NVIDIA Jetson Nano.",
+    "role": "Robotics & Edge AI Engineer",
+    "stack": ["ROS 2", "YOLOv8", "PX4", "Gazebo", "Python", "NVIDIA Jetson"],
     "stats": [
-      { "label": "OS", "value": "ROS" },
-      { "label": "Mapping", "value": "SLAM" },
-      { "label": "Detection", "value": "CNN" },
-      { "label": "Env", "value": "Gazebo" }
+      { "label": "Autopilot", "value": "PX4" },
+      { "label": "Vision", "value": "YOLOv8" },
+      { "label": "Runtime", "value": "Jetson Nano" },
+      { "label": "Sim", "value": "Gazebo" }
     ],
-    "context": "Navigating UAVs in dynamic environments requires simultaneous localization and mapping (SLAM) alongside real-time computer vision for obstacle detection.",
-    "solution": "Developed an autonomous navigation module in ROS integrated with SLAM for persistent mapping. Implemented OpenCV-based CNNs to facilitate real-time pathfinding and target detection in Gazebo simulations.",
-    "codeSnippet": "# ROS Node for Obstacle Avoidance\ndef lidar_callback(msg):\n    distances = np.array(msg.ranges)\n    if np.min(distances) < safe_distance:\n        stop_drone()\n        recalculate_path()",
-    "links": null
+    "context": "Standard UAV autopilots rely purely on pre-programmed waypoints and LIDAR — they cannot semantically understand their environment or make context-aware decisions in real-time.",
+    "solution": "Built a custom ROS 2 autopilot stack on NVIDIA Jetson Nano, integrating YOLOv8 for edge-based semantic object detection. The system fuses visual context with PX4 flight control to enable intelligent, scene-aware navigation — tested end-to-end in Gazebo simulations.",
+    "codeSnippet": "# ROS 2 YOLOv8 Semantic Detection Node\nclass SemanticVisionNode(Node):\n    def __init__(self):\n        super().__init__('vyoma_vision')\n        self.model = YOLO('yolov8n.pt')  # Edge-optimized\n        self.sub = self.create_subscription(\n            Image, '/camera/image_raw', self.detect_cb, 10)\n\n    def detect_cb(self, msg):\n        results = self.model(bridge.imgmsg_to_cv2(msg))\n        self.publish_context(results)  # Feed to PX4 autopilot",
+    "links": {
+      "github": "https://github.com/rahulsiiitm/vyoma",
+      "demo": null
+    }
   },
   {
     "slug": "walmart-bot",
