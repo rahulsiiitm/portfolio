@@ -133,6 +133,7 @@ export default function Footer() {
             message: formData.get('message') as string,
         };
 
+        try {
             const htmlBody = `
               <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0a0a; color: #f5f5f5; border-radius: 8px; overflow: hidden;">
                 <div style="background: #dc2626; padding: 24px 32px; text-align: center;">
