@@ -66,19 +66,24 @@ export async function POST(request: Request) {
     `;
 
     // Prepare data for Web3Forms
-    const web3FormData = new FormData();
-    web3FormData.append('access_key', process.env.NEXT_PUBLIC_WEB3FORMS_KEY || '');
-    web3FormData.append('subject', `New Message from ${formData.name} — Rahul's Portfolio`);
-    web3FormData.append('name', formData.name);
-    web3FormData.append('email', formData.email);
-    web3FormData.append('message', formData.message);
-    web3FormData.append('html', htmlBody);
-    web3FormData.append('replyto', formData.email);
+    const payload = {
+      access_key: process.env.NEXT_PUBLIC_WEB3FORMS_KEY || '',
+      subject: `New Message from ${formData.name} — Rahul's Portfolio`,
+      name: formData.name,
+      email: formData.email,
+      message: formData.message,
+      html: htmlBody,
+      replyto: formData.email
+    };
 
     // Submit to Web3Forms
     const response = await fetch('https://api.web3forms.com/submit', {
       method: 'POST',
-      body: web3FormData,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify(payload),
     });
 
     const data = await response.json();
