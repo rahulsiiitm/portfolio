@@ -1,17 +1,59 @@
 [
   {
+    "slug": "sutra",
+    "year": "2026",
+    "category": "AI",
+    "title": "SUTRA",
+    "tagline": "Description needed.",
+    "role": "Role needed",
+    "stack": [
+      "Stack needed"
+    ],
+    "stats": [
+      {
+        "label": "Status",
+        "value": "Building"
+      }
+    ],
+    "context": "Context needed.",
+    "solution": "Solution needed.",
+    "codeSnippet": "# Code needed",
+    "links": {
+      "github": null,
+      "demo": null
+    }
+  },
+  {
     "slug": "vidchain",
     "year": "2026",
     "category": "Forensic AI",
     "title": "VidChain",
-    "tagline": "Multimodal RAG framework for forensic video intelligence — 'LangChain for Videos'.",
+    "tagline": "Multimodal RAG framework for forensic video intelligence \u2014 'LangChain for Videos'.",
     "role": "Lead AI Architect",
-    "stack": ["Python", "PyTorch", "FastAPI", "GraphRAG", "OpenCV"],
+    "stack": [
+      "Python",
+      "PyTorch",
+      "FastAPI",
+      "GraphRAG",
+      "OpenCV"
+    ],
     "stats": [
-      { "label": "Engine", "value": "IRIS" },
-      { "label": "Reasoning", "value": "GraphRAG" },
-      { "label": "Deployment", "value": "Edge/Local" },
-      { "label": "Intelligence", "value": "Multimodal" }
+      {
+        "label": "Engine",
+        "value": "IRIS"
+      },
+      {
+        "label": "Reasoning",
+        "value": "GraphRAG"
+      },
+      {
+        "label": "Deployment",
+        "value": "Edge/Local"
+      },
+      {
+        "label": "Intelligence",
+        "value": "Multimodal"
+      }
     ],
     "context": "Forensic video analysis typically requires manual scrubbing through massive datasets, making it impossible to perform cross-video entity tracking or complex reasoning in real-time.",
     "solution": "Architected a local-first, edge-optimized RAG framework using the IRIS engine. Integrated multi-sensor fusion and GraphRAG to allow for complex natural language queries across distributed video nodes, enabling automated suspect tracking and event deduction.",
@@ -23,18 +65,76 @@
     }
   },
   {
+    "slug": "autonomous-drone",
+    "year": "2026",
+    "category": "Robotics / Edge AI",
+    "title": "Vyoma",
+    "tagline": "Custom ROS 2 drone autopilot with YOLOv8 semantic vision and context-aware navigation on NVIDIA Jetson Nano.",
+    "role": "Robotics & Edge AI Engineer",
+    "stack": [
+      "ROS 2",
+      "YOLOv8",
+      "PX4",
+      "Gazebo",
+      "Python",
+      "NVIDIA Jetson"
+    ],
+    "stats": [
+      {
+        "label": "Autopilot",
+        "value": "PX4"
+      },
+      {
+        "label": "Vision",
+        "value": "YOLOv8"
+      },
+      {
+        "label": "Runtime",
+        "value": "Jetson Nano"
+      },
+      {
+        "label": "Sim",
+        "value": "Gazebo"
+      }
+    ],
+    "context": "Standard UAV autopilots rely purely on pre-programmed waypoints and LIDAR \u2014 they cannot semantically understand their environment or make context-aware decisions in real-time.",
+    "solution": "Built a custom ROS 2 autopilot stack on NVIDIA Jetson Nano, integrating YOLOv8 for edge-based semantic object detection. The system fuses visual context with PX4 flight control to enable intelligent, scene-aware navigation \u2014 tested end-to-end in Gazebo simulations.",
+    "codeSnippet": "# ROS 2 YOLOv8 Semantic Detection Node\nclass SemanticVisionNode(Node):\n    def __init__(self):\n        super().__init__('vyoma_vision')\n        self.model = YOLO('yolov8n.pt')  # Edge-optimized\n        self.sub = self.create_subscription(\n            Image, '/camera/image_raw', self.detect_cb, 10)\n\n    def detect_cb(self, msg):\n        results = self.model(bridge.imgmsg_to_cv2(msg))\n        self.publish_context(results)  # Feed to PX4 autopilot",
+    "links": {
+      "github": "https://github.com/rahulsiiitm/vyoma",
+      "demo": null
+    }
+  },
+  {
     "slug": "tokenizer-pipeline",
     "year": "2026",
     "category": "AI / NLP",
     "title": "Edge Tokenizer",
     "tagline": "Hybrid BPE/BBPE tokenizer for Hinglish with O(1) C++ optimization.",
     "role": "AI Systems Engineer",
-    "stack": ["Python", "C++", "FastAPI", "Next.js"],
+    "stack": [
+      "Python",
+      "C++",
+      "FastAPI",
+      "Next.js"
+    ],
     "stats": [
-      { "label": "OOV Rate", "value": "0%" },
-      { "label": "Lookup", "value": "O(1)" },
-      { "label": "Latency", "value": "<1ms" },
-      { "label": "Language", "value": "Hinglish" }
+      {
+        "label": "OOV Rate",
+        "value": "0%"
+      },
+      {
+        "label": "Lookup",
+        "value": "O(1)"
+      },
+      {
+        "label": "Latency",
+        "value": "<1ms"
+      },
+      {
+        "label": "Language",
+        "value": "Hinglish"
+      }
     ],
     "context": "Standard BPE tokenizers often 'shatter' transliterated Hinglish text into meaningless individual characters, losing critical semantic roots during inference.",
     "solution": "Built a custom BPE tokenizer featuring a Hybrid Code-Mixed Router to eliminate token shattering. Optimized the lookup engine using a C++ Hash Map for O(1) efficiency, achieving sub-1ms latency on simulated edge hardware.",
@@ -51,12 +151,29 @@
     "title": "ICAIAC 2026",
     "tagline": "Official research platform for the International Conference on AI & Computing.",
     "role": "Lead Web Developer",
-    "stack": ["Next.js", "GSAP", "Tailwind CSS", "Vercel"],
+    "stack": [
+      "Next.js",
+      "GSAP",
+      "Tailwind CSS",
+      "Vercel"
+    ],
     "stats": [
-      { "label": "Traffic", "value": "High" },
-      { "label": "SEO", "value": "Optimized" },
-      { "label": "Performance", "value": "99/100" },
-      { "label": "Type", "value": "Research" }
+      {
+        "label": "Traffic",
+        "value": "High"
+      },
+      {
+        "label": "SEO",
+        "value": "Optimized"
+      },
+      {
+        "label": "Performance",
+        "value": "99/100"
+      },
+      {
+        "label": "Type",
+        "value": "Research"
+      }
     ],
     "context": "IIIT Manipur required a high-performance, professional digital hub to manage submissions, speaker details, and schedules for an international research conference.",
     "solution": "Developed a high-speed landing page using Next.js, focusing on performance and core web vitals. Implemented complex layouts and smooth motion using GSAP to reflect the cutting-edge nature of the AI/Computing theme.",
@@ -73,12 +190,29 @@
     "title": "E-Parchi",
     "tagline": "Full-stack medical RAG pipeline and hospital management system.",
     "role": "Full Stack Developer",
-    "stack": ["Next.js", "Firebase", "Python", "LangChain"],
+    "stack": [
+      "Next.js",
+      "Firebase",
+      "Python",
+      "LangChain"
+    ],
     "stats": [
-      { "label": "Recognition", "value": "Finalist" },
-      { "label": "Event", "value": "UDBHAV" },
-      { "label": "Logic", "value": "RAG" },
-      { "label": "Security", "value": "HIPAA" }
+      {
+        "label": "Recognition",
+        "value": "Finalist"
+      },
+      {
+        "label": "Event",
+        "value": "UDBHAV"
+      },
+      {
+        "label": "Logic",
+        "value": "RAG"
+      },
+      {
+        "label": "Security",
+        "value": "HIPAA"
+      }
     ],
     "context": "Digital prescription management is often fragmented. The goal was to build a system that allows doctors to manage patient logs while using AI to retrieve relevant medical history.",
     "solution": "Built a scalable medical log system with a RAG (Retrieval-Augmented Generation) pipeline. Used Firebase for real-time patient-doctor data synchronization and Next.js for a clean, intuitive clinical dashboard.",
@@ -95,12 +229,29 @@
     "title": "AgriHive",
     "tagline": "Multilingual AI farming assistant achieving 92% disease detection accuracy.",
     "role": "Lead AI & Flutter Developer",
-    "stack": ["TensorFlow Lite", "Flutter", "Firebase", "Gemini API"],
+    "stack": [
+      "TensorFlow Lite",
+      "Flutter",
+      "Firebase",
+      "Gemini API"
+    ],
     "stats": [
-      { "label": "Accuracy", "value": "92%" },
-      { "label": "Language", "value": "Multi" },
-      { "label": "Latency", "value": "<2s" },
-      { "label": "Offline", "value": "Enabled" }
+      {
+        "label": "Accuracy",
+        "value": "92%"
+      },
+      {
+        "label": "Language",
+        "value": "Multi"
+      },
+      {
+        "label": "Latency",
+        "value": "<2s"
+      },
+      {
+        "label": "Offline",
+        "value": "Enabled"
+      }
     ],
     "context": "Farmers in rural India often lack access to immediate, localized agricultural advice, and internet connectivity is highly unreliable in remote areas.",
     "solution": "Engineered an offline-first mobile application using Flutter. Integrated a quantized TensorFlow Lite model for on-device inference, allowing for crop disease detection without network dependency.",
@@ -118,39 +269,34 @@
     "title": "AEGIS (CRPF)",
     "tagline": "Mission-critical secure log management system for the CRPF.",
     "role": "Full Stack Architect",
-    "stack": ["Flutter", "Firebase", "Dart", "GCP"],
+    "stack": [
+      "Flutter",
+      "Firebase",
+      "Dart",
+      "GCP"
+    ],
     "stats": [
-      { "label": "Auth", "value": "Multi-Role" },
-      { "label": "Clearance", "value": "Admin" },
-      { "label": "Uptime", "value": "99.9%" },
-      { "label": "Integrity", "value": "Locked" }
+      {
+        "label": "Auth",
+        "value": "Multi-Role"
+      },
+      {
+        "label": "Clearance",
+        "value": "Admin"
+      },
+      {
+        "label": "Uptime",
+        "value": "99.9%"
+      },
+      {
+        "label": "Integrity",
+        "value": "Locked"
+      }
     ],
     "context": "The CRPF required a secure digital alternative to manual log entries, necessitating strict data integrity and multi-level authorization for sensitive personnel data.",
     "solution": "Architected a high-integrity Firestore database with role-based access control (RBAC). Developed a customized management dashboard ensuring that sensitive logistical data is isolated, audited, and tamper-proof.",
     "codeSnippet": "// Firebase Security Rules (RBAC)\nmatch /classified_logs/{logId} {\n  allow read: if request.auth != null && \n    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'COMMANDER';\n  allow write: if request.auth != null && \n    get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'ADMIN';\n}",
     "links": null
-  },
-  {
-    "slug": "autonomous-drone",
-    "year": "2025",
-    "category": "Robotics / Edge AI",
-    "title": "Vyoma",
-    "tagline": "Custom ROS 2 drone autopilot with YOLOv8 semantic vision and context-aware navigation on NVIDIA Jetson Nano.",
-    "role": "Robotics & Edge AI Engineer",
-    "stack": ["ROS 2", "YOLOv8", "PX4", "Gazebo", "Python", "NVIDIA Jetson"],
-    "stats": [
-      { "label": "Autopilot", "value": "PX4" },
-      { "label": "Vision", "value": "YOLOv8" },
-      { "label": "Runtime", "value": "Jetson Nano" },
-      { "label": "Sim", "value": "Gazebo" }
-    ],
-    "context": "Standard UAV autopilots rely purely on pre-programmed waypoints and LIDAR — they cannot semantically understand their environment or make context-aware decisions in real-time.",
-    "solution": "Built a custom ROS 2 autopilot stack on NVIDIA Jetson Nano, integrating YOLOv8 for edge-based semantic object detection. The system fuses visual context with PX4 flight control to enable intelligent, scene-aware navigation — tested end-to-end in Gazebo simulations.",
-    "codeSnippet": "# ROS 2 YOLOv8 Semantic Detection Node\nclass SemanticVisionNode(Node):\n    def __init__(self):\n        super().__init__('vyoma_vision')\n        self.model = YOLO('yolov8n.pt')  # Edge-optimized\n        self.sub = self.create_subscription(\n            Image, '/camera/image_raw', self.detect_cb, 10)\n\n    def detect_cb(self, msg):\n        results = self.model(bridge.imgmsg_to_cv2(msg))\n        self.publish_context(results)  # Feed to PX4 autopilot",
-    "links": {
-      "github": "https://github.com/rahulsiiitm/vyoma",
-      "demo": null
-    }
   },
   {
     "slug": "walmart-bot",
@@ -159,12 +305,29 @@
     "title": "Walmart AI Bot",
     "tagline": "Semantic product search chatbot using LangChain and Gemini API.",
     "role": "AI Developer",
-    "stack": ["LangChain", "Gemini API", "Flask", "PostgreSQL"],
+    "stack": [
+      "LangChain",
+      "Gemini API",
+      "Flask",
+      "PostgreSQL"
+    ],
     "stats": [
-      { "label": "Search", "value": "Semantic" },
-      { "label": "Logic", "value": "RAG" },
-      { "label": "Database", "value": "Postgres" },
-      { "label": "Uptime", "value": "99%" }
+      {
+        "label": "Search",
+        "value": "Semantic"
+      },
+      {
+        "label": "Logic",
+        "value": "RAG"
+      },
+      {
+        "label": "Database",
+        "value": "Postgres"
+      },
+      {
+        "label": "Uptime",
+        "value": "99%"
+      }
     ],
     "context": "Traditional keyword-based search fails to interpret complex user intent, leading to irrelevant product recommendations in e-commerce.",
     "solution": "Created a semantic search chatbot utilizing LangChain for document retrieval. Leveraged Gemini API for natural language understanding and Flask to manage the API gateway for real-time customer queries.",
@@ -181,12 +344,28 @@
     "title": "PDF Table Parser",
     "tagline": "Automated extraction of unstructured PDF tables into structured datasets.",
     "role": "Automation Engineer",
-    "stack": ["Python", "Pandas", "PyPDF2"],
+    "stack": [
+      "Python",
+      "Pandas",
+      "PyPDF2"
+    ],
     "stats": [
-      { "label": "Input", "value": "PDF" },
-      { "label": "Output", "value": "Excel" },
-      { "label": "Efficiency", "value": "90%" },
-      { "label": "Speed", "value": "Fast" }
+      {
+        "label": "Input",
+        "value": "PDF"
+      },
+      {
+        "label": "Output",
+        "value": "Excel"
+      },
+      {
+        "label": "Efficiency",
+        "value": "90%"
+      },
+      {
+        "label": "Speed",
+        "value": "Fast"
+      }
     ],
     "context": "Manual data entry from PDF financial reports is time-consuming and error-prone, requiring a programmatic extraction method.",
     "solution": "Developed a Python utility using Pandas and PyPDF2 to identify and parse table structures from unstructured PDFs, exporting high-fidelity data into formatted Excel sheets automatically.",
@@ -203,12 +382,29 @@
     "title": "OCR Portal",
     "tagline": "A minimalist multi-language OCR web portal with direct DOCX export.",
     "role": "Full Stack Developer",
-    "stack": ["Next.js", "Flask", "Python", "Tesseract"],
+    "stack": [
+      "Next.js",
+      "Flask",
+      "Python",
+      "Tesseract"
+    ],
     "stats": [
-      { "label": "Engine", "value": "Tesseract" },
-      { "label": "Languages", "value": "Multi" },
-      { "label": "Export", "value": "DOCX" },
-      { "label": "UI", "value": "Minimal" }
+      {
+        "label": "Engine",
+        "value": "Tesseract"
+      },
+      {
+        "label": "Languages",
+        "value": "Multi"
+      },
+      {
+        "label": "Export",
+        "value": "DOCX"
+      },
+      {
+        "label": "UI",
+        "value": "Minimal"
+      }
     ],
     "context": "Extracting text from images in multiple languages often requires heavy desktop software or paid web services.",
     "solution": "Built a clean, responsive web application using Next.js and Flask. Integrated Tesseract OCR to support English, Hindi, Sanskrit, and more, allowing users to drag-and-drop images and export the extracted text directly as formatted DOCX files.",
