@@ -86,7 +86,25 @@ export async function POST(request: Request) {
       body: JSON.stringify(payload),
     });
 
-    const data = await response.json();
+    let data;
+    try {
+      const text = await response.text();
+      try {
+        data = JSON.parse(text);
+      } catch (parseError) {
+        console.error('Failed to parse Web3Forms response. Raw text:', text);
+        return NextResponse.json(
+          { success: false, message: 'External API Error: Invalid Response' },
+          { status: 502 }
+        );
+      }
+    } catch (readError) {
+      console.error('Failed to read Web3Forms response:', readError);
+      return NextResponse.json(
+        { success: false, message: 'External API Error: Cannot Read Response' },
+        { status: 502 }
+      );
+    }
 
     if (data.success) {
       return NextResponse.json({ 
@@ -94,15 +112,16 @@ export async function POST(request: Request) {
         message: 'Transmission Successful. We\'ll be in touch.' 
       });
     } else {
+      console.error('Web3Forms returned failure:', data);
       return NextResponse.json(
         { success: false, message: data.message || 'Connection Failed. Retrying...' },
         { status: 500 }
       );
     }
-  } catch (error) {
-    console.error('Form submission error:', error);
+  } catch (error: any) {
+    console.error('Form submission error:', error?.message || error);
     return NextResponse.json(
-      { success: false, message: 'Network Error. Check connectivity.' },
+      { success: false, message: `Server Error: ${error?.message || 'Unknown'}` },
       { status: 500 }
     );
   }

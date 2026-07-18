@@ -142,7 +142,15 @@ export default function Footer() {
                 body: JSON.stringify(data),
             });
 
-            const result = await response.json();
+            let result;
+            const text = await response.text();
+            try {
+                result = JSON.parse(text);
+            } catch (e) {
+                console.error("Non-JSON response from server:", text);
+                setResult(`Server Error (${response.status}). Please try again.`);
+                return;
+            }
 
             if (result.success) {
                 setResult(result.message);
@@ -150,9 +158,9 @@ export default function Footer() {
             } else {
                 setResult(result.message || "Connection Failed. Retrying...");
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Submission error:', error);
-            setResult("Network Error. Check connectivity.");
+            setResult(`Client Error: ${error.message || "Network Check failed"}`);
         } finally {
             setIsSubmitting(false);
             setTimeout(() => setResult(""), 5000);
