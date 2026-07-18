@@ -9,6 +9,7 @@ import personalityData from "@/data/personality.json";
 
 // Allow streaming responses up to 30 seconds
 export const maxDuration = 30;
+export const runtime = 'edge';
 
 // ── Rate limiting ────────────────────────────────────────────────────────────
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute

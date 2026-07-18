@@ -52,7 +52,7 @@ export default function ChatWidget() {
     <>
       <AnimatePresence>{isOpen && <ChatWindow onClose={() => { sfx.close(); setIsOpen(false); }} />}</AnimatePresence>
 
-      <div className="fixed bottom-6 right-6 z-50 flex items-center justify-end">
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center justify-end">
         {!isOpen && (
           <motion.div
             initial={{ opacity: 0, x: 20 }}

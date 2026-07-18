@@ -167,11 +167,10 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       exit={{ opacity: 0, y: 50, scale: 0.9 }}
       transition={{ type: "spring", damping: 25, stiffness: 300 }}
-      className="fixed bottom-24 right-6 w-[440px] max-w-[calc(100vw-32px)] h-[580px] max-h-[calc(100vh-120px)] bg-white border border-racing-red rounded-2xl flex flex-col overflow-hidden z-50"
-      style={{ boxShadow: "0 8px 32px rgba(0,0,0,0.35), 0 0 0 1px rgba(220,38,38,0.15)" }}
+      className="fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[440px] h-[100dvh] sm:h-[580px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-white sm:border sm:border-racing-red sm:rounded-2xl flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_8px_32px_rgba(0,0,0,0.35),0_0_0_1px_rgba(220,38,38,0.15)]"
     >
       {/* ── Header ── */}
-      <div className="bg-white px-4 py-3 flex items-center justify-between border-b border-zinc-100 shrink-0">
+      <div className="bg-white px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:pt-3 flex items-center justify-between border-b border-zinc-100 shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full flex items-center justify-center border-2 border-zinc-900 overflow-hidden bg-[#1a1a1a] shrink-0">
             <img src="/mask-circle.png" alt="Zero" className="w-full h-full object-cover" />
@@ -213,7 +212,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       {/* ── Messages ── */}
       <div className="flex-1 relative overflow-hidden min-h-0 bg-[#0e0e0e] rounded-t-2xl">
         {/* Watermark — fixed to the frame, not the scroll content */}
-        <div className="absolute inset-0 opacity-50 bg-[url('/web-watermark.png')] bg-no-repeat bg-right-bottom pointer-events-none mix-blend-screen bg-[length:140%_auto] z-0" />
+        <div className="absolute inset-0 opacity-20 sm:opacity-50 bg-[url('/web-watermark.png')] bg-no-repeat bg-right-bottom pointer-events-none sm:mix-blend-screen bg-[length:140%_auto] z-0" />
 
         <div
           ref={scrollContainerRef}
@@ -291,7 +290,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       </AnimatePresence>
 
       {/* ── Input ── */}
-      <div className="px-3 pt-3 pb-2 bg-[#0e0e0e] border-t border-white/5">
+      <div className="px-3 pt-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:pb-2 bg-[#0e0e0e] border-t border-white/5">
         <form onSubmit={handleSubmit} className="flex items-center gap-2">
           <textarea
             ref={textareaRef}
@@ -300,7 +299,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             onKeyDown={handleKeyDown}
             placeholder="Ask me anything..."
             rows={1}
-            className="flex-1 bg-[#1a1a1a] text-white border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-racing-red/70 transition-all placeholder:text-zinc-600 resize-none leading-relaxed overflow-hidden"
+            className="flex-1 bg-[#1a1a1a] text-white border border-white/10 rounded-xl px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:border-racing-red/70 transition-all placeholder:text-zinc-600 resize-none leading-relaxed overflow-hidden"
             style={{ minHeight: "40px", maxHeight: "120px" }}
           />
           <motion.button
