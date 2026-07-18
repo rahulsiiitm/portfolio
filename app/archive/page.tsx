@@ -68,8 +68,11 @@ export default function ArchivePage() {
                   <td className="py-6">
                     <Link href={`/projects/${project.slug}`} className="block">
                         <div className="flex items-center gap-3">
-                            <h3 className="text-lg md:text-xl font-black uppercase tracking-tighter group-hover:text-red-600 transition-colors">
+                            <h3 className={`text-lg md:text-xl font-black uppercase tracking-tighter transition-colors flex items-center gap-2 ${['SUTRA', 'VidChain', 'Vyoma', 'AgriHive'].includes(project.title) ? 'text-red-600 italic' : 'group-hover:text-red-600'}`}>
                                 {project.title}
+                                {['SUTRA', 'VidChain', 'Vyoma', 'AgriHive'].includes(project.title) && (
+                                  <span className="text-base md:text-lg not-italic" title="Flagship Project">🏎️</span>
+                                )}
                             </h3>
                             {project.links === null && (
                                 <Lock size={12} className="text-zinc-300" />

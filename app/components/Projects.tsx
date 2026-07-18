@@ -301,8 +301,8 @@ export default function Projects() {
                     View Case Study <ChevronRight size={12} />
                   </button>
                 )}
-                
-                <button 
+
+                <button
                   onClick={(e) => openInspect(e, project)}
                   className="px-2 py-1.5 border border-white/10 bg-white/5 hover:bg-red-600 hover:border-red-600 text-[8px] sm:text-[9px] font-mono font-bold text-zinc-400 hover:text-white transition-all duration-300 uppercase tracking-widest flex items-center gap-1.5"
                 >
@@ -351,14 +351,14 @@ export default function Projects() {
       {inspectProject && (
         <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 md:p-10 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
           <div className="relative w-full max-w-4xl bg-zinc-900 border border-white/20 shadow-2xl overflow-hidden rounded-sm flex flex-col md:flex-row h-[80vh] md:h-auto max-h-[90vh] pointer-events-auto">
-            
+
             <div className="absolute top-0 left-0 w-full h-1 bg-red-600 z-30"></div>
-            
+
             <div className="w-full md:w-1/3 bg-black relative border-b md:border-b-0 md:border-r border-white/10 overflow-hidden min-h-[200px]">
               {inspectProject.bgImage && (
-                <img 
-                  src={inspectProject.bgImage} 
-                  alt={inspectProject.title} 
+                <img
+                  src={inspectProject.bgImage}
+                  alt={inspectProject.title}
                   className="w-full h-full object-cover opacity-40 grayscale"
                 />
               )}
@@ -375,7 +375,7 @@ export default function Projects() {
                   <h5 className="text-[10px] font-mono font-bold text-zinc-500 uppercase tracking-widest mb-1">SYSTEM_ARCHITECTURE</h5>
                   <p className="text-sm font-medium text-white/80">{inspectProject.category}</p>
                 </div>
-                <button 
+                <button
                   onClick={() => setInspectProject(null)}
                   className="text-zinc-500 hover:text-white font-mono text-xs uppercase tracking-widest flex items-center gap-2"
                 >
@@ -385,52 +385,52 @@ export default function Projects() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
                 <div className="space-y-6">
-                   <div>
-                      <h6 className="text-[9px] font-mono font-bold text-red-500 uppercase tracking-widest mb-2">RAW_SPECIFICATIONS</h6>
-                      <div className="space-y-1 font-mono text-[11px] text-zinc-400">
-                        <p className="flex justify-between border-b border-white/5 pb-1"><span>UID:</span> <span className="text-white">PROJECT_{inspectProject.id}</span></p>
-                        <p className="flex justify-between border-b border-white/5 pb-1"><span>YEAR:</span> <span className="text-white">{inspectProject.year}</span></p>
-                        <p className="flex justify-between border-b border-white/5 pb-1"><span>STATUS:</span> <span className="text-green-500">LIVE_OPTIMIZED</span></p>
-                        <p className="flex justify-between border-b border-white/5 pb-1"><span>SLUG:</span> <span className="text-white">/{inspectProject.slug}</span></p>
-                      </div>
-                   </div>
-                   
-                   <div>
-                      <h6 className="text-[9px] font-mono font-bold text-red-500 uppercase tracking-widest mb-2">CORE_LOGIC_SUMMARY</h6>
-                      <p className="text-xs text-zinc-400 leading-relaxed italic">
-                        "{inspectProject.description}"
-                      </p>
-                   </div>
+                  <div>
+                    <h6 className="text-[9px] font-mono font-bold text-red-500 uppercase tracking-widest mb-2">RAW_SPECIFICATIONS</h6>
+                    <div className="space-y-1 font-mono text-[11px] text-zinc-400">
+                      <p className="flex justify-between border-b border-white/5 pb-1"><span>UID:</span> <span className="text-white">PROJECT_{inspectProject.id}</span></p>
+                      <p className="flex justify-between border-b border-white/5 pb-1"><span>YEAR:</span> <span className="text-white">{inspectProject.year}</span></p>
+                      <p className="flex justify-between border-b border-white/5 pb-1"><span>STATUS:</span> <span className="text-green-500">LIVE_OPTIMIZED</span></p>
+                      <p className="flex justify-between border-b border-white/5 pb-1"><span>SLUG:</span> <span className="text-white">/{inspectProject.slug}</span></p>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h6 className="text-[9px] font-mono font-bold text-red-500 uppercase tracking-widest mb-2">CORE_LOGIC_SUMMARY</h6>
+                    <p className="text-xs text-zinc-400 leading-relaxed italic">
+                      "{inspectProject.description}"
+                    </p>
+                  </div>
                 </div>
 
                 <div className="space-y-6">
-                   <div className="bg-black/40 p-4 border border-white/5 rounded-sm">
-                      <h6 className="text-[9px] font-mono font-bold text-zinc-500 uppercase tracking-widest mb-3">SYSTEM_LOG</h6>
-                      <div className="space-y-2 font-mono text-[9px] text-zinc-500">
-                        <p className="flex gap-3 text-zinc-400">
-                          <span className="text-red-500">[00:01:24]</span>
-                          <span>PERCEPTION_NODES_ACTIVE</span>
-                        </p>
-                        <p className="flex gap-3">
-                          <span className="text-green-500">[00:01:25]</span>
-                          <span>DEDUCTIVE_REASONING_SYNCED</span>
-                        </p>
-                        <p className="flex gap-3 text-zinc-600">
-                          <span className="text-zinc-600">[00:01:27]</span>
-                          <span>TELEMETRY_BUFFER_FULL</span>
-                        </p>
-                      </div>
-                   </div>
+                  <div className="bg-black/40 p-4 border border-white/5 rounded-sm">
+                    <h6 className="text-[9px] font-mono font-bold text-zinc-500 uppercase tracking-widest mb-3">SYSTEM_LOG</h6>
+                    <div className="space-y-2 font-mono text-[9px] text-zinc-500">
+                      <p className="flex gap-3 text-zinc-400">
+                        <span className="text-red-500">[00:01:24]</span>
+                        <span>PERCEPTION_NODES_ACTIVE</span>
+                      </p>
+                      <p className="flex gap-3">
+                        <span className="text-green-500">[00:01:25]</span>
+                        <span>DEDUCTIVE_REASONING_SYNCED</span>
+                      </p>
+                      <p className="flex gap-3 text-zinc-600">
+                        <span className="text-zinc-600">[00:01:27]</span>
+                        <span>TELEMETRY_BUFFER_FULL</span>
+                      </p>
+                    </div>
+                  </div>
 
-                   <button
+                  <button
                     onClick={() => {
                       if (inspectProject.slug) router.push(`/projects/${inspectProject.slug}`);
                       setInspectProject(null);
                     }}
                     className="w-full py-4 bg-white text-black text-center text-[10px] font-black uppercase tracking-[0.4em] hover:bg-red-600 hover:text-white transition-all duration-300 block"
-                   >
+                  >
                     Enter_Deep_Dive
-                   </button>
+                  </button>
                 </div>
               </div>
             </div>

@@ -2,25 +2,40 @@
   {
     "slug": "sutra",
     "year": "2026",
-    "category": "AI",
+    "category": "AI / DevOps",
     "title": "SUTRA",
-    "tagline": "Description needed.",
-    "role": "Role needed",
+    "tagline": "Internal AI Chatbot for IIT Roorkee with a secure zero-downtime CI/CD pipeline.",
+    "role": "AI DevOps Engineer",
     "stack": [
-      "Stack needed"
+      "Docker",
+      "GitHub Actions",
+      "Python",
+      "Windows Server"
     ],
     "stats": [
       {
-        "label": "Status",
-        "value": "Building"
+        "label": "Security",
+        "value": "Zero-Trust"
+      },
+      {
+        "label": "Deploy",
+        "value": "Automated"
+      },
+      {
+        "label": "Downtime",
+        "value": "Zero"
+      },
+      {
+        "label": "Platform",
+        "value": "Windows"
       }
     ],
-    "context": "Context needed.",
-    "solution": "Solution needed.",
-    "codeSnippet": "# Code needed",
+    "context": "IIT Roorkee required a highly secure internal AI chatbot operating on an institutional network. The deployment needed to strictly adhere to zero-inbound trust policies with no manual intervention for updates.",
+    "solution": "Containerized the AI backend using Docker and engineered a secure CI/CD pipeline via GitHub Actions. The pipeline orchestrates remote updates over SSH to the production Windows Server, automatically rebuilding and restarting the chatbot with zero downtime while keeping all secrets securely encrypted.",
+    "codeSnippet": "# GitHub Actions CI/CD Configuration\nname: Deploy\non:\n  push:\n    branches: [ main ]\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n    - name: Secure SSH Deployment\n      run: ssh admin@server \"docker-compose up -d --build\"",
     "links": {
       "github": null,
-      "demo": null
+      "demo": "soon"
     }
   },
   {
