@@ -67,7 +67,7 @@ export async function POST(request: Request) {
 
     // Prepare data for Web3Forms
     const web3FormData = new FormData();
-    web3FormData.append('access_key', process.env.WEB3FORMS_ACCESS_KEY || '');
+    web3FormData.append('access_key', process.env.NEXT_PUBLIC_WEB3FORMS_KEY || '');
     web3FormData.append('subject', `New Message from ${formData.name} — Rahul's Portfolio`);
     web3FormData.append('name', formData.name);
     web3FormData.append('email', formData.email);
