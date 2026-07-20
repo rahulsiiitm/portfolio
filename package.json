@@ -9,8 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@ai-sdk/google": "^4.0.14",
-    "@ai-sdk/openai": "^4.0.13",
     "@ai-sdk/react": "^4.0.27",
     "@studio-freight/lenis": "^1.0.42",
     "@vercel/analytics": "^1.6.1",

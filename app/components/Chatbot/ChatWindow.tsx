@@ -35,7 +35,10 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   const [input, setInput] = useState("");
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const transport = new TextStreamChatTransport({ api: "/api/chat" });
+  
+  // Point to the live Render backend, fallback to localhost for testing
+  const backendUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || "http://localhost:8000/api/chat";
+  const transport = new TextStreamChatTransport({ api: backendUrl });
 
   const { messages, sendMessage, status, setMessages } = useChat({
     transport,
