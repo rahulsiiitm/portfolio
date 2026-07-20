@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useChat } from "@ai-sdk/react";
-import { TextStreamChatTransport, UIMessage } from "ai";
+import { TextStreamChatTransport, type UIMessage } from "ai";
 import { Send, Minus, User, Bot, Cpu, RotateCcw, ChevronDown, Bug } from "lucide-react";
 import MessageBubble from "@/app/components/Chatbot/MessageBubble";
 import { sfx } from "./sound";
@@ -35,12 +35,11 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   const [input, setInput] = useState("");
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  
-  // Point to the live Render backend, fallback to localhost for testing
+
   const backendUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || "http://localhost:8000/api/chat";
   const transport = new TextStreamChatTransport({ api: backendUrl });
 
-  const { messages, append, status, setMessages } = useChat({
+  const { messages, sendMessage, status, setMessages } = useChat({
     transport,
     messages: INITIAL_MESSAGES,
   });
@@ -100,7 +99,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   const submitMessage = () => {
     if (!input.trim() || isTyping) return;
     sfx.send();
-    append({ role: "user", content: input.trim() });
+    sendMessage({ text: input.trim() });
     setInput("");
     if (textareaRef.current) textareaRef.current.style.height = "auto";
   };
@@ -161,7 +160,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
 
   const handleSuggestionClick = (text: string) => {
     sfx.send();
-    append({ role: "user", content: text });
+    sendMessage({ text });
   };
 
   return (
