@@ -42,12 +42,12 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       // Fonts: self + Google Fonts
       "font-src 'self' https://fonts.gstatic.com",
-      // Images: self + data URIs (for canvas) + blob
-      "img-src 'self' data: blob:",
+      // Images: self + data URIs (for canvas) + blob + external assets
+      "img-src 'self' data: blob: https://grainy-gradients.vercel.app",
       // Media: self (for audio files)
       "media-src 'self'",
-      // Connections: self + AI API providers + Vercel
-      "connect-src 'self' https://api.x.ai https://generativelanguage.googleapis.com https://vitals.vercel-insights.com https://va.vercel-scripts.com",
+      // Connections: self + AI API providers + Vercel + Backend
+      "connect-src 'self' https://api.x.ai https://generativelanguage.googleapis.com https://vitals.vercel-insights.com https://va.vercel-scripts.com https://rahul-ai.onrender.com http://localhost:8000",
       // Frames: YouTube only (for project demo iframes)
       "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
       // Workers
