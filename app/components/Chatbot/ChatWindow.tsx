@@ -40,7 +40,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   const backendUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || "http://localhost:8000/api/chat";
   const transport = new TextStreamChatTransport({ api: backendUrl });
 
-  const { messages, sendMessage, status, setMessages } = useChat({
+  const { messages, append, status, setMessages } = useChat({
     transport,
     messages: INITIAL_MESSAGES,
   });
@@ -100,7 +100,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   const submitMessage = () => {
     if (!input.trim() || isTyping) return;
     sfx.send();
-    sendMessage({ role: "user", parts: [{ type: "text", text: input.trim() }] });
+    append({ role: "user", content: input.trim() });
     setInput("");
     if (textareaRef.current) textareaRef.current.style.height = "auto";
   };
@@ -161,7 +161,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
 
   const handleSuggestionClick = (text: string) => {
     sfx.send();
-    sendMessage({ role: "user", parts: [{ type: "text", text }] });
+    append({ role: "user", content: text });
   };
 
   return (
