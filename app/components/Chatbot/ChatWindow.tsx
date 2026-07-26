@@ -56,25 +56,27 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   useEffect(() => {
     if (prevStatus.current === "streaming" && status === "ready") {
       sfx.receive();
-      // If the API returned blank (quota exceeded / overload), inject a funny message
-      setMessages((prev) => {
-        const last = prev[prev.length - 1];
-        if (!last || last.role !== "assistant") return prev;
-        const text = last.parts
-          .filter((p) => p.type === "text")
-          .map((p) => (p as { type: "text"; text: string }).text)
-          .join("");
-        if (text.trim() !== "") return prev;
-        const fallback = "🏎️ *[Zero has left the pits]*\n\nIf you're seeing this, my free API credits are probably cooked. Classic me. Try again in a bit — I'll be back before the next lap. *hehehe*";
-        return prev.map((m) =>
-          m.id === last.id
-            ? { ...m, parts: [{ type: "text", text: fallback }] }
-            : m
-        );
-      });
     }
     prevStatus.current = status;
   }, [status]);
+
+  // Handle cold start waiting message
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    if (status === "submitted") {
+      timeoutId = setTimeout(() => {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: "wakeup-" + Date.now(),
+            role: "assistant",
+            parts: [{ type: "text", text: "*(Yawns...)* I was sleeping! Waking up the servers takes a minute. Hang tight..." }],
+          }
+        ]);
+      }, 5000);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [status, setMessages]);
 
   // Auto-resize textarea
   const adjustHeight = () => {
