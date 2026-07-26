@@ -34,6 +34,7 @@ function TypingDots() {
 export default function ChatWindow({ onClose }: { onClose: () => void }) {
   const [input, setInput] = useState("");
   const [showScrollBtn, setShowScrollBtn] = useState(false);
+  const [serverState, setServerState] = useState<"checking" | "online" | "offline">("checking");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const backendUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || "http://localhost:8000/api/chat";
@@ -59,6 +60,30 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
     }
     prevStatus.current = status;
   }, [status]);
+
+  // Ping server to check if awake
+  useEffect(() => {
+    let active = true;
+    const ping = async () => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const url = backendUrl.replace("/api/chat", "/keep-alive");
+        const res = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (active) setServerState(res.ok ? "online" : "offline");
+      } catch (e) {
+        if (active) setServerState("offline");
+        try {
+          const url = backendUrl.replace("/api/chat", "/keep-alive");
+          const res = await fetch(url);
+          if (active && res.ok) setServerState("online");
+        } catch (err) {}
+      }
+    };
+    ping();
+    return () => { active = false; };
+  }, [backendUrl]);
 
   // Handle cold start waiting message
   useEffect(() => {
@@ -182,9 +207,9 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="font-bold text-racing-red text-base leading-none tracking-wide">ZERO</h3>
-              <span className={`w-1.5 h-1.5 rounded-full ${isTyping ? "bg-racing-red" : "bg-emerald-500"} animate-pulse`} />
+              <span className={`w-1.5 h-1.5 rounded-full ${isTyping ? "bg-racing-red" : serverState === "online" ? "bg-emerald-500" : serverState === "checking" ? "bg-zinc-400" : "bg-zinc-600"} animate-pulse`} />
               <span className="text-[9px] font-semibold text-zinc-400 tracking-widest uppercase">
-                {isTyping ? "typing" : "online"}
+                {isTyping ? "typing" : serverState}
               </span>
             </div>
             <p className="text-[11px] text-zinc-400 mt-0.5">Rahul's AI alter ego</p>
