@@ -146,7 +146,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   // Handle cold start waiting message
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
-    if (status === "submitted") {
+    if (status === "submitted" && serverState !== "online") {
       timeoutId = setTimeout(() => {
         setMessages((prev) => [
           ...prev,
@@ -159,7 +159,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       }, 5000);
     }
     return () => clearTimeout(timeoutId);
-  }, [status, setMessages]);
+  }, [status, serverState, setMessages]);
 
   // Auto-resize textarea
   const adjustHeight = () => {
