@@ -42,11 +42,38 @@ function useGlitchText(text: string, active: boolean) {
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
+  const [serverState, setServerState] = useState<"checking" | "online" | "offline">("checking");
+  const backendUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || "http://localhost:8000/api/chat";
+
+  useEffect(() => {
+    let active = true;
+    const ping = async () => {
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const url = backendUrl.replace("/api/chat", "/keep-alive");
+        const res = await fetch(url, { signal: controller.signal });
+        clearTimeout(timeoutId);
+        if (active) setServerState(res.ok ? "online" : "offline");
+      } catch (e) {
+        if (active) setServerState("offline");
+        try {
+          const url = backendUrl.replace("/api/chat", "/keep-alive");
+          const res = await fetch(url);
+          if (active && res.ok) setServerState("online");
+        } catch (err) {}
+      }
+    };
+    ping();
+    return () => { active = false; };
+  }, [backendUrl]);
 
   const toggle = () => {
     if (!isOpen) { sfx.open(); setHasOpened(true); } else sfx.close();
     setIsOpen(!isOpen);
   };
+
+  const statusColor = serverState === "online" ? "bg-emerald-500" : serverState === "checking" ? "bg-zinc-400" : "bg-zinc-600";
 
   return (
     <>
@@ -73,14 +100,18 @@ export default function ChatWidget() {
         )}
 
         <div className="relative pointer-events-auto">
-          {/* Rotating scan ring */}
-          <motion.div
-            className="absolute inset-[-8px] rounded-full border border-racing-red/40 pointer-events-none"
-            style={{ borderStyle: "dashed" }}
-            animate={{ rotate: 360 }}
-            transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-          />
-          <div className="absolute inset-[-6px] rounded-full border border-white/60 pointer-events-none" />
+          {/* Rotating scan ring (hidden when open to save GPU power) */}
+          {!isOpen && (
+            <>
+              <motion.div
+                className="absolute inset-[-8px] rounded-full border border-racing-red/40 pointer-events-none"
+                style={{ borderStyle: "dashed" }}
+                animate={{ rotate: 360 }}
+                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
+              />
+              <div className="absolute inset-[-6px] rounded-full border border-white/60 pointer-events-none" />
+            </>
+          )}
 
           <motion.button
             className="w-16 h-16 rounded-full bg-black border-2 border-racing-red shadow-[0_0_15px_rgba(255,0,0,0.5)] flex items-center justify-center relative group z-10 overflow-hidden"
@@ -95,8 +126,10 @@ export default function ChatWidget() {
 
           {!isOpen && (
             <span className="absolute bottom-0 right-0 flex h-4 w-4 transform translate-x-1/4 translate-y-1/4 z-20">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-racing-red opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-full w-full bg-racing-red border-2 border-black"></span>
+              {serverState === "online" && (
+                <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${statusColor} opacity-75`}></span>
+              )}
+              <span className={`relative inline-flex rounded-full h-full w-full ${statusColor} border-2 border-black`}></span>
             </span>
           )}
         </div>

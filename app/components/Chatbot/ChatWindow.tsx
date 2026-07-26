@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useChat } from "@ai-sdk/react";
 import { TextStreamChatTransport, type UIMessage } from "ai";
-import { Send, Minus, User, Bot, Cpu, RotateCcw, ChevronDown, Bug } from "lucide-react";
+import { Send, Minus, User, Bot, Cpu, RotateCcw, ChevronDown, Bug, Copy, Check } from "lucide-react";
 import MessageBubble from "@/app/components/Chatbot/MessageBubble";
 import { sfx } from "./sound";
 
@@ -35,10 +35,36 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   const [input, setInput] = useState("");
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [serverState, setServerState] = useState<"checking" | "online" | "offline">("checking");
+  const [viewportHeight, setViewportHeight] = useState<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [sessionId, setSessionId] = useState<string>("");
+  const [copiedInput, setCopiedInput] = useState(false);
 
   const backendUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || "http://localhost:8000/api/chat";
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.visualViewport) return;
+
+    let lastH = 0;
+    const handleResize = () => {
+      if (window.innerWidth < 640) {
+        const currentH = window.visualViewport!.height;
+        if (Math.abs(lastH - currentH) > 15) {
+          lastH = currentH;
+          setViewportHeight(currentH);
+        }
+      } else {
+        setViewportHeight(null);
+      }
+    };
+
+    handleResize();
+    window.visualViewport.addEventListener("resize", handleResize);
+
+    return () => {
+      window.visualViewport?.removeEventListener("resize", handleResize);
+    };
+  }, []);
   
   useEffect(() => {
     // Generate or retrieve session ID
@@ -198,6 +224,17 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
     setMessages(INITIAL_MESSAGES);
   };
 
+  const handleCopyChatOrInput = () => {
+    const lastBotMsg = [...messages].reverse().find((m) => m.role === "assistant");
+    const textToCopy = input.trim() || (lastBotMsg ? lastBotMsg.parts.filter(p => p.type === 'text').map((p: any) => p.text).join('\n') : "");
+    if (!textToCopy) return;
+
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      setCopiedInput(true);
+      setTimeout(() => setCopiedInput(false), 1800);
+    });
+  };
+
   // Scroll tracking
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -250,10 +287,11 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 50, scale: 0.9 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 50, scale: 0.9 }}
-      transition={{ type: "spring", damping: 25, stiffness: 300 }}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 30 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+      style={{ height: viewportHeight ? `${viewportHeight}px` : undefined }}
       className="fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[440px] h-[100dvh] sm:h-[580px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-white sm:border sm:border-racing-red sm:rounded-2xl flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_8px_32px_rgba(0,0,0,0.35),0_0_0_1px_rgba(220,38,38,0.15)]"
     >
       {/* ── Header ── */}
@@ -298,8 +336,8 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
 
       {/* ── Messages ── */}
       <div className="flex-1 relative overflow-hidden min-h-0 bg-[#0e0e0e] rounded-t-2xl">
-        {/* Watermark — fixed to the frame, not the scroll content */}
-        <div className="absolute inset-0 opacity-20 sm:opacity-50 bg-[url('/web-watermark.png')] bg-no-repeat bg-right-bottom pointer-events-none sm:mix-blend-screen bg-[length:140%_auto] z-0" />
+        {/* Watermark — hidden on mobile to boost scrolling performance */}
+        <div className="hidden sm:block absolute inset-0 opacity-50 bg-[url('/web-watermark.png')] bg-no-repeat bg-right-bottom pointer-events-none mix-blend-screen bg-[length:140%_auto] z-0" />
 
         <div
           ref={scrollContainerRef}
@@ -314,7 +352,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
               >
-                <MessageBubble message={message} isLast={i === messages.length - 1} />
+                <MessageBubble message={message} isLast={i === messages.length - 1 && isTyping} />
               </motion.div>
             ))}
 
@@ -384,6 +422,11 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             value={input}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
+            onFocus={() => {
+              if (window.innerWidth < 640) {
+                setTimeout(() => window.scrollTo(0, 0), 100);
+              }
+            }}
             placeholder="Ask me anything..."
             rows={1}
             className="flex-1 bg-[#1a1a1a] text-white border border-white/10 rounded-xl px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:border-racing-red/70 transition-all placeholder:text-zinc-600 resize-none leading-relaxed overflow-hidden"
@@ -399,9 +442,32 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             <Send size={14} />
           </motion.button>
         </form>
-        <div className="flex items-center justify-center gap-1.5 mt-2 text-zinc-600 text-[9px]">
-          <Bug size={9} className="text-racing-red" />
-          <span>"I survived my trip to Manipur!!"</span>
+
+        {/* ── Sub-input action bar & Quote ── */}
+        <div className="flex items-center justify-between mt-2 px-1 text-[9px] text-zinc-600">
+          <div className="flex items-center gap-1.5">
+            <Bug size={9} className="text-racing-red shrink-0" />
+            <span className="truncate">"I survived my trip to Manipur!!"</span>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleCopyChatOrInput}
+            className="flex items-center gap-1 hover:text-zinc-300 transition-colors py-0.5 px-2 rounded-md bg-white/5 border border-white/10 shrink-0 text-zinc-400"
+            title="Copy typed text or latest response"
+          >
+            {copiedInput ? (
+              <>
+                <Check size={10} className="text-emerald-400" />
+                <span className="text-emerald-400 font-medium">Copied!</span>
+              </>
+            ) : (
+              <>
+                <Copy size={10} />
+                <span>Copy</span>
+              </>
+            )}
+          </button>
         </div>
       </div>
     </motion.div>
