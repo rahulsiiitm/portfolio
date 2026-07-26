@@ -173,9 +173,10 @@ export default function Navbar() {
 
         {/* FOOTER - MOBILE OPTIMIZED */}
         <div className="p-8 sm:p-10 md:p-12 border-t border-white/10 text-white">
-          <div className="flex gap-4 sm:gap-5 md:gap-6 mb-3 md:mb-4">
+          <div className="flex flex-wrap gap-4 sm:gap-5 md:gap-6 mb-3 md:mb-4">
             <a href="https://github.com/rahulsiiitm" target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">GitHub</a>
             <a href="https://linkedin.com/in/rahulsharma2k4" target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">LinkedIn</a>
+            <a href="https://leetcode.com/u/rahul2k4/" target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">LeetCode</a>
           </div>
           <p className="font-mono text-[9px] md:text-[10px] text-gray-700">SYSTEM: ONLINE <br /> V.2.0.4</p>
         </div>

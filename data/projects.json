@@ -2,40 +2,83 @@
   {
     "slug": "sutra",
     "year": "2026",
-    "category": "AI / DevOps",
+    "category": "AI / RAG",
     "title": "SUTRA",
-    "tagline": "Internal AI Chatbot for IIT Roorkee with a secure zero-downtime CI/CD pipeline.",
-    "role": "AI DevOps Engineer",
+    "tagline": "Production RAG-based knowledge assistant built for IIT Roorkee's Academic Affairs department.",
+    "role": "Lead AI Engineer",
     "stack": [
+      "FastAPI",
+      "Qdrant",
+      "TEI",
       "Docker",
-      "GitHub Actions",
-      "Python",
-      "Windows Server"
+      "Docling"
     ],
     "stats": [
       {
+        "label": "Architecture",
+        "value": "Hybrid RAG"
+      },
+      {
+        "label": "Retrieval",
+        "value": "Dense+Sparse"
+      },
+      {
+        "label": "Pipeline",
+        "value": "4-Stage LLM"
+      },
+      {
         "label": "Security",
-        "value": "Zero-Trust"
-      },
-      {
-        "label": "Deploy",
-        "value": "Automated"
-      },
-      {
-        "label": "Downtime",
-        "value": "Zero"
-      },
-      {
-        "label": "Platform",
-        "value": "Windows"
+        "value": "Hardened"
       }
     ],
-    "context": "IIT Roorkee required a highly secure internal AI chatbot operating on an institutional network. The deployment needed to strictly adhere to zero-inbound trust policies with no manual intervention for updates.",
-    "solution": "Containerized the AI backend using Docker and engineered a secure CI/CD pipeline via GitHub Actions. The pipeline orchestrates remote updates over SSH to the production Windows Server, automatically rebuilding and restarting the chatbot with zero downtime while keeping all secrets securely encrypted.",
-    "codeSnippet": "# GitHub Actions CI/CD Configuration\nname: Deploy\non:\n  push:\n    branches: [ main ]\njobs:\n  deploy:\n    runs-on: ubuntu-latest\n    steps:\n    - name: Secure SSH Deployment\n      run: ssh admin@server \"docker-compose up -d --build\"",
+    "context": "IIT Roorkee's Academic Affairs department needed a production-grade knowledge assistant. The system had to support complex queries over regulatory texts, necessitating a highly accurate retrieval pipeline and robust security against path traversal and XSS.",
+    "solution": "Architected a hybrid RAG system using FastAPI and Qdrant native hybrid search with server-side RRF. Offloaded embeddings and reranking to HuggingFace TEI containers. Built a 4-stage LLM pipeline (rewrite → extract → generate → verify) utilizing quantized Qwen 3 14B for precise instruction following. Hardened the deployment with Docker Compose on the Param Ganga HPC cluster.",
+    "codeSnippet": "# TEI & Qdrant Hybrid Retrieval Pipeline\ndef retrieve_evidence(query):\n    # Dense + Sparse (BM25) search with RRF\n    results = qdrant.search_hybrid(query, limit=10)\n    # TEI Cross-Encoder Reranking\n    reranked = tei_client.rerank(query, results)\n    return apply_sigmoid_threshold(reranked)",
+    "video": "/videos/sutra.mp4",
     "links": {
       "github": null,
       "demo": "soon"
+    }
+  },
+  {
+    "slug": "mailstrom",
+    "year": "2026",
+    "category": "AI / Desktop Apps",
+    "title": "MAILSTROM",
+    "tagline": "AI-powered email outreach copilot with Gemini/Ollama and native desktop integration.",
+    "role": "Full Stack Engineer",
+    "stack": [
+      "Python",
+      "FastAPI",
+      "Tauri",
+      "Rust",
+      "Ollama",
+      "Gemini"
+    ],
+    "stats": [
+      {
+        "label": "App",
+        "value": "Native"
+      },
+      {
+        "label": "AI",
+        "value": "Local+Cloud"
+      },
+      {
+        "label": "Backend",
+        "value": "FastAPI"
+      },
+      {
+        "label": "Database",
+        "value": "SQLite"
+      }
+    ],
+    "context": "Email outreach often requires managing lists manually and using generic templates, leading to low engagement. The goal was to build a local-first copilot to automate personalized email campaigns.",
+    "solution": "Built a native desktop app using Tauri (Rust) and a Python FastAPI backend. Integrated Ollama for local email classification and Gemini API for drafting highly personalized emails. Implemented APScheduler for automated interval sending via Gmail OAuth.",
+    "codeSnippet": "# FastAPI Mailstrom Backend\n@app.post('/draft')\nasync def draft_email(contact: Contact):\n    # Local or Cloud LLM Routing\n    draft = await generate_with_gemini(contact.context)\n    scheduler.add_job(send_email, 'date', run_date=schedule_time, args=[draft])\n    return {'status': 'Scheduled'}",
+    "links": {
+      "github": "https://github.com/rahulsiiitm/mailstrom",
+      "demo": null
     }
   },
   {

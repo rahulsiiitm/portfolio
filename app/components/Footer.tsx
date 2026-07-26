@@ -359,12 +359,15 @@ export default function Footer() {
                     <span>TEMP: 34°C</span>
                 </div>
 
-                <nav className="flex gap-4 sm:gap-6 md:gap-8 text-xs font-bold uppercase tracking-[0.15em] md:tracking-[0.2em] text-white" aria-label="Social links">
+                <nav className="flex flex-wrap gap-4 sm:gap-6 md:gap-8 text-xs font-bold uppercase tracking-[0.15em] md:tracking-[0.2em] text-white" aria-label="Social links">
                     <a href="https://linkedin.com/in/rahulsiiitm" target="_blank" rel="noopener noreferrer" className="hover:text-red-600 transition-colors">
                         LinkedIn
                     </a>
                     <a href="https://github.com/rahulsiiitm" target="_blank" rel="noopener noreferrer" className="hover:text-red-600 transition-colors">
                         GitHub
+                    </a>
+                    <a href="https://leetcode.com/u/rahul2k4/" target="_blank" rel="noopener noreferrer" className="hover:text-red-600 transition-colors">
+                        LeetCode
                     </a>
                     <a href="mailto:rahulsharma.hps@gmail.com" className="hover:text-red-600 transition-colors">
                         Email

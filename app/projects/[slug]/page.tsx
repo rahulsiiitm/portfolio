@@ -110,7 +110,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
         {/* --- MAIN CONTENT LAYOUT --- */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
 
-          <div className="lg:col-span-7 flex flex-col gap-8">
+          <div className="lg:col-span-7 lg:order-last flex flex-col gap-8">
 
             <div className="relative w-full aspect-video bg-zinc-900 rounded-md overflow-hidden ring-1 ring-zinc-200 shadow-xl shadow-zinc-200/50 group">
               <div className="absolute top-3 left-3 flex items-center gap-2 z-10 bg-black/40 backdrop-blur-md px-2.5 py-1 rounded-sm border border-white/10">
@@ -119,13 +119,26 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
               </div>
 
               {project.video ? (
-                <iframe
-                  className="w-full h-full"
-                  src={project.video}
-                  title={`${project.title} Demo`}
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
+                project.video.endsWith('.mp4') || project.video.endsWith('.webm') ? (
+                  <video
+                    className="w-full h-full object-cover object-right"
+                    src={project.video}
+                    title={`${project.title} Demo`}
+                    autoPlay
+                    loop
+                    muted
+                    controls
+                    playsInline
+                  />
+                ) : (
+                  <iframe
+                    className="w-full h-full"
+                    src={project.video}
+                    title={`${project.title} Demo`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                )
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-zinc-500 font-mono text-xs tracking-widest bg-zinc-900">
                   [ VIDEO ASSET REQUIRED ]

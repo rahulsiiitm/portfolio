@@ -52,7 +52,7 @@ export default function ChatWidget() {
     <>
       <AnimatePresence>{isOpen && <ChatWindow onClose={() => { sfx.close(); setIsOpen(false); }} />}</AnimatePresence>
 
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center justify-end">
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center justify-end pointer-events-none">
         {!isOpen && (
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -72,7 +72,7 @@ export default function ChatWidget() {
           </motion.div>
         )}
 
-        <div className="relative">
+        <div className="relative pointer-events-auto">
           {/* Rotating scan ring */}
           <motion.div
             className="absolute inset-[-8px] rounded-full border border-racing-red/40 pointer-events-none"

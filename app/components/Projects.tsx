@@ -16,6 +16,17 @@ type Project = {
 const projects: Project[] = [
   {
     id: "01",
+    title: "SUTRA",
+    category: "AI / RAG",
+    description: "Production RAG-based knowledge assistant for IIT Roorkee's Academic Affairs. Features Qdrant native hybrid search with server-side RRF, TEI embedding offload, and a hardened zero-downtime CI/CD deployment.",
+    year: "2026",
+    colorClass: "bg-blue-950",
+    bgImage: "/projects/sutra.jpg",
+    slug: "sutra",
+    links: { demo: "soon" }
+  },
+  {
+    id: "02",
     title: "VidChain",
     category: "FORENSIC AI / RAG",
     description: "Multimodal RAG framework for forensic video intelligence. Built the IRIS engine to enable cross-video entity tracking and natural language forensic queries at the edge.",
@@ -26,7 +37,7 @@ const projects: Project[] = [
     links: { github: "https://github.com/rahulsiiitm/videochain-python", pypi: "https://pypi.org/project/VidChain/" }
   },
   {
-    id: "02",
+    id: "03",
     title: "AgriHive",
     category: "AI / AGRI-TECH",
     description: "Multilingual AI farming assistant achieving 92% disease detection accuracy. Engineered with TensorFlow, Gemini API, and an offline-first Firebase architecture for rural accessibility.",
@@ -35,18 +46,6 @@ const projects: Project[] = [
     bgImage: "/projects/AgriHive.webp",
     slug: "agrihive",
     links: { github: "#", demo: "#" }
-  },
-  {
-    id: "03",
-    title: "AEGIS (CRPF)",
-    category: "SECURITY / ARCH",
-    description: "Mission-critical secure log and personnel management system for the Central Reserve Police Force. Features multi-role authentication and high-integrity Firestore architecture.",
-    year: "2025",
-    colorClass: "bg-zinc-900",
-    bgImage: "/projects/crpf.png",
-    slug: "aegis",
-    links: null,
-    confidential: true
   }
 ];
 
