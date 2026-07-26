@@ -36,20 +36,78 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   const [showScrollBtn, setShowScrollBtn] = useState(false);
   const [serverState, setServerState] = useState<"checking" | "online" | "offline">("checking");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [sessionId, setSessionId] = useState<string>("");
 
   const backendUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || "http://localhost:8000/api/chat";
+  
+  useEffect(() => {
+    // Generate or retrieve session ID
+    let sid = localStorage.getItem("zero_chat_session_id");
+    if (!sid) {
+      sid = Math.random().toString(36).substring(2, 15);
+      localStorage.setItem("zero_chat_session_id", sid);
+    }
+    setSessionId(sid);
+    
+    // Fetch history
+    fetch(`${backendUrl.replace("/chat", "/chat/history")}/${sid}`)
+      .then(r => r.json())
+      .then(data => {
+        if (data.messages && data.messages.length > 0) {
+          // Format messages for useChat
+          const formatted = data.messages.map((m: any, i: number) => ({
+            id: `history-${i}`,
+            role: m.role === "model" ? "assistant" : m.role,
+            content: m.content
+          }));
+          setMessages(formatted);
+        }
+      })
+      .catch(e => console.error("Failed to fetch history:", e));
+  }, [backendUrl]);
+
   const transport = new TextStreamChatTransport({ api: backendUrl });
 
   const { messages, sendMessage, status, setMessages } = useChat({
     transport,
     messages: INITIAL_MESSAGES,
   });
+  
+  // Custom submit that adds session_id to body
+  const customSendMessage = (text: string) => {
+    sendMessage({
+      text,
+    }, {
+      body: { session_id: sessionId }
+    });
+  };
 
   const isTyping = status === "submitted" || status === "streaming";
 
   // Auto-focus input on open
   useEffect(() => {
     setTimeout(() => textareaRef.current?.focus(), 100);
+  }, []);
+
+  // Lock body scroll when chat is open to prevent mobile keyboard from pushing UI out of viewport
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    
+    // Also disable touch scrolling on the body for iOS Safari
+    const preventTouchMove = (e: TouchEvent) => {
+      // Don't prevent touchmove if the event is originating from inside our chat scroll area
+      const target = e.target as HTMLElement;
+      if (!target.closest('.chat-scroll-area')) {
+        e.preventDefault();
+      }
+    };
+    document.addEventListener('touchmove', preventTouchMove, { passive: false });
+    
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.removeEventListener('touchmove', preventTouchMove);
+    };
   }, []);
 
   // SFX on response done + empty-response fallback
@@ -126,7 +184,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   const submitMessage = () => {
     if (!input.trim() || isTyping) return;
     sfx.send();
-    sendMessage({ text: input.trim() });
+    customSendMessage(input.trim());
     setInput("");
     if (textareaRef.current) textareaRef.current.style.height = "auto";
   };
@@ -187,7 +245,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
 
   const handleSuggestionClick = (text: string) => {
     sfx.send();
-    sendMessage({ text });
+    customSendMessage(text);
   };
 
   return (
@@ -246,7 +304,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
         <div
           ref={scrollContainerRef}
           onScroll={handleScroll}
-          className="h-full overflow-y-auto overscroll-contain px-4 pt-4 pb-2 custom-scrollbar bg-transparent relative"
+          className="chat-scroll-area h-full overflow-y-auto overscroll-contain px-4 pt-4 pb-2 custom-scrollbar bg-transparent relative"
         >
           <div className="relative z-10 space-y-3">
             {messages.map((message, i) => (
