@@ -3,10 +3,11 @@ let ctx: AudioContext | null = null;
 const getCtx = () => {
   if (typeof window === "undefined") return null;
   if (!ctx) ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+  if (ctx.state === 'suspended') ctx.resume();
   return ctx;
 };
 
-function blip(freq: number, duration: number, type: OscillatorType = "square", gain = 0.04) {
+function blip(freq: number, duration: number, type: OscillatorType = "square", gain = 0.15) {
   const c = getCtx();
   if (!c) return;
   const osc = c.createOscillator();
@@ -21,9 +22,9 @@ function blip(freq: number, duration: number, type: OscillatorType = "square", g
 }
 
 export const sfx = {
-  open: () => { blip(220, 0.08); setTimeout(() => blip(440, 0.1), 60); },
-  close: () => { blip(440, 0.06); setTimeout(() => blip(180, 0.08), 40); },
-  send: () => blip(660, 0.05, "sine", 0.03),
-  receive: () => { blip(320, 0.04, "sine", 0.03); setTimeout(() => blip(500, 0.06, "sine", 0.03), 50); },
-  key: () => blip(900 + Math.random() * 200, 0.015, "square", 0.015),
+  open: () => { blip(220, 0.08, "square", 0.1); setTimeout(() => blip(440, 0.1, "square", 0.1), 60); },
+  close: () => { blip(440, 0.06, "square", 0.1); setTimeout(() => blip(180, 0.08, "square", 0.1), 40); },
+  send: () => blip(660, 0.08, "sine", 0.25),
+  receive: () => { blip(320, 0.05, "sine", 0.2); setTimeout(() => blip(500, 0.08, "sine", 0.2), 60); },
+  key: () => blip(900 + Math.random() * 200, 0.02, "square", 0.05),
 };

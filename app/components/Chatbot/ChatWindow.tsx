@@ -4,9 +4,15 @@ import { useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useChat } from "@ai-sdk/react";
 import { TextStreamChatTransport, type UIMessage } from "ai";
-import { Send, Minus, User, Bot, Cpu, RotateCcw, ChevronDown, Bug, Copy, Check } from "lucide-react";
+import { Send, SendHorizontal, Minus, User, Bot, Cpu, RotateCcw, ChevronDown, Bug, Copy, Check, Sparkles } from "lucide-react";
 import MessageBubble from "@/app/components/Chatbot/MessageBubble";
 import { sfx } from "./sound";
+import { Outfit, JetBrains_Mono } from "next/font/google";
+
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
+const jbMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jbmono" });
+
+
 
 const INITIAL_MESSAGES: UIMessage[] = [
   {
@@ -41,6 +47,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   const [copiedInput, setCopiedInput] = useState(false);
 
   const backendUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || "http://localhost:8000/api/chat";
+  const baseUrl = backendUrl.replace(/\/api\/chat\/?$/, "");
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.visualViewport) return;
@@ -76,7 +83,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
     setSessionId(sid);
     
     // Fetch history
-    fetch(`${backendUrl.replace("/chat", "/chat/history")}/${sid}`)
+    fetch(`${baseUrl}/api/chat/history/${sid}`)
       .then(r => r.json())
       .then(data => {
         if (data.messages && data.messages.length > 0) {
@@ -152,14 +159,14 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
-        const url = backendUrl.replace("/api/chat", "/keep-alive");
+        const url = `${baseUrl}/keep-alive`;
         const res = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
         if (active) setServerState(res.ok ? "online" : "offline");
       } catch (e) {
         if (active) setServerState("offline");
         try {
-          const url = backendUrl.replace("/api/chat", "/keep-alive");
+          const url = `${baseUrl}/keep-alive`;
           const res = await fetch(url);
           if (active && res.ok) setServerState("online");
         } catch (err) {}
@@ -204,6 +211,9 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       submitMessage();
+    } else if (e.key !== "Shift" && e.key !== "Meta" && e.key !== "Control" && e.key !== "Alt") {
+      // Subtle typing click sound
+      sfx.key();
     }
   };
 
@@ -213,6 +223,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
     customSendMessage(input.trim());
     setInput("");
     if (textareaRef.current) textareaRef.current.style.height = "auto";
+    scrollToBottom(); // Instantly jump to bottom and re-enable auto-scroll
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -238,23 +249,31 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   // Scroll tracking
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const userScrolledUp = useRef(false);
 
+  // Auto-scroll logic that triggers on every message chunk
   useEffect(() => {
-    const el = scrollContainerRef.current;
-    if (!el) return;
-    const { scrollTop, scrollHeight, clientHeight } = el;
-    const isNearBottom = scrollHeight - scrollTop - clientHeight < 80;
-    if (isNearBottom) messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (!userScrolledUp.current) {
+      // Using 'auto' (instant) instead of 'smooth' here is crucial for streaming.
+      // Smooth scrolling gets interrupted by rapid DOM updates during a stream,
+      // causing it to fall behind or stutter. 'auto' perfectly sticks to the bottom.
+      messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
+    }
   }, [messages, isTyping]);
 
   const handleScroll = () => {
     const el = scrollContainerRef.current;
     if (!el) return;
     const { scrollTop, scrollHeight, clientHeight } = el;
-    setShowScrollBtn(scrollHeight - scrollTop - clientHeight > 120);
+    const distanceToBottom = scrollHeight - scrollTop - clientHeight;
+    setShowScrollBtn(distanceToBottom > 120);
+    
+    // If the user scrolls up more than 80px from the bottom, they have "broken" the auto-scroll
+    userScrolledUp.current = distanceToBottom > 80;
   };
 
   const scrollToBottom = () => {
+    userScrolledUp.current = false;
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
@@ -292,7 +311,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       exit={{ opacity: 0, y: 30 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
       style={{ height: viewportHeight ? `${viewportHeight}px` : undefined }}
-      className="fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[440px] h-[100dvh] sm:h-[580px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-white sm:border sm:border-racing-red sm:rounded-2xl flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_8px_32px_rgba(0,0,0,0.35),0_0_0_1px_rgba(220,38,38,0.15)]"
+      className={`fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[440px] h-[100dvh] sm:h-[600px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-white sm:border-2 sm:border-red-600/50 sm:rounded-3xl flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_0_30px_rgba(220,38,38,0.25)] ${outfit.className} ${outfit.variable} ${jbMono.variable}`}
     >
       {/* ── Header ── */}
       <div className="bg-white px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:pt-3 flex items-center justify-between border-b border-zinc-100 shrink-0">
@@ -301,8 +320,8 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             <img src="/mask-circle.png" alt="Zero" className="w-full h-full object-cover" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="font-bold text-racing-red text-base leading-none tracking-wide">ZERO</h3>
+            <div className="flex items-center gap-2 mt-1">
+              <h3 className="font-ammonite text-racing-red text-xl leading-none tracking-wide lowercase">zero</h3>
               <span className={`w-1.5 h-1.5 rounded-full ${isTyping ? "bg-racing-red" : serverState === "online" ? "bg-emerald-500" : serverState === "checking" ? "bg-zinc-400" : "bg-zinc-600"} animate-pulse`} />
               <span className="text-[9px] font-semibold text-zinc-400 tracking-widest uppercase">
                 {isTyping ? "typing" : serverState}
@@ -335,7 +354,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       </div>
 
       {/* ── Messages ── */}
-      <div className="flex-1 relative overflow-hidden min-h-0 bg-[#0e0e0e] rounded-t-2xl">
+      <div className="flex-1 relative overflow-hidden min-h-0 bg-[#0e0e0e] rounded-t-3xl border-t border-white/5">
         {/* Watermark — hidden on mobile to boost scrolling performance */}
         <div className="hidden sm:block absolute inset-0 opacity-50 bg-[url('/web-watermark.png')] bg-no-repeat bg-right-bottom pointer-events-none mix-blend-screen bg-[length:140%_auto] z-0" />
 
@@ -369,14 +388,14 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
         <AnimatePresence>
           {showScrollBtn && (
             <motion.button
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
+              initial={{ opacity: 0, x: "-50%", y: 10 }}
+              animate={{ opacity: 1, x: "-50%", y: 0 }}
+              exit={{ opacity: 0, x: "-50%", y: 10 }}
               onClick={scrollToBottom}
-              className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 px-3 py-1.5 bg-zinc-800 border border-white/10 rounded-full text-[11px] text-zinc-300 hover:bg-zinc-700 transition-colors shadow-lg z-20"
+              className="absolute bottom-4 left-1/2 flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0a0b0d]/80 backdrop-blur-md border border-white/10 rounded-full text-[11px] font-medium text-zinc-200 hover:bg-[#0a0b0d] hover:text-white transition-colors shadow-[0_4px_20px_rgba(0,0,0,0.6)] z-20 group"
             >
-              <ChevronDown size={12} />
-              <span>Scroll down</span>
+              <ChevronDown size={13} className="text-racing-red group-hover:translate-y-[2px] transition-transform" />
+              <span className="tracking-wide">Scroll down</span>
             </motion.button>
           )}
         </AnimatePresence>
@@ -415,7 +434,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       </AnimatePresence>
 
       {/* ── Input ── */}
-      <div className="px-3 pt-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:pb-2 bg-[#0e0e0e] border-t border-white/5">
+      <div className="px-3 pt-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:pb-3 bg-[#0a0b0d] border-t border-white/10">
         <form onSubmit={handleSubmit} className="flex items-center gap-2">
           <textarea
             ref={textareaRef}
@@ -429,45 +448,28 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             }}
             placeholder="Ask me anything..."
             rows={1}
-            className="flex-1 bg-[#1a1a1a] text-white border border-white/10 rounded-xl px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:border-racing-red/70 transition-all placeholder:text-zinc-600 resize-none leading-relaxed overflow-hidden"
+            className="flex-1 bg-[#121316] text-white border border-white/10 rounded-2xl px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:border-racing-red/60 transition-all placeholder:text-zinc-600 resize-none leading-relaxed overflow-hidden shadow-inner"
             style={{ minHeight: "40px", maxHeight: "120px" }}
           />
+
+          {/* Red Glow Send Button */}
           <motion.button
             type="submit"
             disabled={!input.trim() || isTyping}
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.92 }}
-            className="shrink-0 w-9 h-9 flex items-center justify-center rounded-xl bg-racing-red text-white disabled:opacity-40 disabled:cursor-not-allowed transition-opacity shadow-sm"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className="shrink-0 w-10 h-10 flex items-center justify-center rounded-2xl bg-gradient-to-br from-red-600 via-red-700 to-red-900 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_0_15px_rgba(220,38,38,0.5)] border border-red-500/40"
           >
-            <Send size={14} />
+            <SendHorizontal size={17} />
           </motion.button>
         </form>
 
-        {/* ── Sub-input action bar & Quote ── */}
-        <div className="flex items-center justify-between mt-2 px-1 text-[9px] text-zinc-600">
-          <div className="flex items-center gap-1.5">
-            <Bug size={9} className="text-racing-red shrink-0" />
-            <span className="truncate">"I survived my trip to Manipur!!"</span>
-          </div>
-
-          <button
-            type="button"
-            onClick={handleCopyChatOrInput}
-            className="flex items-center gap-1 hover:text-zinc-300 transition-colors py-0.5 px-2 rounded-md bg-white/5 border border-white/10 shrink-0 text-zinc-400"
-            title="Copy typed text or latest response"
-          >
-            {copiedInput ? (
-              <>
-                <Check size={10} className="text-emerald-400" />
-                <span className="text-emerald-400 font-medium">Copied!</span>
-              </>
-            ) : (
-              <>
-                <Copy size={10} />
-                <span>Copy</span>
-              </>
-            )}
-          </button>
+        {/* ── Spider Footer Divider Bar ── */}
+        <div className="flex items-center justify-center gap-2 mt-3 pb-1 text-[10px] text-zinc-500 font-sans select-none">
+          <div className="h-[1px] w-12 bg-gradient-to-r from-transparent via-red-900/60 to-red-600/50" />
+          <Bug size={14} className="text-racing-red shrink-0 stroke-[2.2]" />
+          <span className="text-zinc-500 tracking-wide font-medium">I survived my trip to Manipur!</span>
+          <div className="h-[1px] w-12 bg-gradient-to-l from-transparent via-red-900/60 to-red-600/50" />
         </div>
       </div>
     </motion.div>

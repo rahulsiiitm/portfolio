@@ -44,6 +44,7 @@ export default function ChatWidget() {
   const [hasOpened, setHasOpened] = useState(false);
   const [serverState, setServerState] = useState<"checking" | "online" | "offline">("checking");
   const backendUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || "http://localhost:8000/api/chat";
+  const baseUrl = backendUrl.replace(/\/api\/chat\/?$/, "");
 
   useEffect(() => {
     let active = true;
@@ -51,14 +52,14 @@ export default function ChatWidget() {
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
-        const url = backendUrl.replace("/api/chat", "/keep-alive");
+        const url = `${baseUrl}/keep-alive`;
         const res = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
         if (active) setServerState(res.ok ? "online" : "offline");
       } catch (e) {
         if (active) setServerState("offline");
         try {
-          const url = backendUrl.replace("/api/chat", "/keep-alive");
+          const url = `${baseUrl}/keep-alive`;
           const res = await fetch(url);
           if (active && res.ok) setServerState("online");
         } catch (err) {}
