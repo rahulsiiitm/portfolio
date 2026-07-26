@@ -45,7 +45,7 @@ const projects: Project[] = [
     colorClass: "bg-zinc-900",
     bgImage: "/projects/AgriHive.webp",
     slug: "agrihive",
-    links: { github: "#", demo: "#" }
+    links: { github: "https://github.com/rahulsiiitm/AgriHive-Frontend", demo: "https://agrihive-c8f6b.web.app/" }
   }
 ];
 
