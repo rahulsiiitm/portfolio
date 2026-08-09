@@ -43,7 +43,7 @@ const projects: Project[] = [
     description: "Multilingual AI farming assistant achieving 92% disease detection accuracy. Engineered with TensorFlow, Gemini API, and an offline-first Firebase architecture for rural accessibility.",
     year: "2025",
     colorClass: "bg-zinc-900",
-    bgImage: "/projects/AgriHive.webp",
+    bgImage: "/projects/agri.png",
     slug: "agrihive",
     links: { github: "https://github.com/rahulsiiitm/AgriHive-Frontend", demo: "https://agrihive-c8f6b.web.app/" }
   }
