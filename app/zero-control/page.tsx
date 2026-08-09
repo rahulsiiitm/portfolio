@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import ControlRoom from "./ControlRoom";
+import ControlRoomEditorial from "./ControlRoomEditorial";
 
 export const dynamic = "force-dynamic";
 
@@ -14,5 +14,5 @@ export const metadata: Metadata = {
 };
 
 export default function ZeroControlPage() {
-  return <ControlRoom />;
+  return <ControlRoomEditorial />;
 }
