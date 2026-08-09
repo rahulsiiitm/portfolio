@@ -5,8 +5,11 @@
   background: #efefef;
   color: #08101f;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-style: normal;
+  font-weight: 400;
 }
 
+/* Reuse the same visual grid language as the main portfolio. */
 .zero-control-v2::before {
   content: "";
   position: fixed;
@@ -19,25 +22,10 @@
     linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
   transform: skewX(-9deg);
   transform-origin: center;
-  opacity: 0.34;
+  opacity: 0.3;
 }
 
-.zero-control-v2 .zero-rhombus {
-  position: fixed;
-  z-index: 0;
-  pointer-events: none;
-  width: 290px;
-  height: 290px;
-  transform: rotate(45deg);
-  border-radius: 7px;
-  background: rgba(210, 211, 214, 0.28);
-}
-
-.zero-control-v2 .zero-rhombus-a { left: 28%; top: 7%; }
-.zero-control-v2 .zero-rhombus-b { right: 7%; top: 13%; background: rgba(255,255,255,0.42); }
-.zero-control-v2 .zero-rhombus-c { right: -7%; bottom: -9%; width: 340px; height: 340px; }
-
-/* Hide the old component-specific backdrop so the real portfolio grid is the only base. */
+/* Hide the old component-specific backdrop. The grid above is the only page background. */
 .zero-control-v2 main > div:first-child {
   display: none !important;
 }
@@ -46,34 +34,47 @@
   position: relative;
   z-index: 1;
   background: transparent !important;
+  font-family: inherit !important;
 }
 
-/* Kill the warped display face used by the previous draft. */
+/* One clean Leclerc-like sans treatment across the whole interface. */
+.zero-control-v2 *,
 .zero-control-v2 h1,
 .zero-control-v2 h2,
 .zero-control-v2 h3,
-.zero-control-v2 main div[class*="font-"] {
-  font-family: "Arial Narrow", "Helvetica Neue Condensed", "Roboto Condensed", "Helvetica Neue", Arial, sans-serif !important;
+.zero-control-v2 button,
+.zero-control-v2 input,
+.zero-control-v2 code,
+.zero-control-v2 [class*="font-"] {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif !important;
   font-style: normal !important;
-  font-stretch: condensed;
+  font-stretch: normal !important;
 }
 
 .zero-control-v2 h1,
-.zero-control-v2 h2 {
+.zero-control-v2 h2,
+.zero-control-v2 h3 {
   letter-spacing: -0.035em !important;
-  line-height: 0.95 !important;
-  font-weight: 700 !important;
+  line-height: 1 !important;
+  font-weight: 500 !important;
 }
 
-/* Leclerc-like restrained geometry: soft, but not pill UI. */
+.zero-control-v2 p,
+.zero-control-v2 span,
+.zero-control-v2 button,
+.zero-control-v2 input {
+  letter-spacing: normal;
+}
+
+/* Soft geometry like the reference. */
 .zero-control-v2 :where(section, button, input, div[class*="border"], span[class*="border"]) {
   border-radius: 7px !important;
 }
 
-/* Compact the whole canvas. */
+/* Compact the whole canvas without making it cramped. */
 .zero-control-v2 main > div.relative.mx-auto {
-  max-width: 1700px !important;
-  padding: 14px 22px 24px !important;
+  max-width: 1660px !important;
+  padding: 16px 20px 22px !important;
 }
 
 .zero-control-v2 header {
@@ -84,16 +85,21 @@
 
 .zero-control-v2 header h1 {
   font-size: 34px !important;
+  font-weight: 500 !important;
 }
 
 .zero-control-v2 header p {
   margin-top: 5px !important;
   font-size: 12px !important;
+  color: #616b79 !important;
 }
 
 .zero-control-v2 header button {
   padding: 8px 12px !important;
   border-radius: 7px !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.14em !important;
 }
 
 /* Metrics row */
@@ -103,62 +109,82 @@
 }
 
 .zero-control-v2 main > div.relative.mx-auto > section:first-of-type > div {
-  min-height: 104px !important;
-  padding: 13px 14px !important;
+  min-height: 102px !important;
+  padding: 12px 14px !important;
   border-radius: 7px !important;
+}
+
+.zero-control-v2 main > div.relative.mx-auto > section:first-of-type > div span {
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.14em !important;
 }
 
 .zero-control-v2 main > div.relative.mx-auto > section:first-of-type > div > div:last-child {
   font-size: 38px !important;
-  line-height: 0.92 !important;
-  font-family: "Arial Narrow", "Helvetica Neue Condensed", "Roboto Condensed", Arial, sans-serif !important;
-  font-weight: 700 !important;
+  line-height: 0.95 !important;
+  font-family: inherit !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.045em !important;
 }
 
 /* Main 3-column content */
 .zero-control-v2 main > div.relative.mx-auto > section:nth-of-type(2) {
   gap: 10px !important;
-  grid-template-columns: 280px minmax(0,1fr) 310px !important;
+  grid-template-columns: 280px minmax(0, 1fr) 310px !important;
 }
 
 .zero-control-v2 main > div.relative.mx-auto > section:nth-of-type(2) > section {
-  min-height: 610px !important;
+  min-height: 600px !important;
 }
 
 .zero-control-v2 section > div[class*="border-b"] {
-  padding: 12px 14px !important;
+  padding: 11px 14px !important;
 }
 
 .zero-control-v2 section h2 {
   font-size: 22px !important;
   margin-top: 0 !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.025em !important;
 }
 
 .zero-control-v2 section button {
-  padding: 12px 14px !important;
+  padding: 11px 14px !important;
 }
 
 .zero-control-v2 section [class*="space-y-6"],
 .zero-control-v2 section [class*="space-y-5"] {
-  gap: 12px !important;
+  gap: 11px !important;
 }
 
 .zero-control-v2 section [class*="p-5"],
 .zero-control-v2 section [class*="p-6"] {
-  padding: 14px !important;
+  padding: 13px !important;
 }
 
 .zero-control-v2 section [class*="leading-7"],
 .zero-control-v2 section [class*="leading-8"] {
-  line-height: 1.55 !important;
+  line-height: 1.5 !important;
 }
 
-/* Conversation bubbles */
+/* Conversation content should read like editorial copy, not terminal output. */
 .zero-control-v2 section div[class*="shadow-"] {
   border-radius: 7px !important;
 }
 
-/* Keep the red identity precise. */
+.zero-control-v2 section div[class*="shadow-"] p {
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+}
+
+/* Keep IDs compact but in the same family. */
+.zero-control-v2 code {
+  font-family: inherit !important;
+  font-weight: 500 !important;
+}
+
+/* Exact portfolio accent. */
 .zero-control-v2 [class*="text-[#D62E37]"] { color: #D62E37 !important; }
 .zero-control-v2 [class*="bg-[#D62E37]"] { background-color: #D62E37 !important; }
 

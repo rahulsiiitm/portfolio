@@ -17,9 +17,6 @@ export const metadata: Metadata = {
 export default function ZeroControlPage() {
   return (
     <div className="zero-control-v2">
-      <div className="zero-rhombus zero-rhombus-a" />
-      <div className="zero-rhombus zero-rhombus-b" />
-      <div className="zero-rhombus zero-rhombus-c" />
       <ControlRoomEditorial />
     </div>
   );
