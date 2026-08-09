@@ -107,10 +107,8 @@ export async function requireAdminSession() {
   let accessToken = cookieStore.get(ACCESS_COOKIE)?.value;
   const refreshToken = cookieStore.get(REFRESH_COOKIE)?.value;
 
-  if (!accessToken) return null;
-
-  let user = await fetchUser(accessToken);
-  if (!user && refreshToken) {
+  let user = accessToken ? await fetchUser(accessToken) : null;
+  if ((!accessToken || !user) && refreshToken) {
     const refreshed = await refreshSession(refreshToken);
     if (refreshed) {
       accessToken = refreshed.access_token;
@@ -118,14 +116,14 @@ export async function requireAdminSession() {
     }
   }
 
-  if (!user || user.app_metadata?.role !== "zero_admin") return null;
+  if (!accessToken || !user || user.app_metadata?.role !== "zero_admin") return null;
   return { user, accessToken };
 }
 
 export async function clearAdminSession() {
   const cookieStore = await cookies();
-  cookieStore.delete(ACCESS_COOKIE);
-  cookieStore.delete(REFRESH_COOKIE);
+  cookieStore.set(ACCESS_COOKIE, "", cookieOptions(0));
+  cookieStore.set(REFRESH_COOKIE, "", cookieOptions(0));
 }
 
 export async function supabaseData<T>(query: string, accessToken: string): Promise<T> {
