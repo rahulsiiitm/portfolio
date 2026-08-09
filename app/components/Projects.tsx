@@ -20,7 +20,7 @@ const projects: Project[] = [
     category: "AI / RAG",
     description: "Production RAG-based knowledge assistant for IIT Roorkee's Academic Affairs. Features Qdrant native hybrid search with server-side RRF, TEI embedding offload, and a hardened zero-downtime CI/CD deployment.",
     year: "2026",
-    colorClass: "bg-blue-950",
+    colorClass: "bg-zinc-900",
     bgImage: "/projects/sutra.jpg",
     slug: "sutra",
     links: { demo: "soon" }
@@ -31,7 +31,7 @@ const projects: Project[] = [
     category: "FORENSIC AI / RAG",
     description: "Multimodal RAG framework for forensic video intelligence. Built the IRIS engine to enable cross-video entity tracking and natural language forensic queries at the edge.",
     year: "2026",
-    colorClass: "bg-red-950",
+    colorClass: "bg-zinc-900",
     bgImage: "/projects/image.png",
     slug: "vidchain",
     links: { github: "https://github.com/rahulsiiitm/videochain-python", pypi: "https://pypi.org/project/VidChain/" }
@@ -130,7 +130,8 @@ export default function Projects() {
           const image = card.querySelector(".project-image-inner") as HTMLElement | null;
           if (image) {
             gsap.to(image, {
-              x: 50, ease: "none",
+              x: 10,
+              ease: "none",
               scrollTrigger: {
                 trigger: card,
                 containerAnimation: scrollTween,
@@ -257,7 +258,7 @@ export default function Projects() {
                 <img
                   src={project.bgImage}
                   alt={project.title}
-                  className="project-image-inner absolute w-[110%] h-[110%] -left-[5%] -top-[5%] object-cover opacity-60 group-hover:opacity-80 transition-opacity duration-500"
+                  className="project-image-inner absolute inset-0 w-full h-full object-cover object-left opacity-60 group-hover:opacity-80 transition-opacity duration-500"
                   loading="lazy"
                   decoding="async"
                 />
