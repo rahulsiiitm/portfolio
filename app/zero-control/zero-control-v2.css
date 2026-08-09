@@ -6,7 +6,7 @@
   color: #08101f;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 /* Reuse the same visual grid language as the main portfolio. */
@@ -35,9 +35,10 @@
   z-index: 1;
   background: transparent !important;
   font-family: inherit !important;
+  font-weight: 500;
 }
 
-/* One clean Leclerc-like sans treatment across the whole interface. */
+/* One clean family, with hierarchy created through weight/scale rather than font switching. */
 .zero-control-v2 *,
 .zero-control-v2 h1,
 .zero-control-v2 h2,
@@ -51,19 +52,31 @@
   font-stretch: normal !important;
 }
 
-.zero-control-v2 h1,
-.zero-control-v2 h2,
-.zero-control-v2 h3 {
+.zero-control-v2 h1 {
+  font-weight: 600 !important;
   letter-spacing: -0.035em !important;
   line-height: 1 !important;
-  font-weight: 500 !important;
+}
+
+.zero-control-v2 h2,
+.zero-control-v2 h3 {
+  font-weight: 600 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.05 !important;
 }
 
 .zero-control-v2 p,
-.zero-control-v2 span,
-.zero-control-v2 button,
 .zero-control-v2 input {
+  font-weight: 500 !important;
   letter-spacing: normal;
+}
+
+.zero-control-v2 span {
+  font-weight: 500;
+}
+
+.zero-control-v2 strong {
+  font-weight: 650 !important;
 }
 
 /* Soft geometry like the reference. */
@@ -85,20 +98,21 @@
 
 .zero-control-v2 header h1 {
   font-size: 34px !important;
-  font-weight: 500 !important;
+  font-weight: 600 !important;
 }
 
 .zero-control-v2 header p {
   margin-top: 5px !important;
   font-size: 12px !important;
   color: #616b79 !important;
+  font-weight: 500 !important;
 }
 
 .zero-control-v2 header button {
   padding: 8px 12px !important;
   border-radius: 7px !important;
   font-size: 10px !important;
-  font-weight: 600 !important;
+  font-weight: 650 !important;
   letter-spacing: 0.14em !important;
 }
 
@@ -116,7 +130,7 @@
 
 .zero-control-v2 main > div.relative.mx-auto > section:first-of-type > div span {
   font-size: 10px !important;
-  font-weight: 500 !important;
+  font-weight: 600 !important;
   letter-spacing: 0.14em !important;
 }
 
@@ -124,7 +138,7 @@
   font-size: 38px !important;
   line-height: 0.95 !important;
   font-family: inherit !important;
-  font-weight: 400 !important;
+  font-weight: 500 !important;
   letter-spacing: -0.045em !important;
 }
 
@@ -145,12 +159,42 @@
 .zero-control-v2 section h2 {
   font-size: 22px !important;
   margin-top: 0 !important;
-  font-weight: 500 !important;
+  font-weight: 600 !important;
   letter-spacing: -0.025em !important;
 }
 
 .zero-control-v2 section button {
   padding: 11px 14px !important;
+  font-weight: 500 !important;
+}
+
+.zero-control-v2 section button strong,
+.zero-control-v2 section button div[class*="font-semibold"] {
+  font-weight: 650 !important;
+}
+
+.zero-control-v2 section button span[class*="text-[10px]"] {
+  font-weight: 550 !important;
+}
+
+.zero-control-v2 section button div[class*="text-xs"],
+.zero-control-v2 section button div[class*="text-[11px]"] {
+  font-weight: 500 !important;
+}
+
+/* Active session: keep the red as a tint, not a solid block, and preserve readable metadata. */
+.zero-control-v2 section button[class*="bg-[#D62E37]"] {
+  background: rgba(214, 46, 55, 0.09) !important;
+}
+
+.zero-control-v2 section button[class*="bg-[#D62E37]"] * {
+  color: #08101f !important;
+}
+
+.zero-control-v2 section button[class*="bg-[#D62E37]"] div[class*="text-xs"],
+.zero-control-v2 section button[class*="bg-[#D62E37]"] div[class*="text-[11px]"],
+.zero-control-v2 section button[class*="bg-[#D62E37]"] span[class*="text-[10px]"] {
+  color: #4f5968 !important;
 }
 
 .zero-control-v2 section [class*="space-y-6"],
@@ -176,17 +220,25 @@
 .zero-control-v2 section div[class*="shadow-"] p {
   font-size: 14px !important;
   line-height: 1.55 !important;
-}
-
-/* Keep IDs compact but in the same family. */
-.zero-control-v2 code {
-  font-family: inherit !important;
   font-weight: 500 !important;
 }
 
-/* Exact portfolio accent. */
-.zero-control-v2 [class*="text-[#D62E37]"] { color: #D62E37 !important; }
-.zero-control-v2 [class*="bg-[#D62E37]"] { background-color: #D62E37 !important; }
+/* Eyebrows / tiny uppercase labels need enough authority without becoming heavy. */
+.zero-control-v2 span[class*="uppercase"],
+.zero-control-v2 div[class*="uppercase"] {
+  font-weight: 600 !important;
+}
+
+/* Keep IDs compact but readable in the same family. */
+.zero-control-v2 code {
+  font-family: inherit !important;
+  font-weight: 600 !important;
+}
+
+/* Exact portfolio accent. Do not override tinted red background utilities. */
+.zero-control-v2 [class*="text-[#D62E37]"] {
+  color: #D62E37 !important;
+}
 
 @media (max-width: 1279px) {
   .zero-control-v2 main > div.relative.mx-auto > section:nth-of-type(2) {
