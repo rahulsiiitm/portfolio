@@ -4,15 +4,15 @@ import { useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useChat } from "@ai-sdk/react";
 import { TextStreamChatTransport, type UIMessage } from "ai";
-import { Send, SendHorizontal, Minus, User, Bot, Cpu, RotateCcw, ChevronDown, Bug, Copy, Check, Sparkles } from "lucide-react";
+import { SendHorizontal, Minus, User, Bot, Cpu, RotateCcw, ChevronDown, Bug } from "lucide-react";
 import MessageBubble from "@/app/components/Chatbot/MessageBubble";
 import { sfx } from "./sound";
 import { Outfit, JetBrains_Mono } from "next/font/google";
 
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 const jbMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jbmono" });
-
-
+const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+const SESSION_STORAGE_KEY = "zero_chat_session";
 
 const INITIAL_MESSAGES: UIMessage[] = [
   {
@@ -21,6 +21,33 @@ const INITIAL_MESSAGES: UIMessage[] = [
     parts: [{ type: "text", text: "Hey — I'm Zero, Rahul's AI. Fair warning: I'm still being trained, so I don't know everything about him yet. But ask anyway." }],
   },
 ];
+
+function createSession() {
+  return {
+    id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15),
+    createdAt: Date.now(),
+  };
+}
+
+function getOrCreateSession() {
+  const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw) as { id?: string; createdAt?: number };
+      if (parsed.id && parsed.createdAt && Date.now() - parsed.createdAt < SESSION_TTL_MS) {
+        return { id: parsed.id, createdAt: parsed.createdAt };
+      }
+    } catch {
+      // Ignore malformed/legacy state and rotate the session below.
+    }
+  }
+
+  // Migrate away from the legacy indefinite session key.
+  localStorage.removeItem("zero_chat_session_id");
+  const session = createSession();
+  localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+  return session;
+}
 
 function TypingDots() {
   return (
@@ -44,10 +71,15 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   const [viewportHeight, setViewportHeight] = useState<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [sessionId, setSessionId] = useState<string>("");
-  const [copiedInput, setCopiedInput] = useState(false);
 
   const backendUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || "http://localhost:8000/api/chat";
   const baseUrl = backendUrl.replace(/\/api\/chat\/?$/, "");
+
+  const transport = new TextStreamChatTransport({ api: backendUrl });
+  const { messages, sendMessage, status, setMessages } = useChat({
+    transport,
+    messages: INITIAL_MESSAGES,
+  });
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.visualViewport) return;
@@ -67,116 +99,84 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
 
     handleResize();
     window.visualViewport.addEventListener("resize", handleResize);
-
-    return () => {
-      window.visualViewport?.removeEventListener("resize", handleResize);
-    };
+    return () => window.visualViewport?.removeEventListener("resize", handleResize);
   }, []);
-  
+
   useEffect(() => {
-    // Generate or retrieve session ID
-    let sid = localStorage.getItem("zero_chat_session_id");
-    if (!sid) {
-      sid = Math.random().toString(36).substring(2, 15);
-      localStorage.setItem("zero_chat_session_id", sid);
-    }
-    setSessionId(sid);
-    
-    // Fetch history
-    fetch(`${baseUrl}/api/chat/history/${sid}`)
-      .then(r => r.json())
-      .then(data => {
-        if (data.messages && data.messages.length > 0) {
-          // Format messages for useChat
-          const formatted = data.messages.map((m: any, i: number) => ({
-            id: `history-${i}`,
-            role: m.role === "model" ? "assistant" : m.role,
-            content: m.content
-          }));
+    const session = getOrCreateSession();
+    setSessionId(session.id);
+
+    fetch(`${baseUrl}/api/chat/history/${session.id}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`History request failed: ${r.status}`))))
+      .then((data) => {
+        if (data.messages?.length > 0) {
+          const formatted: UIMessage[] = data.messages.map(
+            (m: { role: string; content?: string }, i: number) => ({
+              id: `history-${i}`,
+              role: m.role === "model" ? "assistant" : "user",
+              parts: [{ type: "text", text: m.content || "" }],
+            })
+          );
           setMessages(formatted);
         }
       })
-      .catch(e => console.error("Failed to fetch history:", e));
-  }, [backendUrl]);
+      .catch((e) => console.error("Failed to fetch history:", e));
+  }, [baseUrl, setMessages]);
 
-  const transport = new TextStreamChatTransport({ api: backendUrl });
-
-  const { messages, sendMessage, status, setMessages } = useChat({
-    transport,
-    messages: INITIAL_MESSAGES,
-  });
-  
-  // Custom submit that adds session_id to body
   const customSendMessage = (text: string) => {
-    sendMessage({
-      text,
-    }, {
-      body: { session_id: sessionId }
-    });
+    if (!sessionId) return;
+    sendMessage({ text }, { body: { session_id: sessionId } });
   };
 
   const isTyping = status === "submitted" || status === "streaming";
 
-  // Auto-focus input on open
   useEffect(() => {
-    setTimeout(() => textareaRef.current?.focus(), 100);
+    const focusTimer = setTimeout(() => textareaRef.current?.focus(), 100);
+    return () => clearTimeout(focusTimer);
   }, []);
 
-  // Lock body scroll when chat is open to prevent mobile keyboard from pushing UI out of viewport
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    
-    // Also disable touch scrolling on the body for iOS Safari
+
     const preventTouchMove = (e: TouchEvent) => {
-      // Don't prevent touchmove if the event is originating from inside our chat scroll area
       const target = e.target as HTMLElement;
-      if (!target.closest('.chat-scroll-area')) {
-        e.preventDefault();
-      }
+      if (!target.closest(".chat-scroll-area")) e.preventDefault();
     };
-    document.addEventListener('touchmove', preventTouchMove, { passive: false });
-    
+    document.addEventListener("touchmove", preventTouchMove, { passive: false });
+
     return () => {
       document.body.style.overflow = originalOverflow;
-      document.removeEventListener('touchmove', preventTouchMove);
+      document.removeEventListener("touchmove", preventTouchMove);
     };
   }, []);
 
-  // SFX on response done + empty-response fallback
   const prevStatus = useRef(status);
   useEffect(() => {
-    if (prevStatus.current === "streaming" && status === "ready") {
-      sfx.receive();
-    }
+    if (prevStatus.current === "streaming" && status === "ready") sfx.receive();
     prevStatus.current = status;
   }, [status]);
 
-  // Ping server to check if awake
   useEffect(() => {
     let active = true;
     const ping = async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3000);
       try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
-        const url = `${baseUrl}/keep-alive`;
-        const res = await fetch(url, { signal: controller.signal });
-        clearTimeout(timeoutId);
+        const res = await fetch(`${baseUrl}/keep-alive`, { signal: controller.signal });
         if (active) setServerState(res.ok ? "online" : "offline");
-      } catch (e) {
+      } catch {
         if (active) setServerState("offline");
-        try {
-          const url = `${baseUrl}/keep-alive`;
-          const res = await fetch(url);
-          if (active && res.ok) setServerState("online");
-        } catch (err) {}
+      } finally {
+        clearTimeout(timeoutId);
       }
     };
     ping();
-    return () => { active = false; };
-  }, [backendUrl]);
+    return () => {
+      active = false;
+    };
+  }, [baseUrl]);
 
-  // Handle cold start waiting message
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     if (status === "submitted" && serverState !== "online") {
@@ -187,14 +187,13 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             id: "wakeup-" + Date.now(),
             role: "assistant",
             parts: [{ type: "text", text: "*(Yawns...)* I was sleeping! Waking up the servers takes a minute. Hang tight..." }],
-          }
+          },
         ]);
       }, 5000);
     }
     return () => clearTimeout(timeoutId);
   }, [status, serverState, setMessages]);
 
-  // Auto-resize textarea
   const adjustHeight = () => {
     const el = textareaRef.current;
     if (!el) return;
@@ -211,19 +210,18 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       submitMessage();
-    } else if (e.key !== "Shift" && e.key !== "Meta" && e.key !== "Control" && e.key !== "Alt") {
-      // Subtle typing click sound
+    } else if (!["Shift", "Meta", "Control", "Alt"].includes(e.key)) {
       sfx.key();
     }
   };
 
   const submitMessage = () => {
-    if (!input.trim() || isTyping) return;
+    if (!input.trim() || isTyping || !sessionId) return;
     sfx.send();
     customSendMessage(input.trim());
     setInput("");
     if (textareaRef.current) textareaRef.current.style.height = "auto";
-    scrollToBottom(); // Instantly jump to bottom and re-enable auto-scroll
+    scrollToBottom();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -231,34 +229,29 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
     submitMessage();
   };
 
-  const clearChat = () => {
+  const clearChat = async () => {
+    const oldSessionId = sessionId;
     setMessages(INITIAL_MESSAGES);
+
+    const nextSession = createSession();
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(nextSession));
+    setSessionId(nextSession.id);
+
+    if (!oldSessionId) return;
+    try {
+      const response = await fetch(`${baseUrl}/api/chat/history/${oldSessionId}`, { method: "DELETE" });
+      if (!response.ok) console.error(`Failed to clear server history: ${response.status}`);
+    } catch (error) {
+      console.error("Failed to clear server history:", error);
+    }
   };
 
-  const handleCopyChatOrInput = () => {
-    const lastBotMsg = [...messages].reverse().find((m) => m.role === "assistant");
-    const textToCopy = input.trim() || (lastBotMsg ? lastBotMsg.parts.filter(p => p.type === 'text').map((p: any) => p.text).join('\n') : "");
-    if (!textToCopy) return;
-
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      setCopiedInput(true);
-      setTimeout(() => setCopiedInput(false), 1800);
-    });
-  };
-
-  // Scroll tracking
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const userScrolledUp = useRef(false);
 
-  // Auto-scroll logic that triggers on every message chunk
   useEffect(() => {
-    if (!userScrolledUp.current) {
-      // Using 'auto' (instant) instead of 'smooth' here is crucial for streaming.
-      // Smooth scrolling gets interrupted by rapid DOM updates during a stream,
-      // causing it to fall behind or stutter. 'auto' perfectly sticks to the bottom.
-      messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
-    }
+    if (!userScrolledUp.current) messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
   }, [messages, isTyping]);
 
   const handleScroll = () => {
@@ -267,8 +260,6 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
     const { scrollTop, scrollHeight, clientHeight } = el;
     const distanceToBottom = scrollHeight - scrollTop - clientHeight;
     setShowScrollBtn(distanceToBottom > 120);
-    
-    // If the user scrolls up more than 80px from the bottom, they have "broken" the auto-scroll
     userScrolledUp.current = distanceToBottom > 80;
   };
 
@@ -277,7 +268,6 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Block scroll propagation to page
   useEffect(() => {
     const el = scrollContainerRef.current;
     if (!el) return;
@@ -300,6 +290,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   ];
 
   const handleSuggestionClick = (text: string) => {
+    if (!sessionId || isTyping) return;
     sfx.send();
     customSendMessage(text);
   };
@@ -313,7 +304,6 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       style={{ height: viewportHeight ? `${viewportHeight}px` : undefined }}
       className={`fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[440px] h-[100dvh] sm:h-[600px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-white sm:border-2 sm:border-red-600/50 sm:rounded-3xl flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_0_30px_rgba(220,38,38,0.25)] ${outfit.className} ${outfit.variable} ${jbMono.variable}`}
     >
-      {/* ── Header ── */}
       <div className="bg-white px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:pt-3 flex items-center justify-between border-b border-zinc-100 shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full flex items-center justify-center border-2 border-zinc-900 overflow-hidden bg-[#1a1a1a] shrink-0">
@@ -332,7 +322,6 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
         </div>
 
         <div className="flex items-center gap-1">
-          {/* Clear chat */}
           {messages.length > 1 && (
             <motion.button
               whileHover={{ scale: 1.1 }}
@@ -344,37 +333,21 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
               <RotateCcw size={15} />
             </motion.button>
           )}
-          <button
-            onClick={onClose}
-            className="p-2 hover:bg-zinc-100 rounded-full transition-colors text-zinc-400 hover:text-zinc-800"
-          >
+          <button onClick={onClose} className="p-2 hover:bg-zinc-100 rounded-full transition-colors text-zinc-400 hover:text-zinc-800">
             <Minus size={18} />
           </button>
         </div>
       </div>
 
-      {/* ── Messages ── */}
       <div className="flex-1 relative overflow-hidden min-h-0 bg-[#0e0e0e] rounded-t-3xl border-t border-white/5">
-        {/* Watermark — hidden on mobile to boost scrolling performance */}
         <div className="hidden sm:block absolute inset-0 opacity-50 bg-[url('/web-watermark.png')] bg-no-repeat bg-right-bottom pointer-events-none mix-blend-screen bg-[length:140%_auto] z-0" />
-
-        <div
-          ref={scrollContainerRef}
-          onScroll={handleScroll}
-          className="chat-scroll-area h-full overflow-y-auto overscroll-contain px-4 pt-4 pb-2 custom-scrollbar bg-transparent relative"
-        >
+        <div ref={scrollContainerRef} onScroll={handleScroll} className="chat-scroll-area h-full overflow-y-auto overscroll-contain px-4 pt-4 pb-2 custom-scrollbar bg-transparent relative">
           <div className="relative z-10 space-y-3">
             {messages.map((message, i) => (
-              <motion.div
-                key={message.id}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2, ease: "easeOut" }}
-              >
+              <motion.div key={message.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, ease: "easeOut" }}>
                 <MessageBubble message={message} isLast={i === messages.length - 1 && isTyping} />
               </motion.div>
             ))}
-
             {isTyping && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
                 <TypingDots />
@@ -384,7 +357,6 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
           </div>
         </div>
 
-        {/* Scroll-to-bottom — fixed to the visible frame, not the scrollable content */}
         <AnimatePresence>
           {showScrollBtn && (
             <motion.button
@@ -401,15 +373,9 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
         </AnimatePresence>
       </div>
 
-      {/* ── Suggestions (show only before first user message) ── */}
       <AnimatePresence>
         {messages.length <= 1 && (
-          <motion.div
-            initial={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="px-4 pb-2 bg-[#0e0e0e] overflow-hidden"
-          >
+          <motion.div initial={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }} className="px-4 pb-2 bg-[#0e0e0e] overflow-hidden">
             <div className="flex items-center gap-2 mb-2">
               <div className="h-px w-6 bg-racing-red" />
               <span className="text-[9px] font-bold text-zinc-500 tracking-[0.2em] uppercase">Try asking</span>
@@ -422,7 +388,8 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => handleSuggestionClick(s.label)}
-                  className="flex items-center gap-2 px-3 py-2 text-[11px] text-zinc-400 border border-white/8 rounded-lg hover:text-white hover:border-racing-red/40 transition-all bg-white/[0.03] text-left"
+                  disabled={!sessionId || isTyping}
+                  className="flex items-center gap-2 px-3 py-2 text-[11px] text-zinc-400 border border-white/8 rounded-lg hover:text-white hover:border-racing-red/40 transition-all bg-white/[0.03] text-left disabled:opacity-50"
                 >
                   {s.icon}
                   <span className="truncate">{s.label}</span>
@@ -433,7 +400,6 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
         )}
       </AnimatePresence>
 
-      {/* ── Input ── */}
       <div className="px-3 pt-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:pb-3 bg-[#0a0b0d] border-t border-white/10">
         <form onSubmit={handleSubmit} className="flex items-center gap-2">
           <textarea
@@ -442,9 +408,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             onFocus={() => {
-              if (window.innerWidth < 640) {
-                setTimeout(() => window.scrollTo(0, 0), 100);
-              }
+              if (window.innerWidth < 640) setTimeout(() => window.scrollTo(0, 0), 100);
             }}
             placeholder="Ask me anything..."
             rows={1}
@@ -452,10 +416,9 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             style={{ minHeight: "40px", maxHeight: "120px" }}
           />
 
-          {/* Red Glow Send Button */}
           <motion.button
             type="submit"
-            disabled={!input.trim() || isTyping}
+            disabled={!input.trim() || isTyping || !sessionId}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="shrink-0 w-10 h-10 flex items-center justify-center rounded-2xl bg-gradient-to-br from-red-600 via-red-700 to-red-900 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_0_15px_rgba(220,38,38,0.5)] border border-red-500/40"
@@ -464,7 +427,6 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
           </motion.button>
         </form>
 
-        {/* ── Spider Footer Divider Bar ── */}
         <div className="flex items-center justify-center gap-2 mt-3 pb-1 text-[10px] text-zinc-500 font-sans select-none">
           <div className="h-[1px] w-12 bg-gradient-to-r from-transparent via-red-900/60 to-red-600/50" />
           <Bug size={14} className="text-racing-red shrink-0 stroke-[2.2]" />
