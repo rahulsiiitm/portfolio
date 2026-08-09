@@ -1,134 +1,175 @@
-# Rahul Sharma | Portfolio 2026
+<div align="center">
+  <img src="image.png" alt="Rahul Sharma Portfolio" width="100%" />
 
-![Hero Section](image.png)
+  <br />
+  <h1>Rahul Sharma — Portfolio</h1>
+  <p><strong>Personal portfolio for my work across AI engineering, software, product design, and interactive web experiences.</strong></p>
 
-Website Link: [https://rahul.aishtrex.com](https://rahul.aishtrex.com/)
+  <p>
+    <a href="https://rahul.aishtrex.com"><strong>Live Website</strong></a>
+  </p>
 
-> **"Engineering intelligence into design."**
+  <p>
+    <img src="https://img.shields.io/badge/Next.js-16.1.2-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" />
+    <img src="https://img.shields.io/badge/React-19.2.3-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+    <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-3.4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+    <img src="https://img.shields.io/badge/GSAP-Animation-88CE02?style=for-the-badge&logo=greensock&logoColor=white" alt="GSAP" />
+    <img src="https://img.shields.io/badge/License-Proprietary-D62E37?style=for-the-badge" alt="License" />
+  </p>
+</div>
 
-A high-performance personal portfolio website built for speed, precision, and aesthetics.  
-This project bridges the gap between **Silicon Logic (AI/Backend)** and **Human Emotion (UI/UX)**, featuring an **F1-inspired “Telemetry” design system**.
+## Overview
 
-![Tech Stack](https://img.shields.io/badge/Next.js-14-black)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
-![Tailwind CSS 3.4](https://img.shields.io/badge/Tailwind_CSS-3.4-cyan)
-![GSAP](https://img.shields.io/badge/GSAP-Animation-green)
+This repository powers my personal website at **rahul.aishtrex.com**.
 
----
+The site is built as more than a static portfolio. It combines project storytelling, motion design, custom interaction systems, and an AI assistant into one cohesive experience. The visual direction is influenced by modern motorsport/editorial interfaces: clean grids, slanted geometry, restrained motion, strong typography, and a focused red accent.
 
-## Key Features
-
-- **Smooth Scrolling**  
-  Integrated **Lenis** for buttery smooth, momentum-based scrolling that syncs perfectly with animations.
-
-- **Dynamic Navigation**  
-  Smart Navbar detects background brightness using `elementFromPoint` and automatically switches text color (black/white) for perfect contrast.
-
-- **🏎️ F1 "Telemetry" Design System**  
-  Custom UI inspired by racing dashboards — system diagnostics, skill bars, slanted overlays, and data-driven layouts.
-
-- **Advanced Animations**  
-  Complex **GSAP + ScrollTrigger** timelines for staggered text, parallax motion, and immersive section reveals.
-
-- **Audio Feedback**  
-  Interactive **engine-start sound** triggered on Resume download for tactile feedback.
-
-- **Performance Monitoring**  
-  Pre-configured **Vercel Analytics** and **Speed Insights** for real-time performance tracking.
-
-- **Fully Responsive**  
-  Optimized from mobile screens to ultra-wide 4K displays.
+The goal is simple: make the portfolio feel engineered, not templated.
 
 ---
 
-##  Tech Stack
+## Highlights
 
-### Core
-- **Next.js 14 (App Router)**
+### Portfolio Experience
+- Responsive project showcase with dedicated project pages.
+- Custom grid and slanted visual language used across the site.
+- GSAP-powered motion and scroll interactions.
+- Lenis smooth scrolling for consistent movement across sections.
+- Dynamic navigation and responsive layouts for desktop and mobile.
+
+### ZERO — Portfolio AI Assistant
+The portfolio includes **ZERO**, a personal AI chatbot backed by the separate [`rahul-ai`](https://github.com/rahulsiiitm/rahul-ai) repository.
+
+ZERO can answer questions about my work, projects, experience, and technical background directly from the site.
+
+The frontend includes:
+- streaming chat responses,
+- persistent conversation state,
+- responsive chat UI,
+- graceful backend error handling,
+- integration with the standalone ZERO backend.
+
+### ZERO Control
+A private `/zero-control` observability interface is included for monitoring the chatbot.
+
+It provides visibility into:
+- chat sessions,
+- stored messages,
+- provider usage,
+- response latency,
+- failures and events,
+- inbound leads.
+
+Access is protected using Supabase authentication and Row Level Security.
+
+---
+
+## Tech Stack
+
+### Frontend
+- **Next.js 16.1.2**
+- **React 19.2.3**
 - **TypeScript**
-- **React**
-
-### Styling & Animation
 - **Tailwind CSS**
-- **GSAP (GreenSock)**
-- **Lenis (Studio Freight)**
 
-### Deployment
-- **Vercel**
+### Motion & Interaction
+- **GSAP**
+- **Framer Motion**
+- **Lenis**
+- **Lucide React**
+
+### AI Integration
+- **Vercel AI SDK**
+- **ZERO backend API**
+
+### Observability & Platform
+- **Supabase** for Control Room authentication and telemetry access
+- **Vercel Analytics**
+- **Vercel Speed Insights**
+- **Vercel** for deployment
 
 ---
 
-##  Getting Started
+## Project Structure
 
-### 1️⃣ Clone the repository
-```bash
-git clone https://github.com/rahulsiiitm/portfolio-2026.git
-cd portfolio-2026
+```text
+portfolio/
+├── app/
+│   ├── components/          # Main portfolio UI and shared components
+│   ├── projects/            # Individual project pages
+│   ├── zero-control/        # Private ZERO observability interface
+│   ├── globals.css          # Global styles and portfolio grid system
+│   ├── layout.tsx           # Global application layout
+│   └── page.tsx             # Main portfolio entry point
+├── data/                    # Portfolio/project data
+├── public/                  # Static assets
+├── image.png                # README preview image
+├── LICENSE                  # Proprietary license
+└── package.json
 ```
 
-### 2️⃣ Install dependencies
+---
+
+## Running Locally
+
 ```bash
+# Clone the repository
+git clone https://github.com/rahulsiiitm/portfolio.git
+cd portfolio
+
+# Install dependencies
 npm install
-# or
-yarn install
-```
 
-### 3️⃣ Run the development server
-```bash
+# Start the development server
 npm run dev
 ```
 
-### 4️⃣ Open locally
-Visit:  
--> http://localhost:3000
+Then open:
 
----
-
-##  Project Structure
-
-```bash
-├── app/
-│   ├── components/
-│   │   ├── Hero.tsx              # Slanted overlay & WebP background
-│   │   ├── Navbar.tsx            # Dynamic color-switching + smooth scroll
-│   │   ├── About.tsx             # Telemetry stats, audio trigger, skill bars
-│   │   ├── Projects.tsx          # Project showcase
-│   │   ├── TechStack.tsx         # Infinite marquee of skills
-│   │   ├── SmoothScrolling.tsx   # Lenis provider wrapper
-│   │   └── ...
-│   ├── globals.css               # Tailwind + custom fonts
-│   ├── layout.tsx                # Global layout + Analytics
-│   └── page.tsx                  # Main entry point
-├── public/
-│   ├── livery.webp               # Optimized hero background
-│   ├── engine-start.mp3          # Interaction sound
-│   └── ...
-└── ...
+```text
+http://localhost:3000
 ```
 
----
-
-##  Design Philosophy
-
-Inspired by **Formula 1 engineering precision**:
-
-- **Typography**  
-  Bold uppercase headers with monospaced data text.
-
-- **Color Palette**  
-  Carbon Black, Off-White, Racing Red (`#FF0000`).
-
-- **Motion Language**  
-  Fast, non-linear easing curves (`power4.out`) to simulate acceleration and deceleration.
+Some features such as ZERO and ZERO Control require their respective environment variables and backend services to be configured.
 
 ---
 
-##  Author
+## Related Repository
+
+### [`rahul-ai`](https://github.com/rahulsiiitm/rahul-ai)
+Backend and local AI tooling for ZERO, including the FastAPI service used by this portfolio.
+
+---
+
+## Design Direction
+
+The interface follows a restrained motorsport-inspired system rather than a traditional developer portfolio aesthetic:
+
+- off-white and graphite surfaces,
+- racing red accent `#D62E37`,
+- skewed grid geometry,
+- compact editorial typography,
+- subtle rhombus and slanted SVG details,
+- motion used to support hierarchy instead of decorating every element.
+
+---
+
+## Author
 
 **Rahul Sharma**  
-B.Tech CSE • Full Stack & AI Engineer  
+AI Engineer · Software Developer · Product Designer
 
-📍 Imphal, India  
-🟢 Status: **ONLINE**
+- Website: [rahul.aishtrex.com](https://rahul.aishtrex.com)
+- GitHub: [github.com/rahulsiiitm](https://github.com/rahulsiiitm)
+- LinkedIn: [linkedin.com/in/rahulsharma2k4](https://linkedin.com/in/rahulsharma2k4)
 
-Built with 🏎️ and ☕ by Rahul Sharma.
+---
+
+## License
+
+This project is **proprietary**. All rights reserved.
+
+The source code, design system, visual assets, branding, content, and related materials may not be copied, modified, redistributed, deployed, or reused without explicit written permission.
+
+See the [LICENSE](LICENSE) file for the full terms.
