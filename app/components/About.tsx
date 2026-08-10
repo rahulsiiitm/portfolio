@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useSound } from "./SoundProvider";
 
 export default function About() {
     const container = useRef(null);
@@ -10,36 +11,10 @@ export default function About() {
     const buttonRef = useRef(null);
     const numberRef = useRef(null);
     const sidebarRef = useRef(null);
-
-    // Audio State
-    const audioRef = useRef<HTMLAudioElement | null>(null);
-    const [audioUnlocked, setAudioUnlocked] = useState(false);
-    const [isMobile, setIsMobile] = useState(false);
+    const { play } = useSound();
 
     useEffect(() => {
-        // Check if mobile
-        setIsMobile(window.innerWidth < 768);
-
-        // 1. SETUP AUDIO
-        const audio = new Audio("/engine-start.mp3");
-        audio.volume = 0.5;
-        audioRef.current = audio;
-
-        // 2. UNLOCK AUDIO (Browser Policy Fix)
-        const unlockAudio = () => {
-            if (audioRef.current) {
-                const playPromise = audioRef.current.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        audioRef.current?.pause();
-                        audioRef.current!.currentTime = 0;
-                        setAudioUnlocked(true);
-                    }).catch(() => { });
-                }
-            }
-            document.removeEventListener("click", unlockAudio);
-        };
-        document.addEventListener("click", unlockAudio);
+        const isMobile = window.innerWidth < 768;
 
         gsap.registerPlugin(ScrollTrigger);
 
@@ -126,17 +101,8 @@ export default function About() {
 
         return () => {
             ctx.revert();
-            document.removeEventListener("click", unlockAudio);
         };
-    }, [isMobile]);
-
-    const playHoverSound = () => {
-        if (!audioUnlocked) return;
-        if (audioRef.current) {
-            audioRef.current.currentTime = 0;
-            audioRef.current.play().catch(() => { });
-        }
-    };
+    }, []);
 
     return (
         <section ref={container} id="about" className="relative w-full bg-off-white text-carbon-black border-b border-black/10 overflow-hidden">
@@ -202,7 +168,7 @@ export default function About() {
 
                         <div className="flex flex-col justify-between">
                             <p>
-                                The best tech feels invisible. Users shouldn't think about how it works - they should just use it and love it.
+                                The best tech feels invisible. Users shouldn&#39;t think about how it works - they should just use it and love it.
                             </p>
 
                             {/* Stats - MOBILE OPTIMIZED */}
@@ -226,9 +192,9 @@ export default function About() {
                             download="Rahul_Sharma_Resume.pdf"
                             target="_blank"
                             rel="noopener noreferrer"  // ← Add this
-                            aria-label="Download Resume"  // ← Add this
-                            onMouseEnter={playHoverSound}
-                            className="inline-flex items-center gap-3 md:gap-4 px-6 md:px-8 py-3 md:py-4 bg-black text-white font-bold uppercase tracking-[0.15em] md:tracking-[0.2em] text-xs md:text-sm hover:bg-racing-red transition-colors duration-300 group shadow-xl cursor-pointer"
+                            aria-label="Download Resume"
+                            onPointerDown={() => play("engine")}
+                            className="slant-action inline-flex items-center gap-3 md:gap-4 px-6 md:px-8 py-3 md:py-4 bg-black text-white font-bold uppercase tracking-[0.15em] md:tracking-[0.2em] text-xs md:text-sm hover:bg-racing-red transition-colors duration-300 group shadow-xl cursor-pointer"
                         >
                             <span>Download Resume</span>
                             <span className="group-hover:translate-y-1 transition-transform duration-300">↓</span>

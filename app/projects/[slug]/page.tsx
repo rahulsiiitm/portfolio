@@ -198,26 +198,26 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
               <div className="flex flex-col sm:flex-row flex-wrap gap-3 pt-2">
                 {project.links.pypi && (
                   <a href={project.links.pypi} target="_blank" rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-md text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-blue-700 transition-colors shadow-sm">
+                    className="slant-action flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-md text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-blue-700 transition-colors shadow-sm">
                     <ExternalLink size={14} />
                     PyPI Package
                   </a>
                 )}
                 {project.links.demo === 'soon' ? (
-                  <span className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-zinc-200 text-zinc-500 cursor-not-allowed rounded-md text-[10px] font-bold uppercase tracking-[0.2em] shadow-sm">
+                  <span className="slant-action flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-zinc-200 text-zinc-500 cursor-not-allowed rounded-md text-[10px] font-bold uppercase tracking-[0.2em] shadow-sm">
                     <Play size={14} />
                     Live Link Soon
                   </span>
                 ) : project.links.demo && (
                   <a href={project.links.demo} target="_blank" rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-600 text-white rounded-md text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-red-700 transition-colors shadow-sm">
+                    className="slant-action flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-600 text-white rounded-md text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-red-700 transition-colors shadow-sm">
                     <Play size={14} />
                     Launch Demo
                   </a>
                 )}
                 {project.links.github && (
                   <a href={project.links.github} target="_blank" rel="noopener noreferrer"
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white text-zinc-900 ring-1 ring-zinc-200 rounded-md text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-zinc-50 transition-colors shadow-sm">
+                    className="slant-action flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-white text-zinc-900 ring-1 ring-zinc-200 rounded-md text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-zinc-50 transition-colors shadow-sm">
                     <Code2 size={14} />
                     Source Code
                   </a>

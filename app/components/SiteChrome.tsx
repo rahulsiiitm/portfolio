@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import SmoothScrolling from "./SmoothScrolling";
 import Navbar from "./Navbar";
 import ChatWidget from "./Chatbot/ChatWidget";
+import { SoundProvider } from "./SoundProvider";
 
 export default function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -12,12 +13,12 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
   if (isControlRoom) return <>{children}</>;
 
   return (
-    <>
+    <SoundProvider>
       <SmoothScrolling>
         <Navbar />
         {children}
       </SmoothScrolling>
       <ChatWidget />
-    </>
+    </SoundProvider>
   );
 }

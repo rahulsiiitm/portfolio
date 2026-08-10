@@ -20,36 +20,14 @@ export default function Footer() {
 
     // --- AUDIO STATE ---
     const audioRef = useRef<HTMLAudioElement | null>(null);
-    const [audioUnlocked, setAudioUnlocked] = useState(false);
 
     useEffect(() => {
         // 1. SETUP AUDIO
-        const audio = new Audio("/engine-start.mp3");
-        audio.volume = 0.5;
+        const audio = new Audio("/engine-start.mp3?v=rahul-engine-3");
+        audio.volume = 1;
         audioRef.current = audio;
 
-        // 2. UNLOCK AUDIO (Browser Policy Fix)
-        const unlockAudio = () => {
-            if (audioRef.current) {
-                const playPromise = audioRef.current.play();
-                if (playPromise !== undefined) {
-                    playPromise.then(() => {
-                        audioRef.current?.pause();
-                        audioRef.current!.currentTime = 0;
-                        setAudioUnlocked(true);
-                    }).catch((error) => {
-                        console.log("Audio unlock blocked (waiting for interaction)");
-                    });
-                }
-            }
-            document.removeEventListener("click", unlockAudio);
-            document.removeEventListener("touchstart", unlockAudio);
-        };
-
-        document.addEventListener("click", unlockAudio);
-        document.addEventListener("touchstart", unlockAudio);
-
-        // 3. GSAP ANIMATIONS
+        // GSAP ANIMATIONS
         gsap.registerPlugin(ScrollTrigger);
 
         gsap.fromTo(footerRef.current,
@@ -73,8 +51,6 @@ export default function Footer() {
 
         // 4. CLEANUP
         return () => {
-            document.removeEventListener("click", unlockAudio);
-            document.removeEventListener("touchstart", unlockAudio);
             if (audioRef.current) {
                 audioRef.current.pause();
                 audioRef.current = null;
@@ -110,9 +86,7 @@ export default function Footer() {
     };
 
     // --- PLAY SOUND FUNCTION ---
-    const playHoverSound = () => {
-        if (!audioUnlocked) return;
-
+    const playEngineSound = () => {
         if (audioRef.current) {
             audioRef.current.currentTime = 0;
             audioRef.current.play().catch((e) => console.log("Play blocked", e));
@@ -124,7 +98,6 @@ export default function Footer() {
         event.preventDefault();
         setIsSubmitting(true);
         setResult("Sending data packets...");
-        playHoverSound();
 
         const formData = new FormData(event.target as HTMLFormElement);
         const data = {
@@ -199,7 +172,7 @@ export default function Footer() {
             const text = await response.text();
             try {
                 result = JSON.parse(text);
-            } catch (e) {
+            } catch {
                 console.error("Non-JSON response from server:", text);
                 setResult(`Server Error (${response.status}). Please try again.`);
                 return;
@@ -211,12 +184,13 @@ export default function Footer() {
             } else {
                 setResult(result.message || "Connection Failed. Retrying...");
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Submission error:', error);
-            if (error.message === 'Failed to fetch') {
+            const message = error instanceof Error ? error.message : 'Unknown error';
+            if (message === 'Failed to fetch') {
                 setResult("Adblocker prevented submission. Please email rahulsharma.hps@gmail.com directly.");
             } else {
-                setResult(`Client Error: ${error.message || "Network Check failed"}`);
+                setResult(`Client Error: ${message || "Network Check failed"}`);
             }
         } finally {
             setIsSubmitting(false);
@@ -263,7 +237,7 @@ export default function Footer() {
                     </div>
 
                     <h1 className="text-[10vw] sm:text-[8vw] lg:text-[7rem] leading-[0.8] font-black uppercase mb-6 md:mb-8 italic transform -skew-x-6 min-h-[3ch]">
-                        Let's <br /> Build <br />
+                        Let&#39;s <br /> Build <br />
                         <span className="text-transparent stroke-text">
                             {displayText}
                             <span className="animate-pulse text-white">_</span>
@@ -271,7 +245,7 @@ export default function Footer() {
                     </h1>
 
                     <p className="max-w-md text-base md:text-lg font-medium opacity-90 leading-relaxed">
-                        From <strong>IIIT Manipur</strong> to the world. Let's engineer solutions that break the speed limit.
+                        From <strong>IIIT Manipur</strong> to the world. Let&#39;s engineer solutions that break the speed limit.
                     </p>
                 </div>
 
@@ -323,9 +297,9 @@ export default function Footer() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            onMouseEnter={playHoverSound}
+                            onPointerDown={playEngineSound}
                             aria-label="Submit form"
-                            className="form-element mt-1 md:mt-2 py-4 md:py-5 px-5 md:px-6 bg-black text-white text-sm md:text-base font-black uppercase tracking-widest hover:bg-red-600 hover:animate-engine-start transition-colors duration-300 flex justify-between items-center group/btn cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="slant-action form-element mt-1 md:mt-2 py-4 md:py-5 px-5 md:px-6 bg-black text-white text-sm md:text-base font-black uppercase tracking-widest hover:bg-red-600 hover:animate-engine-start transition-colors duration-300 flex justify-between items-center group/btn cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <span>{isSubmitting ? "Transmitting..." : "Start Engine"}</span>
                             <span className="group-hover/btn:translate-x-2 transition-transform">→</span>
@@ -378,7 +352,7 @@ export default function Footer() {
 
             <style jsx>{`
                 .stroke-text { -webkit-text-stroke: 2px white; color: transparent; }
-                
+
                 @keyframes spin-slow {
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
@@ -409,7 +383,7 @@ export default function Footer() {
                 }
 
                 .hover\:animate-engine-start:hover {
-                    animation: engine-shake 3s ease-out forwards; 
+                    animation: engine-shake 3s ease-out forwards;
                 }
             `}</style>
         </footer>

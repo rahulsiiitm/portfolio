@@ -1,6 +1,4 @@
 "use client";
-import { useRef } from "react";
-
 import experiences from "../../data/experience.json";
 
 export default function Experience() {
@@ -15,7 +13,7 @@ export default function Experience() {
                         Track <br /> <span className="text-transparent stroke-text">Record</span>
                     </h2>
                     <div className="text-left md:text-right mt-6 md:mt-0">
-                        <p className="text-[10px] md:text-xs font-mono text-gray-500 mb-1.5 md:mb-2">/// CAREER TRAJECTORY</p>
+                        <p className="text-[10px] md:text-xs font-mono text-gray-500 mb-1.5 md:mb-2">{"/// CAREER TRAJECTORY"}</p>
                         <div className="flex items-center justify-start md:justify-end gap-2">
                             <span className="w-1.5 h-1.5 md:w-2 md:h-2 bg-racing-red rounded-full animate-pulse"></span>
                             <span className="text-xs md:text-sm font-bold uppercase tracking-widest text-racing-red">Live Status</span>
@@ -58,7 +56,7 @@ export default function Experience() {
 
                                 {/* RIGHT: Arrow Icon - MOBILE OPTIMIZED */}
                                 <div className="w-full md:w-1/4 flex justify-start md:justify-end items-center">
-                                    <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:border-black group-hover:rotate-[-45deg] transition-all duration-500">
+                                    <div className="slant-square-control text-white/70 group-hover:text-black group-hover:border-black [--slant-icon-hover:#fff]">
                                         <span className="text-lg md:text-xl text-white group-hover:text-black">→</span>
                                     </div>
                                 </div>

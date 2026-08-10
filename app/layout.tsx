@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Manrope } from "next/font/google";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -7,7 +7,18 @@ import "./globals.css";
 import JsonLd from "./components/JsonLd";
 import SiteChrome from "./components/SiteChrome";
 
-const inter = Inter({ subsets: ["latin"] });
+const manrope = Manrope({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const interHeadings = Inter({
+  subsets: ["latin"],
+  weight: ["600", "700", "800", "900"],
+  variable: "--font-inter-headings",
+  display: "swap",
+});
 
 const ammonite = localFont({
   src: "./fonts/Ammonite.otf",
@@ -69,8 +80,6 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   themeColor: "#000000",
   interactiveWidget: "resizes-content",
 };
@@ -78,7 +87,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} ${ammonite.variable}`}>
+      <body className={`${manrope.className} ${interHeadings.variable} ${ammonite.variable}`}>
         <JsonLd />
         <SiteChrome>{children}</SiteChrome>
         <Analytics />

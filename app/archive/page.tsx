@@ -1,15 +1,15 @@
 import Link from "next/link";
-import { ArrowLeft, ArrowUpRight, Code2, Cpu, Globe, Lock, Terminal } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, Cpu, Globe, Lock, Terminal } from "lucide-react";
 import projectsData from "../../data/projects.json";
 
 export default function ArchivePage() {
   return (
     <main className="min-h-screen bg-zinc-50 text-zinc-900 pt-32 pb-20 px-4 md:px-8 lg:px-16 font-sans relative overflow-hidden">
-      
+
       {/* --- TILTED 3D GRID BACKGROUND (Matches Case Study) --- */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex justify-center perspective-[2000px]">
         <div className="absolute -top-[20%] w-[300vw] h-[150vh]"
-             style={{ 
+             style={{
                backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)',
                backgroundSize: '50px 50px',
                transform: 'rotateX(75deg) translateY(-200px) translateZ(-200px)',
@@ -23,11 +23,11 @@ export default function ArchivePage() {
       <div className="max-w-7xl mx-auto relative z-10">
         {/* --- PAGE HEADER --- */}
         <header className="mb-16">
-          <Link href="/#projects" className="inline-flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-zinc-400 hover:text-red-600 mb-8 transition-colors group">
-            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" /> 
+          <Link href="/#projects" className="slant-action inline-flex items-center gap-2 px-4 py-2 border border-zinc-200 text-[10px] font-mono font-bold uppercase tracking-[0.3em] text-zinc-400 hover:text-red-600 mb-8 transition-colors group">
+            <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
             Back to Base
           </Link>
-          
+
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-zinc-200 pb-10">
             <div>
               <h1 className="text-7xl md:text-9xl font-ammonite lowercase leading-none tracking-tight text-zinc-900">
@@ -98,9 +98,9 @@ export default function ArchivePage() {
                     </div>
                   </td>
                   <td className="py-6 text-right">
-                    <Link 
-                        href={`/projects/${project.slug}`} 
-                        className="inline-flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest bg-zinc-900 text-white px-4 py-2 rounded-sm hover:bg-red-600 transition-all shadow-sm"
+                    <Link
+                        href={`/projects/${project.slug}`}
+                        className="slant-action inline-flex items-center gap-2 text-[10px] font-mono font-bold uppercase tracking-widest bg-zinc-900 text-white px-4 py-2 rounded-sm hover:bg-red-600 transition-all shadow-sm"
                     >
                         View <ArrowUpRight size={12} />
                     </Link>
@@ -124,7 +124,7 @@ export default function ArchivePage() {
                     <span className="text-lg font-black italic uppercase">AI / ML</span>
                 </div>
             </div>
-            
+
             <div className="flex gap-4">
                 <div className="p-2 border border-zinc-200 rounded-sm text-zinc-400">
                     <Globe size={16} />

@@ -2,6 +2,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Manrope handles body copy; Inter keeps display headings crisp and architectural. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-inter-headings), Inter, Arial, sans-serif;
+}
+
 .bg-grid-pattern {
   background-size: 55px 45px;
   background-image: 
@@ -33,4 +43,78 @@ html.lenis, html.lenis body {
 
 .lenis.lenis-scrolling iframe {
   pointer-events: none;
+}
+
+
+/* Keep every scrolling surface usable while removing the visual scrollbar. */
+html,
+body,
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+/* Leclerc-inspired slanted square control language. */
+.slant-square-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 2.75rem;
+  flex: 0 0 auto;
+  border: 1px solid currentColor;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  transform: skewX(-8deg);
+  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease, transform 180ms ease;
+}
+
+.slant-square-control > * {
+  transform: skewX(8deg);
+}
+
+.slant-square-control:hover {
+  background: currentColor;
+  transform: skewX(-8deg) translateY(-2px);
+}
+
+.slant-square-control:hover > * {
+  color: var(--slant-icon-hover, #fff);
+}
+
+@media (max-width: 640px) {
+  .slant-square-control {
+    width: 3rem;
+    height: 2.5rem;
+  }
+}
+/* Full-size actions share the same angled control silhouette. */
+.slant-action {
+  border-radius: 6px !important;
+  clip-path: polygon(7px 0, 100% 0, calc(100% - 7px) 100%, 0 100%);
+  transition: transform 180ms ease, background-color 180ms ease, color 180ms ease, border-color 180ms ease !important;
+}
+
+.slant-action:hover {
+  transform: translateY(-2px);
+}
+
+.slant-action:active {
+  transform: translateY(0) scale(0.98);
+}
+/* Subtle procedural spider-web: crisp at every size, no enlarged bitmap artifacts. */
+.chat-web-pattern {
+  opacity: 0.36;
+  background-image:
+    repeating-radial-gradient(circle at 100% 0%, transparent 0 20px, rgba(220, 38, 38, 0.22) 21px 22px, transparent 23px 40px),
+    repeating-conic-gradient(from 180deg at 100% 0%, transparent 0deg 14deg, rgba(220, 38, 38, 0.18) 14.5deg 15deg, transparent 15.5deg 30deg);
+  background-repeat: no-repeat;
 }

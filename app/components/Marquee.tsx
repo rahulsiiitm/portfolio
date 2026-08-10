@@ -15,23 +15,22 @@ export default function TelemetryMarquee() {
     const gearTextRef = useRef<HTMLDivElement>(null);
     const ledsRef = useRef<(HTMLDivElement | null)[]>([]);
 
-    let xPercent = 0;
-    const direction = -1;
-
+    const xPercent = useRef(0);
     useEffect(() => {
         gsap.registerPlugin(ScrollTrigger);
+        const direction = -1;
 
         // 1. Scrolling Text Ticker
-        let animationFrameId: number;
+        let animationFrameId = 0;
         const animateText = () => {
-            if (xPercent <= -100) xPercent = 0;
-            if (xPercent > 0) xPercent = -100;
+            if (xPercent.current <= -100) xPercent.current = 0;
+            if (xPercent.current > 0) xPercent.current = -100;
 
             if (firstTextRef.current && secondTextRef.current) {
-                gsap.set(firstTextRef.current, { xPercent: xPercent });
-                gsap.set(secondTextRef.current, { xPercent: xPercent });
+                gsap.set(firstTextRef.current, { xPercent: xPercent.current });
+                gsap.set(secondTextRef.current, { xPercent: xPercent.current });
             }
-            xPercent += 0.04 * direction;
+            xPercent.current += 0.04 * direction;
             animationFrameId = requestAnimationFrame(animateText);
         };
         animationFrameId = requestAnimationFrame(animateText);
@@ -73,7 +72,7 @@ export default function TelemetryMarquee() {
             lastTime = now;
         };
 
-        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
         // 3. Scroll-Activated Gear/RPM Telemetry
         const trigger = ScrollTrigger.create({
@@ -139,7 +138,7 @@ export default function TelemetryMarquee() {
         });
 
         return () => {
-            cancelAnimationFrame(animationFrameId);
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
             window.removeEventListener("mousemove", handleMouseMove);
             trigger.kill();
         };

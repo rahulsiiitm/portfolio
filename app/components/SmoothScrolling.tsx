@@ -1,12 +1,10 @@
 "use client";
-import { ReactLenis } from 'lenis/react'
+import { ReactLenis } from "lenis/react";
 
-function SmoothScrolling({ children }: { children: React.ReactNode }) {
+export default function SmoothScrolling({ children }: { children: React.ReactNode }) {
   return (
-    <ReactLenis root options={{ lerp: 0.1, duration: 1.35, smoothWheel: true }}>
-      {children as any}
+    <ReactLenis root options={{ lerp: 0.085, duration: 1.45, smoothWheel: true, syncTouch: false }}>
+      {children}
     </ReactLenis>
   );
 }
-
-export default SmoothScrolling;

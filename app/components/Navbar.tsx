@@ -1,9 +1,11 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import gsap from "gsap";
 import { usePathname } from "next/navigation";
 import { useLenis } from "lenis/react";
+import { ArrowDownRight, ChevronDown, Code2, Github, Linkedin, Mail } from "lucide-react";
 
 const menuLinks = [
   { label: "Home", href: "/", id: "01" },
@@ -14,173 +16,112 @@ const menuLinks = [
   { label: "Contact", href: "#contact", id: "06" },
 ];
 
+const socials = [
+  { label: "GitHub", href: "https://github.com/rahulsiiitm", icon: Github },
+  { label: "LinkedIn", href: "https://linkedin.com/in/rahulsiiitm", icon: Linkedin },
+  { label: "LeetCode", href: "https://leetcode.com/u/rahul2k4/", icon: Code2 },
+  { label: "Email", href: "mailto:rahulsharma.hps@gmail.com", icon: Mail },
+];
+
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDarkText, setIsDarkText] = useState(false);
-
-  const menuRef = useRef(null);
-  const overlayRef = useRef(null);
   const pathname = usePathname();
   const lenis = useLenis();
 
   useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
-
-  // --- SMOOTH SCROLL HANDLER - FIXED TYPE ---
-  const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    setIsOpen(false);
-
-    if (href.startsWith("#")) {
-      e.preventDefault();
-      lenis?.scrollTo(href);
-    }
-    else if (href === "/" && pathname === "/") {
-      e.preventDefault();
-      lenis?.scrollTo(0);
-    }
-  };
-
-  // --- DYNAMIC BACKGROUND DETECTION ---
-  useEffect(() => {
     const checkBackground = () => {
       const element = document.elementFromPoint(window.innerWidth / 2, 40);
-      if (element) {
-        let current: HTMLElement | null = element as HTMLElement;
-        let bgColor = null;
-
-        while (current && current !== document.body) {
-          const computed = window.getComputedStyle(current);
-          const bg = computed.backgroundColor;
-          if (bg && bg !== 'rgba(0, 0, 0, 0)' && bg !== 'transparent') {
-            bgColor = bg;
-            break;
-          }
-          current = current.parentElement;
+      let current = element as HTMLElement | null;
+      while (current && current !== document.body) {
+        const bg = window.getComputedStyle(current).backgroundColor;
+        if (bg && bg !== "rgba(0, 0, 0, 0)" && bg !== "transparent") {
+          const rgb = bg.match(/\d+/g)?.map(Number);
+          if (rgb) setIsDarkText((rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000 > 128);
+          return;
         }
-
-        if (bgColor) {
-          const rgb = bgColor.match(/\d+/g);
-          if (rgb) {
-            const [r, g, b] = rgb.map(Number);
-            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-            setIsDarkText(brightness > 128);
-          }
-        } else {
-          setIsDarkText(false);
-        }
+        current = current.parentElement;
       }
+      setIsDarkText(false);
     };
-
-    window.addEventListener("scroll", checkBackground);
+    window.addEventListener("scroll", checkBackground, { passive: true });
     checkBackground();
     return () => window.removeEventListener("scroll", checkBackground);
   }, []);
 
-  // --- MENU ANIMATIONS ---
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      if (isOpen) {
-        gsap.to(overlayRef.current, { duration: 0.5, opacity: 1, pointerEvents: "all", ease: "power2.out" });
-        gsap.to(menuRef.current, { duration: 0.5, x: "0%", ease: "power3.out" });
-        gsap.fromTo(".menu-link-item",
-          { x: 30, opacity: 0 },
-          { x: 0, opacity: 1, duration: 0.4, stagger: 0.05, delay: 0.2 }
-        );
-      } else {
-        gsap.to(menuRef.current, { duration: 0.5, x: "100%", ease: "power3.in" });
-        gsap.to(overlayRef.current, { duration: 0.5, opacity: 0, pointerEvents: "none", delay: 0.2 });
-      }
-    });
-    return () => ctx.revert();
+    document.body.style.overflow = isOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
   }, [isOpen]);
 
-  const toggleMenu = () => setIsOpen(!isOpen);
+  useEffect(() => {
+    const close = (event: KeyboardEvent) => event.key === "Escape" && setIsOpen(false);
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, []);
 
-  const textColorClass = isDarkText ? "text-carbon-black" : "text-white";
-  const hamburgerColorClass = isDarkText ? "bg-carbon-black" : "bg-white";
+  const toggleMenu = () => setIsOpen((open) => !open);
+
+  const resolvedHref = (href: string) => href.startsWith("#") && pathname !== "/" ? `/${href}` : href;
+  const handleLinkClick = (event: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    setIsOpen(false);
+    if (href.startsWith("#")) {
+      event.preventDefault();
+      lenis?.scrollTo(href);
+    } else if (href === "/" && pathname === "/") {
+      event.preventDefault();
+      lenis?.scrollTo(0);
+    }
+  };
+
+  const textColor = isDarkText && !isOpen ? "text-carbon-black" : "text-white";
+  const lineColor = isDarkText && !isOpen ? "bg-carbon-black" : "bg-white";
 
   return (
     <>
-      {/* NAVBAR - MOBILE OPTIMIZED */}
-      <nav className="fixed top-0 left-0 w-full z-[100] px-4 sm:px-6 md:px-12 py-4 sm:py-5 md:py-6 flex justify-between items-center pointer-events-none transition-colors duration-300">
-
-        {/* LOGO - MOBILE OPTIMIZED */}
-        <Link href="/" onClick={(e) => handleLinkClick(e, "/")} className="group flex items-center gap-1.5 sm:gap-2 pointer-events-auto">
-          <img
-            src="/Y21.png"
-            alt="Logo"
-            className="w-7 h-7 sm:w-8 sm:h-8 object-contain transition-transform duration-300 relative z-10"
-          />
-          <span className="font-black text-base sm:text-lg tracking-tighter uppercase flex items-center relative">
-            <span className={`relative z-10 transition-colors duration-300 ${textColorClass}`}>
-              RAHUL
-            </span>
-            <span className="text-racing-red relative z-10">.DEV</span>
-          </span>
+      <nav className="fixed inset-x-0 top-0 z-[120] flex items-center justify-between px-4 py-4 pointer-events-none sm:px-7 md:px-12 md:py-6">
+        <Link href="/" onClick={(event) => handleLinkClick(event, "/")} className="flex items-center gap-2 pointer-events-auto">
+          <Image src="/Y21.png" alt="Rahul Sharma" width={34} height={34} className="h-8 w-8 object-contain" priority />
+          <span className={`text-base font-black uppercase tracking-tighter transition-colors ${textColor}`}>Rahul<span className="text-racing-red">.dev</span></span>
         </Link>
-
-        {/* TOGGLE BUTTON - MOBILE OPTIMIZED */}
-        <button
-          onClick={toggleMenu}
-          aria-label={isOpen ? "Close menu" : "Open menu"}
-          className={`group flex items-center gap-2 sm:gap-3 cursor-pointer outline-none pointer-events-auto transition-colors duration-300 ${textColorClass}`}
-        >
-          <span className="hidden md:block font-mono text-xs font-bold uppercase tracking-widest group-hover:text-racing-red transition-colors">
+        <button type="button" onClick={toggleMenu} aria-expanded={isOpen} aria-controls="site-menu" aria-label={isOpen ? "Close menu" : "Open menu"} className={`group flex items-center gap-3 pointer-events-auto sm:gap-5 ${textColor}`}>
+          <span className="hidden items-center gap-3 text-sm font-semibold uppercase sm:flex sm:text-base">
             {isOpen ? "Close" : "Chapters"}
+            <ChevronDown className={`h-5 w-5 stroke-[2.5] transition-all duration-500 ${isOpen ? "rotate-180 opacity-0" : "rotate-0 opacity-100 group-hover:translate-y-0.5"}`} />
           </span>
-          <div className="relative w-7 h-7 sm:w-8 sm:h-8 flex flex-col justify-center gap-1.5 items-end">
-            <span className={`w-full h-[2px] transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-2 bg-racing-red' : hamburgerColorClass}`}></span>
-            <span className={`w-2/3 h-[2px] transition-all duration-300 ${isOpen ? 'opacity-0' : `group-hover:w-full ${hamburgerColorClass}`}`}></span>
-            <span className={`w-full h-[2px] transition-all duration-300 ${isOpen ? '-rotate-45 -translate-y-2 bg-racing-red' : hamburgerColorClass}`}></span>
-          </div>
+          <span className="relative block h-11 w-12 sm:h-12 sm:w-14" aria-hidden="true">
+            <span className={`absolute left-0 top-1/2 h-[3px] w-full origin-center transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${isOpen ? "translate-y-0 rotate-45 bg-white" : `-translate-y-[6px] -skew-x-[18deg] ${lineColor}`}`} />
+            <span className={`absolute left-0 top-1/2 h-[3px] w-full origin-center transition-all duration-500 ease-[cubic-bezier(0.76,0,0.24,1)] ${isOpen ? "translate-y-0 -rotate-45 bg-white" : `translate-y-[6px] -skew-x-[18deg] ${lineColor}`}`} />
+          </span>
         </button>
-
       </nav>
 
-      {/* OVERLAY */}
-      <div
-        ref={overlayRef}
-        onClick={() => setIsOpen(false)}
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[90] opacity-0 pointer-events-none transition-opacity"
-      ></div>
+      <div id="site-menu" aria-hidden={!isOpen} className={`fixed inset-0 z-[110] h-[100dvh] overflow-hidden bg-[#030312] text-white transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] ${isOpen ? "translate-y-0 pointer-events-auto" : "-translate-y-full pointer-events-none"}`}>
+        <div className="absolute inset-0 opacity-[0.055] bg-grid-pattern" />
+        <div className="absolute -right-[12vw] top-[7vh] select-none text-[44vw] font-black italic leading-none text-white/[0.025]">21</div>
+        <div className="relative grid h-full grid-cols-1 grid-rows-[minmax(0,1fr)_auto] gap-3 px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-[max(5.25rem,env(safe-area-inset-top))] sm:gap-5 sm:px-8 md:grid-cols-[minmax(260px,0.7fr)_1.3fr] md:grid-rows-1 md:px-12 md:pb-10 md:pt-28 lg:gap-20">
+          <aside className={`order-2 flex min-h-0 flex-col justify-end transition-all duration-700 md:order-1 ${isOpen ? "translate-y-0 opacity-100 delay-300" : "-translate-y-8 opacity-0"}`}>
+            <div className="hidden max-w-sm rounded-[6px] border border-white/10 bg-white/[0.06] p-5 backdrop-blur-md md:block">
+              <div className="mb-10 flex items-start justify-between"><span className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/45">Currently building</span><span className="text-racing-red">●</span></div>
+              <p className="text-2xl font-medium leading-tight">AI systems with speed,<br />clarity and character.</p>
+              <Link href={resolvedHref("#projects")} onClick={(event) => handleLinkClick(event, resolvedHref("#projects"))} className="mt-5 flex items-center justify-between border-t border-white/10 pt-4 text-xs uppercase tracking-[0.2em] transition-colors hover:text-racing-red">Explore selected work <ArrowDownRight size={18} /></Link>
+            </div>
+            <div className="mt-3 flex items-center gap-2 sm:mt-5 sm:gap-3 text-white/55">{socials.map((social) => { const Icon = social.icon; return <a key={social.label} href={social.href} target={social.href.startsWith("http") ? "_blank" : undefined} rel={social.href.startsWith("http") ? "noreferrer" : undefined} aria-label={social.label} title={social.label} className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 transition-all hover:-translate-y-1 hover:border-racing-red hover:text-white"><Icon size={17} /></a>; })}</div>
+          </aside>
 
-      {/* MENU PANEL - MOBILE OPTIMIZED */}
-      <div
-        ref={menuRef}
-        className="fixed top-0 right-0 h-screen w-full sm:w-[380px] md:w-[450px] bg-zinc-950 border-l border-white/10 z-[100] transform translate-x-full shadow-2xl flex flex-col"
-      >
-        {/* HEADER - MOBILE OPTIMIZED */}
-        <div className="p-8 sm:p-10 md:p-12 border-b border-white/10 flex justify-between items-center text-white">
-          <span className="font-mono text-[10px] md:text-xs text-gray-500 uppercase tracking-widest">/// Index</span>
-          <button onClick={() => setIsOpen(false)} className="hover:text-racing-red transition-colors text-[10px] md:text-xs font-bold uppercase tracking-widest">[ ESC ]</button>
+          <main className="order-1 flex min-h-0 flex-col justify-center md:order-2">
+            <p className={`mb-4 font-mono text-[10px] uppercase tracking-[0.32em] text-racing-red transition-all duration-500 ${isOpen ? "translate-y-0 opacity-100 delay-300" : "-translate-y-6 opacity-0"}`}>Portfolio index / 2026</p>
+            <div className="flex flex-col">
+              {menuLinks.map((link, index) => (
+                <Link key={link.id} href={resolvedHref(link.href)} onClick={(event) => handleLinkClick(event, resolvedHref(link.href))} style={{ transitionDelay: isOpen ? `${360 + index * 55}ms` : "0ms" }} className={`group flex items-baseline gap-3 border-b border-white/10 py-[clamp(0.22rem,1vh,0.7rem)] transition-all duration-500 md:gap-6 ${isOpen ? "translate-y-0 opacity-100" : "-translate-y-8 opacity-0"}`}>
+                  <span className="font-mono text-[9px] text-white/35 transition-colors group-hover:text-racing-red">{link.id}</span>
+                  <span className="text-[clamp(1.75rem,7.4vw,6.8rem)] font-black uppercase leading-[0.88] tracking-[-0.07em] transition-all group-hover:translate-x-3 group-hover:text-racing-red">{link.label}</span>
+                </Link>
+              ))}
+            </div>
+            <div className={`mt-5 flex items-center justify-between text-[10px] uppercase tracking-[0.22em] text-white/35 transition-all duration-500 ${isOpen ? "translate-y-0 opacity-100 delay-700" : "-translate-y-5 opacity-0"}`}><span>Rahul Sharma</span><span className="hidden sm:inline">Imphal, India · 24.8170° N</span></div>
+          </main>
         </div>
-
-        {/* LINKS - MOBILE OPTIMIZED */}
-        <div className="flex-1 flex flex-col justify-center px-8 sm:px-10 md:px-12 gap-6 sm:gap-7 md:gap-8">
-          {menuLinks.map((link) => (
-            <Link
-              key={link.id}
-              href={link.href}
-              onClick={(e) => handleLinkClick(e, link.href)}
-              className="menu-link-item group flex items-center gap-4 sm:gap-5 md:gap-6"
-            >
-              <span className="font-mono text-[10px] md:text-xs text-gray-600 group-hover:text-racing-red transition-colors duration-300">{link.id}</span>
-              <span className="text-2xl sm:text-3xl font-bold text-gray-400 uppercase tracking-wide group-hover:text-white group-hover:translate-x-2 transition-all duration-300">{link.label}</span>
-            </Link>
-          ))}
-        </div>
-
-        {/* FOOTER - MOBILE OPTIMIZED */}
-        <div className="p-8 sm:p-10 md:p-12 border-t border-white/10 text-white">
-          <div className="flex flex-wrap gap-4 sm:gap-5 md:gap-6 mb-3 md:mb-4">
-            <a href="https://github.com/rahulsiiitm" target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">GitHub</a>
-            <a href="https://linkedin.com/in/rahulsharma2k4" target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">LinkedIn</a>
-            <a href="https://leetcode.com/u/rahul2k4/" target="_blank" rel="noopener noreferrer" className="text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-white transition-colors">LeetCode</a>
-          </div>
-          <p className="font-mono text-[9px] md:text-[10px] text-gray-700">SYSTEM: ONLINE <br /> V.2.0.4</p>
-        </div>
-        <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none" style={{ filter: 'invert(1)' }}></div>
       </div>
     </>
   );

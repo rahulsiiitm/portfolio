@@ -5,43 +5,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import ChatWindow from "./ChatWindow";
 import { Caveat } from "next/font/google";
 import { sfx } from "./sound";
+import Image from "next/image";
 
 const caveat = Caveat({ subsets: ["latin"], weight: ["400", "500", "700"] });
 
-const GLITCH_CHARS = "01<>/\\|{}#$%";
-
-function useGlitchText(text: string, active: boolean) {
-  const [display, setDisplay] = useState(text);
-  useEffect(() => {
-    if (!active) { setDisplay(text); return; }
-    let frame = 0;
-    const totalFrames = 10;
-    const interval = setInterval(() => {
-      frame++;
-      if (frame >= totalFrames) {
-        setDisplay(text);
-        clearInterval(interval);
-        return;
-      }
-      setDisplay(
-        text
-          .split("")
-          .map((ch, i) =>
-            ch === " " ? " " : i < (frame / totalFrames) * text.length
-              ? text[i]
-              : GLITCH_CHARS[Math.floor(Math.random() * GLITCH_CHARS.length)]
-          )
-          .join("")
-      );
-    }, 35);
-    return () => clearInterval(interval);
-  }, [active, text]);
-  return display;
-}
-
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
-  const [hasOpened, setHasOpened] = useState(false);
   const [serverState, setServerState] = useState<"checking" | "online" | "offline">("checking");
   const backendUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || "http://localhost:8000/api/chat";
   const baseUrl = backendUrl.replace(/\/api\/chat\/?$/, "");
@@ -56,21 +25,21 @@ export default function ChatWidget() {
         const res = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
         if (active) setServerState(res.ok ? "online" : "offline");
-      } catch (e) {
+      } catch {
         if (active) setServerState("offline");
         try {
           const url = `${baseUrl}/keep-alive`;
           const res = await fetch(url);
           if (active && res.ok) setServerState("online");
-        } catch (err) {}
+        } catch {}
       }
     };
     ping();
     return () => { active = false; };
-  }, [backendUrl]);
+  }, [baseUrl]);
 
   const toggle = () => {
-    if (!isOpen) { sfx.open(); setHasOpened(true); } else sfx.close();
+    if (!isOpen) sfx.open(); else sfx.close();
     setIsOpen(!isOpen);
   };
 
@@ -122,7 +91,7 @@ export default function ChatWidget() {
             aria-label="Toggle Chat"
           >
             <div className="absolute inset-0 bg-racing-red opacity-0 group-hover:opacity-20 transition-opacity rounded-full overflow-hidden pointer-events-none" />
-            <img src="/mask-circle.png" alt="Chat" className="w-full h-full object-cover rounded-full overflow-hidden" />
+            <Image src="/mask-circle.png" alt="Chat" fill sizes="64px" className="object-cover rounded-full" />
           </motion.button>
 
           {!isOpen && (

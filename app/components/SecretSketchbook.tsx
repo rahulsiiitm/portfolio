@@ -1,5 +1,6 @@
 "use client";
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { useLenis } from "lenis/react";
 
@@ -16,12 +17,12 @@ const sketches = [
 export default function SecretSketchbook() {
     const [isOpen, setIsOpen] = useState(false);
     const lenis = useLenis();
-    
+
     // PERF: Cache DOM elements to avoid querying them every frame
     const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-    
+
     // PHYSICS STATE
-    const state = useRef({
+    const stateRef = useRef({
         rotation: 0,
         target: 0,
         velocity: 0,
@@ -29,7 +30,7 @@ export default function SecretSketchbook() {
         isHovering: false,
         startX: 0,
         lastX: 0
-    }).current;
+    });
 
     // 1. SECRET CODE LISTENER ("sketch")
     useEffect(() => {
@@ -59,9 +60,10 @@ export default function SecretSketchbook() {
     // 3. OPTIMIZED ANIMATION LOOP
     useEffect(() => {
         if (!isOpen) return;
+        const state = stateRef.current;
 
-        const radius = window.innerWidth < 768 ? 250 : 450; 
-        const autoSpeed = 0.2; 
+        const radius = window.innerWidth < 768 ? 250 : 450;
+        const autoSpeed = 0.2;
         const total = sketches.length;
         const angleStep = 360 / total;
 
@@ -69,7 +71,7 @@ export default function SecretSketchbook() {
             // PHYSICS ENGINE
             if (!state.isDragging) {
                 state.velocity *= 0.95; // Friction
-                
+
                 if (!state.isHovering) {
                     state.target += (autoSpeed + state.velocity);
                 } else {
@@ -90,7 +92,7 @@ export default function SecretSketchbook() {
                 // 3D ORBIT CALCULATION
                 const x = Math.sin(radian) * radius;
                 const z = Math.cos(radian) * radius;
-                
+
                 // VISUALS
                 const scale = (z + radius * 2) / (radius * 3) + 0.5;
                 const opacity = Math.max(0, (z + radius) / (radius * 2) + 0.2);
@@ -113,53 +115,35 @@ export default function SecretSketchbook() {
         return () => gsap.ticker.remove(update);
     }, [isOpen]);
 
-    // 4. EVENT HANDLERS (Memoized not needed for window listeners generally, but good practice)
+    // 4. POINTER CONTROLS
     useEffect(() => {
         if (!isOpen) return;
-
+        const state = stateRef.current;
         const handleDown = (clientX: number) => {
-            state.isDragging = true;
-            state.startX = clientX;
-            state.lastX = clientX;
-            state.velocity = 0;
+            state.isDragging = true; state.startX = clientX; state.lastX = clientX; state.velocity = 0;
         };
-
         const handleMove = (clientX: number) => {
             if (!state.isDragging) return;
-            const diff = clientX - state.lastX;
-            state.target += diff * 0.5; 
-            state.velocity = diff * 0.5; 
-            state.lastX = clientX;
+            const diff = clientX - state.lastX; state.target += diff * 0.5; state.velocity = diff * 0.5; state.lastX = clientX;
         };
-
-        const handleUp = () => {
-            state.isDragging = false;
-        };
-
-        // EVENT LISTENERS
-        const addEvents = (target: Window, events: string[], handler: any) => 
-            events.forEach(evt => target.addEventListener(evt, handler));
-        const removeEvents = (target: Window, events: string[], handler: any) => 
-            events.forEach(evt => target.removeEventListener(evt, handler));
-
-        // MOUSE
-        addEvents(window, ["mousedown"], (e: MouseEvent) => handleDown(e.clientX));
-        addEvents(window, ["mousemove"], (e: MouseEvent) => handleMove(e.clientX));
-        addEvents(window, ["mouseup"], handleUp);
-        
-        // TOUCH
-        addEvents(window, ["touchstart"], (e: TouchEvent) => handleDown(e.touches[0].clientX));
-        addEvents(window, ["touchmove"], (e: TouchEvent) => handleMove(e.touches[0].clientX));
-        addEvents(window, ["touchend"], handleUp);
-
+        const handleUp = () => { state.isDragging = false; };
+        const onMouseDown = (event: MouseEvent) => handleDown(event.clientX);
+        const onMouseMove = (event: MouseEvent) => handleMove(event.clientX);
+        const onTouchStart = (event: TouchEvent) => handleDown(event.touches[0].clientX);
+        const onTouchMove = (event: TouchEvent) => handleMove(event.touches[0].clientX);
+        window.addEventListener("mousedown", onMouseDown);
+        window.addEventListener("mousemove", onMouseMove);
+        window.addEventListener("mouseup", handleUp);
+        window.addEventListener("touchstart", onTouchStart, { passive: true });
+        window.addEventListener("touchmove", onTouchMove, { passive: true });
+        window.addEventListener("touchend", handleUp);
         return () => {
-            // CLEANUP
-            removeEvents(window, ["mousedown"], (e: MouseEvent) => handleDown(e.clientX));
-            removeEvents(window, ["mousemove"], (e: MouseEvent) => handleMove(e.clientX));
-            removeEvents(window, ["mouseup"], handleUp);
-            removeEvents(window, ["touchstart"], (e: TouchEvent) => handleDown(e.touches[0].clientX));
-            removeEvents(window, ["touchmove"], (e: TouchEvent) => handleMove(e.touches[0].clientX));
-            removeEvents(window, ["touchend"], handleUp);
+            window.removeEventListener("mousedown", onMouseDown);
+            window.removeEventListener("mousemove", onMouseMove);
+            window.removeEventListener("mouseup", handleUp);
+            window.removeEventListener("touchstart", onTouchStart);
+            window.removeEventListener("touchmove", onTouchMove);
+            window.removeEventListener("touchend", handleUp);
         };
     }, [isOpen]);
 
@@ -167,7 +151,7 @@ export default function SecretSketchbook() {
 
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center cursor-grab active:cursor-grabbing overflow-hidden">
-            
+
             {/* BACKGROUND */}
             <div className="absolute inset-0 bg-zinc-950">
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_#222_0%,_#000_100%)]"></div>
@@ -178,7 +162,7 @@ export default function SecretSketchbook() {
             {/* HEADER */}
             <div className="absolute top-10 left-0 w-full text-center z-50 pointer-events-none">
                 <p className="text-racing-red font-mono text-xs uppercase tracking-[0.3em] mb-2">
-                    /// CLASSIFIED ARCHIVE
+                    CLASSIFIED ARCHIVE
                 </p>
                 <h2 className="text-white text-3xl md:text-4xl font-black italic uppercase tracking-tighter">
                     Raw <span className="stroke-text">Concepts</span>
@@ -187,9 +171,9 @@ export default function SecretSketchbook() {
                     <p className="text-gray-500 text-[10px] font-mono">
                         HOVER TO INSPECT • DRAG TO SPIN
                     </p>
-                    <button 
+                    <button
                         onClick={() => setIsOpen(false)}
-                        className="px-6 py-2 border border-white/20 text-xs font-mono text-white hover:bg-white hover:text-black transition-colors pointer-events-auto"
+                        className="slant-action px-6 py-2 border border-white/20 text-xs font-mono text-white hover:bg-white hover:text-black transition-colors pointer-events-auto"
                     >
                         CLOSE [ESC]
                     </button>
@@ -203,15 +187,15 @@ export default function SecretSketchbook() {
                         key={i}
                         ref={(el) => { cardsRef.current[i] = el; }} // Cache Ref
                         className="absolute top-1/2 left-1/2 w-[240px] h-[340px] md:w-[320px] md:h-[440px] origin-center will-change-transform group cursor-pointer"
-                        style={{ 
+                        style={{
                             transform: `translate3d(-50%, -50%, 0)`, // Initial GPU Position
                         }}
-                        onMouseEnter={() => state.isHovering = true}
-                        onMouseLeave={() => state.isHovering = false}
+                        onMouseEnter={() => { stateRef.current.isHovering = true; }}
+                        onMouseLeave={() => { stateRef.current.isHovering = false; }}
                     >
                         {/* FRAME */}
                         <div className="relative w-full h-full bg-zinc-900 border border-white/10 p-1 shadow-2xl transition-transform duration-300 group-hover:scale-105 group-hover:border-racing-red/50">
-                            
+
                             {/* Brackets */}
                             <div className="absolute top-0 left-0 w-4 h-4 border-l-2 border-t-2 border-white/30 group-hover:border-racing-red transition-colors"></div>
                             <div className="absolute top-0 right-0 w-4 h-4 border-r-2 border-t-2 border-white/30 group-hover:border-racing-red transition-colors"></div>
@@ -221,13 +205,7 @@ export default function SecretSketchbook() {
                             {/* Image */}
                             <div className="relative w-full h-[85%] bg-black overflow-hidden">
                                 <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] opacity-20 pointer-events-none z-10"></div>
-                                <img 
-                                    src={img.src} 
-                                    alt={`Sketch ${i}`} 
-                                    className="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none" 
-                                    draggable="false"
-                                    decoding="async" // Async Decoding
-                                />
+                                <Image src={img.src} alt={`Sketch ${i}`} fill sizes="(max-width: 768px) 240px, 320px" className="object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 pointer-events-none" draggable="false" />
                             </div>
 
                             {/* Footer */}

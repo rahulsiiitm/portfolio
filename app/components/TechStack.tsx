@@ -181,7 +181,7 @@ export default function RacingStack() {
               {/* INACTIVE SPINE (Vertical Text) - MOBILE OPTIMIZED */}
               <div className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${isActive ? "opacity-0 scale-95" : "opacity-100 scale-100"}`}>
                 <div className="md:-rotate-90 flex items-center gap-3 md:gap-4 min-w-max">
-                  <span className="text-red-600 font-mono text-[10px] md:text-xs font-bold">{group.id} //</span>
+                  <span className="text-red-600 font-mono text-[10px] md:text-xs font-bold">{group.id} {"//"}</span>
                   <h3 className="text-lg sm:text-xl md:text-2xl font-black italic uppercase tracking-wider text-zinc-600 group-hover:text-white transition-colors">
                     {group.label}
                   </h3>

@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRouter } from 'next/navigation';
 import { ArrowRight, ChevronRight, Layers } from "lucide-react";
+import Image from "next/image";
 
 type ProjectLinks = { github?: string; demo?: string; website?: string; download?: string; pypi?: string; } | null;
 
@@ -69,6 +70,12 @@ export default function Projects() {
       const totalWidth = trackRef.current.offsetWidth;
       const viewportWidth = window.innerWidth;
       const isMobile = viewportWidth < 768;
+      const cardElements = gsap.utils.toArray<HTMLElement>(".project-card");
+      const resetCardTilt = () => {
+        if (isMobile) return;
+        gsap.killTweensOf(cardElements, "skewX");
+        gsap.to(cardElements, { skewX: 0, duration: 0.35, ease: "power3.out", overwrite: true });
+      };
 
       const scrollTween = gsap.to(trackRef.current, {
         x: -(totalWidth - viewportWidth),
@@ -81,6 +88,10 @@ export default function Projects() {
           end: isMobile ? "+=1200" : "+=2500",
           invalidateOnRefresh: true,
           onUpdate: (self) => {
+            if (!self.isActive) {
+              resetCardTilt();
+              return;
+            }
             const velocity = Math.abs(self.getVelocity());
             const normalizedSpeed = Math.min(Math.round(velocity / 10), 450);
 
@@ -99,12 +110,21 @@ export default function Projects() {
               if (velocity > 50) {
                 const skewAmount = self.getVelocity() / 300;
                 const clampedSkew = gsap.utils.clamp(-10, 10, skewAmount);
-                gsap.to(".project-card", { skewX: -clampedSkew, duration: 0.3, ease: "power2.out", overwrite: "auto" });
+                gsap.to(cardElements, { skewX: -clampedSkew, duration: 0.25, ease: "power2.out", overwrite: "auto" });
+              } else {
+                resetCardTilt();
               }
             }
           },
+          onScrubComplete: resetCardTilt,
+          onToggle: (self) => { if (!self.isActive) resetCardTilt(); },
           onLeave: () => {
-            if (!isMobile) gsap.to(".project-card", { skewX: 0, duration: 0.3, ease: "power2.out" });
+            resetCardTilt();
+            if (speedDisplayRef.current) speedDisplayRef.current.textContent = "000";
+            if (!isMobile) gsap.to(".project-speed-glow", { opacity: 0, duration: 0.2 });
+          },
+          onLeaveBack: () => {
+            resetCardTilt();
             if (speedDisplayRef.current) speedDisplayRef.current.textContent = "000";
             if (!isMobile) gsap.to(".project-speed-glow", { opacity: 0, duration: 0.2 });
           }
@@ -125,8 +145,7 @@ export default function Projects() {
 
       // Parallax on cards — desktop only
       if (!isMobile) {
-        const cards = gsap.utils.toArray<HTMLElement>(".project-card");
-        cards.forEach((card) => {
+        cardElements.forEach((card) => {
           const image = card.querySelector(".project-image-inner") as HTMLElement | null;
           if (image) {
             gsap.to(image, {
@@ -169,13 +188,10 @@ export default function Projects() {
       <div
         ref={f1ImageRef}
         className="absolute top-0 -left-[10%] w-[120%] h-full z-0 pointer-events-none"
-        style={{
-          backgroundImage: "url('/bg2.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          willChange: "transform"
-        }}
-      />
+        style={{ willChange: "transform" }}
+      >
+        <Image src="/bg2.jpg" alt="" fill priority={false} sizes="120vw" className="object-cover object-center" />
+      </div>
       <div className="absolute inset-0 bg-black/50 z-0 pointer-events-none" />
       <div className="absolute inset-0 z-0 bg-grid-pattern opacity-10 pointer-events-none" style={{ filter: 'invert(1)' }} />
 
@@ -255,12 +271,12 @@ export default function Projects() {
               onClick={() => handleProjectClick(project)}
             >
               {project.bgImage && (
-                <img
+                <Image
                   src={project.bgImage}
                   alt={project.title}
+                  fill
+                  sizes="(max-width: 767px) 80vw, 34vw"
                   className="project-image-inner absolute inset-0 w-full h-full object-cover object-left opacity-60 group-hover:opacity-80 transition-opacity duration-500"
-                  loading="lazy"
-                  decoding="async"
                 />
               )}
               <span className="absolute inset-0 flex items-center justify-center text-[6rem] sm:text-[8rem] md:text-[12rem] font-black text-white/5 select-none pointer-events-none">
@@ -268,7 +284,7 @@ export default function Projects() {
               </span>
               <div className="absolute inset-0 bg-red-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay" />
               <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 scale-90 group-hover:scale-100 pointer-events-none">
-                <div className="w-12 h-12 md:w-16 md:h-16 bg-white text-black rounded-full flex items-center justify-center shadow-xl">
+                <div className="slant-square-control bg-white text-black shadow-xl [--slant-icon-hover:#fff]">
                   <ArrowRight size={22} />
                 </div>
               </div>
@@ -296,7 +312,7 @@ export default function Projects() {
                 {project.slug && (
                   <button
                     onClick={() => handleProjectClick(project)}
-                    className="flex items-center gap-1.5 px-3 py-2 bg-white text-black hover:bg-red-600 hover:text-white transition-colors text-[9px] sm:text-[10px] font-black uppercase tracking-widest"
+                    className="slant-action flex items-center gap-1.5 px-3 py-2 bg-white text-black hover:bg-red-600 hover:text-white transition-colors text-[9px] sm:text-[10px] font-black uppercase tracking-widest"
                   >
                     View Case Study <ChevronRight size={12} />
                   </button>
@@ -304,7 +320,7 @@ export default function Projects() {
 
                 <button
                   onClick={(e) => openInspect(e, project)}
-                  className="px-2 py-1.5 border border-white/10 bg-white/5 hover:bg-red-600 hover:border-red-600 text-[8px] sm:text-[9px] font-mono font-bold text-zinc-400 hover:text-white transition-all duration-300 uppercase tracking-widest flex items-center gap-1.5"
+                  className="slant-action px-2 py-1.5 border border-white/10 bg-white/5 hover:bg-red-600 hover:border-red-600 text-[8px] sm:text-[9px] font-mono font-bold text-zinc-400 hover:text-white transition-all duration-300 uppercase tracking-widest flex items-center gap-1.5"
                 >
                   <Layers size={10} />
                   Inspect
@@ -315,7 +331,7 @@ export default function Projects() {
         ))}
 
         {/* Archive Bridge Card */}
-        <div className="project-card relative flex-shrink-0 mr-4 sm:mr-8 md:mr-16 border-2 border-dashed border-white/10 bg-zinc-950/40 group hover:border-red-600/50 transition-all duration-500
+        <div className="project-card relative flex-shrink-0 mr-4 sm:mr-8 md:mr-16 border-2 border-dashed border-white/10 bg-zinc-950/40 group origin-bottom-left will-change-transform hover:border-red-600/50 transition-[border-color] duration-500
           w-[80vw] sm:w-[42vw] md:w-[32vw]
           h-[62vh] sm:h-[66vh] md:h-[70vh]
           flex flex-col items-center justify-center"
@@ -330,7 +346,7 @@ export default function Projects() {
             </p>
             <button
               onClick={() => router.push('/archive')}
-              className="w-full py-3 bg-white text-black text-[10px] font-black uppercase tracking-[0.25em] hover:bg-red-600 hover:text-white transition-all group-hover:scale-105 active:scale-95 shadow-xl"
+              className="slant-action w-full py-3 bg-white text-black text-[10px] font-black uppercase tracking-[0.25em] hover:bg-red-600 hover:text-white transition-all group-hover:scale-105 active:scale-95 shadow-xl"
             >
               Explore All
             </button>
@@ -356,9 +372,11 @@ export default function Projects() {
 
             <div className="w-full md:w-1/3 bg-black relative border-b md:border-b-0 md:border-r border-white/10 overflow-hidden min-h-[200px]">
               {inspectProject.bgImage && (
-                <img
+                <Image
                   src={inspectProject.bgImage}
                   alt={inspectProject.title}
+                  fill
+                  sizes="(max-width: 767px) 100vw, 33vw"
                   className="w-full h-full object-cover opacity-40 grayscale"
                 />
               )}
@@ -377,7 +395,7 @@ export default function Projects() {
                 </div>
                 <button
                   onClick={() => setInspectProject(null)}
-                  className="text-zinc-500 hover:text-white font-mono text-xs uppercase tracking-widest flex items-center gap-2"
+                  className="slant-action px-3 py-2 border border-white/10 text-zinc-500 hover:text-white font-mono text-xs uppercase tracking-widest flex items-center gap-2"
                 >
                   [ CLOSE_X ]
                 </button>
@@ -398,7 +416,7 @@ export default function Projects() {
                   <div>
                     <h6 className="text-[9px] font-mono font-bold text-red-500 uppercase tracking-widest mb-2">CORE_LOGIC_SUMMARY</h6>
                     <p className="text-xs text-zinc-400 leading-relaxed italic">
-                      "{inspectProject.description}"
+                      &quot;{inspectProject.description}&quot;
                     </p>
                   </div>
                 </div>
@@ -427,7 +445,7 @@ export default function Projects() {
                       if (inspectProject.slug) router.push(`/projects/${inspectProject.slug}`);
                       setInspectProject(null);
                     }}
-                    className="w-full py-4 bg-white text-black text-center text-[10px] font-black uppercase tracking-[0.4em] hover:bg-red-600 hover:text-white transition-all duration-300 block"
+                    className="slant-action w-full py-4 bg-white text-black text-center text-[10px] font-black uppercase tracking-[0.4em] hover:bg-red-600 hover:text-white transition-all duration-300 block"
                   >
                     Enter_Deep_Dive
                   </button>

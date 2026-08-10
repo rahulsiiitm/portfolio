@@ -2,20 +2,20 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
+const LOG_LINES = [
+  "CAM_04 // FRONT_WING_CAM",
+  "SIGNAL LOST",
+  "attempting reconnect...",
+  "route: NOT FOUND [404]",
+  "DRIVER: R.SHARMA // CAR 21",
+  "█████████ NO SIGNAL █████████",
+];
+
 export default function NotFound() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [visible, setVisible] = useState(false);
   const [lines, setLines] = useState<string[]>([]);
   const rafRef = useRef<number>(0);
-
-  const LOG_LINES = [
-    "CAM_04 // FRONT_WING_CAM",
-    "SIGNAL LOST",
-    "attempting reconnect...",
-    "route: NOT FOUND [404]",
-    "DRIVER: R.SHARMA // CAR 21",
-    "█████████ NO SIGNAL █████████",
-  ];
 
   // Reveal log lines one by one
   useEffect(() => {

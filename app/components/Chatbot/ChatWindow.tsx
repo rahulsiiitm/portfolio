@@ -8,6 +8,7 @@ import { SendHorizontal, Minus, User, Bot, Cpu, RotateCcw, ChevronDown, Bug } fr
 import MessageBubble from "@/app/components/Chatbot/MessageBubble";
 import { sfx } from "./sound";
 import { Outfit, JetBrains_Mono } from "next/font/google";
+import Image from "next/image";
 
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 const jbMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jbmono" });
@@ -51,7 +52,7 @@ function getOrCreateSession() {
 
 function TypingDots() {
   return (
-    <div className="flex items-center gap-1 px-4 py-3 bg-[#222222] border border-white/5 rounded-2xl rounded-bl-sm w-fit">
+    <div className="flex items-center gap-1 px-4 py-3 bg-[#222222] border border-white/5 rounded-[15px] rounded-bl-sm w-fit">
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
@@ -302,12 +303,12 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       exit={{ opacity: 0, y: 30 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
       style={{ height: viewportHeight ? `${viewportHeight}px` : undefined }}
-      className={`fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[440px] h-[100dvh] sm:h-[600px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-white sm:border-2 sm:border-red-600/50 sm:rounded-3xl flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_0_30px_rgba(220,38,38,0.25)] ${outfit.className} ${outfit.variable} ${jbMono.variable}`}
+      className={`fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[440px] h-[100dvh] sm:h-[600px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-white sm:border-2 sm:border-red-600/50 sm:rounded-[15px] flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_0_30px_rgba(220,38,38,0.25)] ${outfit.className} ${outfit.variable} ${jbMono.variable}`}
     >
       <div className="bg-white px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:pt-3 flex items-center justify-between border-b border-zinc-100 shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-full flex items-center justify-center border-2 border-zinc-900 overflow-hidden bg-[#1a1a1a] shrink-0">
-            <img src="/mask-circle.png" alt="Zero" className="w-full h-full object-cover" />
+            <Image src="/mask-circle.png" alt="Zero" width={36} height={36} className="h-full w-full object-cover" />
           </div>
           <div>
             <div className="flex items-center gap-2 mt-1">
@@ -317,7 +318,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
                 {isTyping ? "typing" : serverState}
               </span>
             </div>
-            <p className="text-[11px] text-zinc-400 mt-0.5">Rahul's AI alter ego</p>
+            <p className="text-[11px] text-zinc-400 mt-0.5">Rahul&#39;s AI alter ego</p>
           </div>
         </div>
 
@@ -328,7 +329,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
               whileTap={{ scale: 0.9 }}
               onClick={clearChat}
               title="Clear conversation"
-              className="p-2 hover:bg-zinc-100 rounded-full transition-colors text-zinc-400 hover:text-zinc-700"
+              className="p-2 hover:bg-zinc-100 rounded-full transition-colors text-zinc-400 hover:text-zinc-800"
             >
               <RotateCcw size={15} />
             </motion.button>
@@ -339,8 +340,9 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
         </div>
       </div>
 
-      <div className="flex-1 relative overflow-hidden min-h-0 bg-[#0e0e0e] rounded-t-3xl border-t border-white/5">
-        <div className="hidden sm:block absolute inset-0 opacity-50 bg-[url('/web-watermark.png')] bg-no-repeat bg-right-bottom pointer-events-none mix-blend-screen bg-[length:140%_auto] z-0" />
+      <div className="flex-1 relative overflow-hidden min-h-0 bg-[#0e0e0e] rounded-t-[5px] border-t border-white/5">
+        <div className="chat-web-pattern absolute right-0 top-0 h-[220px] w-[220px] pointer-events-none z-0" />
+        <div className="chat-web-pattern absolute bottom-0 left-0 h-[150px] w-[150px] rotate-180 opacity-50 pointer-events-none z-0" />
         <div ref={scrollContainerRef} onScroll={handleScroll} className="chat-scroll-area h-full overflow-y-auto overscroll-contain px-4 pt-4 pb-2 custom-scrollbar bg-transparent relative">
           <div className="relative z-10 space-y-3">
             {messages.map((message, i) => (
@@ -364,7 +366,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
               animate={{ opacity: 1, x: "-50%", y: 0 }}
               exit={{ opacity: 0, x: "-50%", y: 10 }}
               onClick={scrollToBottom}
-              className="absolute bottom-4 left-1/2 flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0a0b0d]/80 backdrop-blur-md border border-white/10 rounded-full text-[11px] font-medium text-zinc-200 hover:bg-[#0a0b0d] hover:text-white transition-colors shadow-[0_4px_20px_rgba(0,0,0,0.6)] z-20 group"
+              className="absolute bottom-4 left-1/2 flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0a0b0d]/80 backdrop-blur-md border border-white/10 rounded-[15px] text-[11px] font-medium text-zinc-200 hover:bg-[#0a0b0d] hover:text-white transition-colors shadow-[0_4px_20px_rgba(0,0,0,0.6)] z-20 group"
             >
               <ChevronDown size={13} className="text-racing-red group-hover:translate-y-[2px] transition-transform" />
               <span className="tracking-wide">Scroll down</span>
@@ -389,7 +391,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
                   whileTap={{ scale: 0.97 }}
                   onClick={() => handleSuggestionClick(s.label)}
                   disabled={!sessionId || isTyping}
-                  className="flex items-center gap-2 px-3 py-2 text-[11px] text-zinc-400 border border-white/8 rounded-lg hover:text-white hover:border-racing-red/40 transition-all bg-white/[0.03] text-left disabled:opacity-50"
+                  className="flex items-center gap-2 px-3 py-2 text-[11px] text-zinc-400 border border-white/8 rounded-[15px] hover:text-white hover:border-racing-red/40 transition-all bg-white/[0.03] text-left disabled:opacity-50"
                 >
                   {s.icon}
                   <span className="truncate">{s.label}</span>
@@ -412,7 +414,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             }}
             placeholder="Ask me anything..."
             rows={1}
-            className="flex-1 bg-[#121316] text-white border border-white/10 rounded-2xl px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:border-racing-red/60 transition-all placeholder:text-zinc-600 resize-none leading-relaxed overflow-hidden shadow-inner"
+            className="flex-1 bg-[#121316] text-white border border-white/10 rounded-[15px] px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:border-racing-red/60 transition-all placeholder:text-zinc-600 resize-none leading-relaxed overflow-hidden shadow-inner"
             style={{ minHeight: "40px", maxHeight: "120px" }}
           />
 
@@ -421,7 +423,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             disabled={!input.trim() || isTyping || !sessionId}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="shrink-0 w-10 h-10 flex items-center justify-center rounded-2xl bg-gradient-to-br from-red-600 via-red-700 to-red-900 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_0_15px_rgba(220,38,38,0.5)] border border-red-500/40"
+            className="shrink-0 w-10 h-10 flex items-center justify-center rounded-[15px] bg-gradient-to-br from-red-600 via-red-700 to-red-900 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_0_15px_rgba(220,38,38,0.5)] border border-red-500/40"
           >
             <SendHorizontal size={17} />
           </motion.button>
