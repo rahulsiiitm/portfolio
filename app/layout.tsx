@@ -3,6 +3,7 @@ import { Inter, Manrope } from "next/font/google";
 import localFont from "next/font/local";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import "./globals.css";
 import JsonLd from "./components/JsonLd";
 import SiteChrome from "./components/SiteChrome";
@@ -28,6 +29,7 @@ const ammonite = localFont({
 
 const BASE_URL = "https://rahul.aishtrex.com";
 const OG_IMAGE = `${BASE_URL}/opengraph-image`;
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
@@ -92,6 +94,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <SiteChrome>{children}</SiteChrome>
         <Analytics />
         <SpeedInsights />
+        {GA_MEASUREMENT_ID ? <GoogleAnalytics gaId={GA_MEASUREMENT_ID} /> : null}
       </body>
     </html>
   );
