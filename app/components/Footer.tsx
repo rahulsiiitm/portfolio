@@ -82,7 +82,7 @@ export default function Footer() {
 
     // 6. Wheel Spin
     const handleMouseEnter = () => {
-        gsap.to(wheelRef.current, { rotation: "+=360", duration: 1.5, ease: "power2.out" });
+        gsap.fromTo(wheelRef.current, { rotation: -8, scale: 1 }, { rotation: 0, scale: 1.035, duration: 1.15, ease: "power3.out", overwrite: true });
     };
 
     // --- PLAY SOUND FUNCTION ---
@@ -211,18 +211,32 @@ export default function Footer() {
             <div className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-overlay"
                 style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
 
-            {/* === THE GIANT F1 WHEEL - MOBILE OPTIMIZED === */}
+            {/* === GIANT F1 TYRE === */}
             <div
                 ref={wheelRef}
-                className="absolute -left-[25%] sm:-left-[15%] top-[5%] w-[80vw] h-[80vw] sm:w-[60vw] sm:h-[60vw] md:w-[45vw] md:h-[45vw] opacity-20 pointer-events-none z-0 border-[3px] md:border-[4px] border-dashed border-white rounded-full flex items-center justify-center animate-spin-slow"
+                className="absolute -left-[32%] top-[7%] z-0 aspect-square w-[92vw] pointer-events-none opacity-40 sm:-left-[18%] sm:w-[66vw] md:-left-[14%] md:w-[48vw]"
+                aria-hidden="true"
             >
-                <div className="w-[85%] h-[85%] border-[1px] border-white/30 rounded-full flex items-center justify-center">
-                    <div className="w-[80%] h-[80%] border-[15px] md:border-[20px] border-white/20 rounded-full"></div>
+                <div className="f1-tyre-rotor relative h-full w-full rounded-full">
+                    <div className="f1-tyre absolute inset-0 rounded-full">
+                        <div className="f1-sidewall-copy absolute inset-[5.5%] rounded-full">
+                            <span className="absolute left-1/2 top-[2%] -translate-x-1/2 text-[clamp(9px,1.15vw,17px)] font-black tracking-[0.3em] text-white/65">P ZERO</span>
+                            <span className="absolute bottom-[2%] left-1/2 -translate-x-1/2 rotate-180 text-[clamp(7px,.8vw,12px)] font-bold tracking-[0.24em] text-white/35">RACING SLICK</span>
+                        </div>
+                        <div className="f1-rim absolute inset-[21%] rounded-full">
+                            <div className="f1-brake-disc absolute inset-[12%] rounded-full" />
+                            <div className="absolute inset-[5%] rounded-full">
+                                {Array.from({ length: 10 }).map((_, index) => (
+                                    <span key={index} className="f1-spoke absolute left-1/2 top-1/2 h-[7%] w-[47%] origin-left" style={{ transform: `rotate(${index * 36}deg) translateY(-50%)` }} />
+                                ))}
+                            </div>
+                            <div className="f1-hub absolute left-1/2 top-1/2 flex h-[25%] w-[25%] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full">
+                                <span className="h-[36%] w-[36%] rounded-full bg-racing-red shadow-[0_0_18px_rgba(220,38,38,.65)]" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div className="absolute w-full h-[2px] bg-white/20 rotate-0"></div>
-                <div className="absolute w-full h-[2px] bg-white/20 rotate-45"></div>
-                <div className="absolute w-full h-[2px] bg-white/20 rotate-90"></div>
-                <div className="absolute w-full h-[2px] bg-white/20 rotate-135"></div>
+                <div className="f1-tyre-shadow absolute bottom-[-4%] left-[8%] h-[12%] w-[84%] rounded-full" />
             </div>
 
 
@@ -354,12 +368,50 @@ export default function Footer() {
             <style jsx>{`
                 .stroke-text { -webkit-text-stroke: 2px white; color: transparent; }
 
-                @keyframes spin-slow {
+                @keyframes tyre-roll {
                     from { transform: rotate(0deg); }
                     to { transform: rotate(360deg); }
                 }
-                .animate-spin-slow {
-                    animation: spin-slow 20s linear infinite;
+                .f1-tyre-rotor {
+                    animation: tyre-roll 24s linear infinite;
+                    filter: drop-shadow(0 28px 30px rgba(55, 0, 0, 0.38));
+                    will-change: transform;
+                }
+                .f1-tyre {
+                    background:
+                        repeating-conic-gradient(from 2deg, rgba(255,255,255,.18) 0deg 1.4deg, transparent 1.4deg 8deg),
+                        radial-gradient(circle at 35% 28%, #4a4a4a 0%, #1b1b1c 43%, #070708 72%, #202022 100%);
+                    border: clamp(3px, .55vw, 8px) solid rgba(255,255,255,.2);
+                    box-shadow: inset 0 0 0 clamp(8px, 1.25vw, 20px) rgba(0,0,0,.5), inset 18px 22px 34px rgba(255,255,255,.08), inset -22px -20px 36px rgba(0,0,0,.72);
+                }
+                .f1-sidewall-copy { border: 1px solid rgba(255,255,255,.13); }
+                .f1-rim {
+                    background: radial-gradient(circle at 36% 30%, #f5f5f5 0%, #a5a8ad 20%, #303238 58%, #0c0d0f 78%);
+                    border: clamp(3px, .45vw, 7px) solid rgba(255,255,255,.42);
+                    box-shadow: inset 0 0 24px rgba(0,0,0,.8), 0 0 0 clamp(5px,.8vw,12px) rgba(0,0,0,.75);
+                }
+                .f1-brake-disc {
+                    background: repeating-conic-gradient(#52545a 0deg 3deg, #202226 3deg 7deg);
+                    border: 2px solid rgba(255,255,255,.16);
+                    box-shadow: inset 0 0 20px rgba(0,0,0,.8);
+                }
+                .f1-spoke {
+                    clip-path: polygon(0 22%, 100% 0, 92% 100%, 0 72%);
+                    background: linear-gradient(180deg, #f0f0f0, #777b82 48%, #202226);
+                    box-shadow: 0 2px 4px rgba(0,0,0,.6);
+                }
+                .f1-hub {
+                    background: radial-gradient(circle, #999da3 0%, #303238 46%, #0b0c0e 72%);
+                    border: 2px solid rgba(255,255,255,.35);
+                    box-shadow: 0 0 0 clamp(3px,.45vw,7px) rgba(0,0,0,.55);
+                }
+                .f1-tyre-shadow {
+                    background: rgba(55,0,0,.42);
+                    filter: blur(18px);
+                    transform: skewX(-12deg);
+                }
+                @media (prefers-reduced-motion: reduce) {
+                    .f1-tyre-rotor { animation: none; }
                 }
 
                 /* --- ENGINE START SHAKE ANIMATION --- */
