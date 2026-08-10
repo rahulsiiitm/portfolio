@@ -105,7 +105,7 @@ export default function About() {
     }, []);
 
     return (
-        <section ref={container} id="about" className="relative w-full bg-off-white text-carbon-black border-b border-black/10 overflow-hidden">
+        <section ref={container} id="about" className="relative z-30 w-full bg-off-white text-carbon-black border-b border-black/10 overflow-hidden">
 
             <div className="max-w-7xl mx-auto flex flex-col md:flex-row relative z-10">
 

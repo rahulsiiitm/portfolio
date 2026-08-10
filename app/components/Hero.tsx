@@ -33,8 +33,11 @@ export default function Hero() {
                 scrollTrigger: {
                     trigger: hero,
                     start: "top top",
-                    end: "bottom top",
-                    scrub: 0.75,
+                    end: "+=100%",
+                    scrub: 0.65,
+                    pin: true,
+                    pinSpacing: false,
+                    anticipatePin: 1,
                     invalidateOnRefresh: true,
                 },
             })
@@ -48,7 +51,7 @@ export default function Hero() {
     }, []);
 
     return (
-        <section ref={heroRef} id="home" className="relative h-screen w-full overflow-hidden bg-black">
+        <section ref={heroRef} id="home" className="relative z-0 h-screen w-full overflow-hidden bg-black">
             <div className="pointer-events-none fixed inset-0 z-20 bg-grid-pattern opacity-40 mix-blend-multiply" />
             <div ref={imageRef} className="absolute inset-0 flex origin-center items-center justify-end lg:block">
                 <Image src="/livery.webp" alt="Racing-inspired portfolio background" fill priority quality={85} sizes="100vw" className="object-cover" />
