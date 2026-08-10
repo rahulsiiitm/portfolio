@@ -107,7 +107,7 @@ export default function About() {
     return (
         <section ref={container} id="about" className="relative w-full bg-off-white text-carbon-black border-b border-black/10 overflow-hidden">
 
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row relative z-10">
+            <div className="max-w-6xl mx-auto flex flex-col md:flex-row relative z-10">
 
                 {/* LEFT COLUMN: Sticky Sidebar - MOBILE OPTIMIZED */}
                 <div className="w-full md:w-1/4 md:h-screen md:sticky md:top-0 flex flex-col justify-between p-6 md:p-10 border-b md:border-b-0 md:border-r border-black/10 relative overflow-hidden bg-off-white/50 backdrop-blur-[2px]">
@@ -120,7 +120,7 @@ export default function About() {
 
                     {/* Giant Background "21" for Sidebar - MOBILE OPTIMIZED */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.05] pointer-events-none">
-                        <span className="text-[12rem] md:text-[20rem] font-black italic tracking-tighter text-black stroke-text">
+                        <span className="text-[12rem] md:text-[18rem] font-black italic tracking-tighter text-black stroke-text">
                             21
                         </span>
                     </div>
@@ -141,7 +141,7 @@ export default function About() {
 
                     {/* Giant Parallax "21" Background Number - MOBILE OPTIMIZED */}
                     <div ref={numberRef} className="absolute top-[-10%] right-0 opacity-[0.04] pointer-events-none z-0">
-                        <span className="text-[20rem] sm:text-[28rem] md:text-[35rem] leading-none font-black italic text-black">
+                        <span className="text-[16rem] sm:text-[23rem] md:text-[30rem] leading-none font-black italic text-black">
                             21
                         </span>
                     </div>

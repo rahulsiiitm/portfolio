@@ -231,7 +231,7 @@ export default function Footer() {
 
 
             {/* MAIN CONTENT - MOBILE OPTIMIZED */}
-            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-24 items-center max-w-7xl mx-auto w-full px-4 sm:px-6 md:px-12 mb-16 md:mb-20 flex-grow">
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-24 items-center max-w-6xl mx-auto w-full px-4 sm:px-6 md:px-12 mb-16 md:mb-20 flex-grow">
 
                 {/* LEFT: Typer Headline - MOBILE OPTIMIZED */}
                 <div className="flex flex-col justify-center relative">
@@ -240,7 +240,7 @@ export default function Footer() {
                         <span className="text-xs md:text-sm font-bold tracking-[0.2em] md:tracking-[0.3em] uppercase">Pit Lane / Contact</span>
                     </div>
 
-                    <h1 className="text-[10vw] sm:text-[8vw] lg:text-[7rem] leading-[0.8] font-black uppercase mb-6 md:mb-8 italic transform -skew-x-6 min-h-[3ch]">
+                    <h1 className="text-[9vw] sm:text-[7vw] lg:text-[6.2rem] leading-[0.8] font-black uppercase mb-6 md:mb-8 italic transform -skew-x-6 min-h-[3ch]">
                         Let&#39;s <br /> Build <br />
                         <span className="text-transparent stroke-text">
                             {displayText}

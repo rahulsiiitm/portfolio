@@ -29,7 +29,7 @@ export default function Hero() {
     }, []);
 
     return (
-        <section id="home" className="relative w-full h-[100svh] min-h-[560px] overflow-hidden bg-black">
+        <section id="home" className="relative w-full h-[100svh] min-h-[520px] overflow-hidden bg-black">
 
             {/* === 0. THE STATIC GLOBAL GRID === */}
             <div className="fixed inset-0 z-20 pointer-events-none bg-grid-pattern opacity-40 mix-blend-multiply"></div>
@@ -65,7 +65,7 @@ export default function Hero() {
 
                     {/* The Massive Name - MOBILE OPTIMIZED */}
                     <div ref={textRef}>
-                        <h1 className="text-[3rem] sm:text-6xl md:text-[10rem] font-black leading-[0.9] tracking-tighter text-carbon-black uppercase">
+                        <h1 className="text-[3rem] sm:text-6xl md:text-[8.8rem] font-black leading-[0.9] tracking-tighter text-carbon-black uppercase">
                             Rahul <br />
                             <span className="text-racing-red">Sharma</span>
                         </h1>

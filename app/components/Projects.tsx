@@ -182,7 +182,7 @@ export default function Projects() {
     <section
       id="projects"
       ref={containerRef}
-      className="relative h-[100svh] min-h-[620px] bg-black text-white overflow-hidden"
+      className="relative h-[100svh] min-h-[560px] bg-black text-white overflow-hidden"
     >
       {/* Background — static on mobile for perf */}
       <div
@@ -244,7 +244,7 @@ export default function Projects() {
             key={project.id}
             className="project-card relative flex-shrink-0 mr-4 sm:mr-8 md:mr-16 border border-white/10 bg-zinc-900/80 group origin-bottom-left overflow-hidden shadow-2xl
               w-[80vw] sm:w-[70vw] md:w-[58vw]
-              h-[62vh] sm:h-[66vh] md:h-[70vh]
+              h-[58vh] sm:h-[62vh] md:h-[64vh]
               flex flex-col md:flex-row"
           >
             {/* Top red line on hover */}
@@ -279,7 +279,7 @@ export default function Projects() {
                   className="project-image-inner absolute inset-0 w-full h-full object-cover object-left opacity-60 group-hover:opacity-80 transition-opacity duration-500"
                 />
               )}
-              <span className="absolute inset-0 flex items-center justify-center text-[6rem] sm:text-[8rem] md:text-[12rem] font-black text-white/5 select-none pointer-events-none">
+              <span className="absolute inset-0 flex items-center justify-center text-[5rem] sm:text-[7rem] md:text-[10rem] font-black text-white/5 select-none pointer-events-none">
                 {project.id}
               </span>
               <div className="absolute inset-0 bg-red-600/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 mix-blend-overlay" />
@@ -333,7 +333,7 @@ export default function Projects() {
         {/* Archive Bridge Card */}
         <div className="project-card relative flex-shrink-0 mr-4 sm:mr-8 md:mr-16 border-2 border-dashed border-white/10 bg-zinc-950/40 group origin-bottom-left will-change-transform hover:border-red-600/50 transition-[border-color] duration-500
           w-[80vw] sm:w-[42vw] md:w-[32vw]
-          h-[62vh] sm:h-[66vh] md:h-[70vh]
+          h-[58vh] sm:h-[62vh] md:h-[64vh]
           flex flex-col items-center justify-center"
         >
           <div className="flex flex-col items-center text-center p-6 sm:p-8">

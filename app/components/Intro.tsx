@@ -47,7 +47,7 @@ export default function Intro() {
             ref={container}
             className="relative w-full py-20 sm:py-24 md:py-32 px-6 sm:px-10 md:px-24 bg-off-white text-carbon-black overflow-hidden"
         >
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-10 sm:gap-12 md:gap-16 items-start">
+            <div className="max-w-6xl mx-auto flex flex-col md:flex-row gap-8 sm:gap-10 md:gap-12 items-start">
 
                 {/* === LEFT COLUMN: TEXT CONTENT - MOBILE OPTIMIZED === */}
                 <div className="w-full md:w-3/5">

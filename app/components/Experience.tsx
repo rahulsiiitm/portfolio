@@ -5,7 +5,7 @@ export default function Experience() {
     return (
         <section id="experience" className="bg-black text-white py-20 sm:py-24 md:py-32 px-4 sm:px-6 md:px-12 border-t border-white/10">
 
-            <div className="max-w-7xl mx-auto">
+            <div className="max-w-6xl mx-auto">
 
                 {/* HEADER - MOBILE OPTIMIZED */}
                 <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 sm:mb-20 md:mb-24">

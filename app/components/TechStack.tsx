@@ -74,7 +74,7 @@ export default function RacingStack() {
   }, []);
 
   return (
-    <section id="tech" ref={containerRef} className="relative bg-zinc-950 text-white min-h-screen py-16 sm:py-20 md:py-24 px-4 sm:px-6 md:px-12 flex flex-col justify-center overflow-hidden">
+    <section id="tech" ref={containerRef} className="relative bg-zinc-950 text-white min-h-screen py-14 sm:py-16 md:py-20 px-4 sm:px-6 md:px-12 flex flex-col justify-center overflow-hidden">
 
       {/* CARBON FIBER TEXTURE */}
       <div className="absolute inset-0 opacity-20 pointer-events-none"
@@ -82,7 +82,7 @@ export default function RacingStack() {
       </div>
 
       {/* HEADER DASHBOARD - MOBILE OPTIMIZED */}
-      <div className="relative z-10 max-w-7xl mx-auto w-full mb-6 sm:mb-7 md:mb-8 flex items-end justify-between border-b-2 border-zinc-800 pb-3 md:pb-4">
+      <div className="relative z-10 max-w-6xl mx-auto w-full mb-6 sm:mb-7 md:mb-8 flex items-end justify-between border-b-2 border-zinc-800 pb-3 md:pb-4">
         <div>
           <div className="flex items-center gap-1.5 md:gap-2 mb-1.5 md:mb-2">
             <span className="w-2 h-2 md:w-3 md:h-3 bg-red-600 rounded-full animate-pulse shadow-[0_0_10px_red]"></span>
@@ -99,7 +99,7 @@ export default function RacingStack() {
       </div>
 
       {/* THE RACING ACCORDION - MOBILE OPTIMIZED */}
-      <div className="relative z-10 flex flex-col md:flex-row h-auto md:h-[500px] gap-2 max-w-7xl mx-auto w-full">
+      <div className="relative z-10 flex flex-col md:flex-row h-auto md:h-[450px] gap-2 max-w-6xl mx-auto w-full">
         {stack.map((group, index) => {
           const isActive = activeIndex === index;
 
