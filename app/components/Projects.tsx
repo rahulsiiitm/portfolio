@@ -182,7 +182,7 @@ export default function Projects() {
     <section
       id="projects"
       ref={containerRef}
-      className="relative h-screen bg-black text-white overflow-hidden"
+      className="relative h-[100svh] min-h-[620px] bg-black text-white overflow-hidden"
     >
       {/* Background — static on mobile for perf */}
       <div

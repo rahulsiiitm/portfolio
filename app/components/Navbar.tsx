@@ -96,10 +96,10 @@ export default function Navbar() {
         </button>
       </nav>
 
-      <div id="site-menu" aria-hidden={!isOpen} className={`fixed inset-0 z-[110] h-[100dvh] overflow-hidden bg-[#030312] text-white transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] ${isOpen ? "translate-y-0 pointer-events-auto" : "-translate-y-full pointer-events-none"}`}>
+      <div id="site-menu" aria-hidden={!isOpen} className={`fixed inset-0 z-[110] h-[100dvh] overflow-x-hidden overflow-y-auto overscroll-contain bg-[#030312] text-white transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] ${isOpen ? "translate-y-0 pointer-events-auto" : "-translate-y-full pointer-events-none"}`}>
         <div className="absolute inset-0 opacity-[0.055] bg-grid-pattern" />
         <div className="absolute -right-[12vw] top-[7vh] select-none text-[44vw] font-black italic leading-none text-white/[0.025]">21</div>
-        <div className="relative grid h-full grid-cols-1 grid-rows-[minmax(0,1fr)_auto] gap-3 px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-[max(5.25rem,env(safe-area-inset-top))] sm:gap-5 sm:px-8 md:grid-cols-[minmax(260px,0.7fr)_1.3fr] md:grid-rows-1 md:px-12 md:pb-10 md:pt-28 lg:gap-20">
+        <div className="relative grid min-h-full grid-cols-1 grid-rows-[minmax(0,1fr)_auto] gap-3 px-5 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-[max(5.25rem,env(safe-area-inset-top))] sm:gap-5 sm:px-8 md:grid-cols-[minmax(260px,0.7fr)_1.3fr] md:grid-rows-1 md:px-12 md:pb-10 md:pt-28 lg:gap-20">
           <aside className={`order-2 flex min-h-0 flex-col justify-end transition-all duration-700 md:order-1 ${isOpen ? "translate-y-0 opacity-100 delay-300" : "-translate-y-8 opacity-0"}`}>
             <div className="hidden max-w-sm rounded-[6px] border border-white/10 bg-white/[0.06] p-5 backdrop-blur-md md:block">
               <div className="mb-10 flex items-start justify-between"><span className="font-mono text-[10px] uppercase tracking-[0.25em] text-white/45">Currently building</span><span className="text-racing-red">●</span></div>
@@ -109,7 +109,7 @@ export default function Navbar() {
             <div className="mt-3 flex items-center gap-2 sm:mt-5 sm:gap-3 text-white/55">{socials.map((social) => { const Icon = social.icon; return <a key={social.label} href={social.href} target={social.href.startsWith("http") ? "_blank" : undefined} rel={social.href.startsWith("http") ? "noreferrer" : undefined} aria-label={social.label} title={social.label} className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 transition-all hover:-translate-y-1 hover:border-racing-red hover:text-white"><Icon size={17} /></a>; })}</div>
           </aside>
 
-          <main className="order-1 flex min-h-0 flex-col justify-center md:order-2">
+          <main className="order-1 flex min-h-0 flex-col justify-start pt-2 sm:justify-center sm:pt-0 md:order-2">
             <p className={`mb-4 font-mono text-[10px] uppercase tracking-[0.32em] text-racing-red transition-all duration-500 ${isOpen ? "translate-y-0 opacity-100 delay-300" : "-translate-y-6 opacity-0"}`}>Portfolio index / 2026</p>
             <div className="flex flex-col">
               {menuLinks.map((link, index) => (

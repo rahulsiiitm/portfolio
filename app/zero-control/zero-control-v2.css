@@ -245,3 +245,119 @@
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Mobile dashboard: preserve the editorial design while making every panel usable. */
+.zero-control-v2,
+.zero-control-v2 main {
+  overflow-x: clip !important;
+  overflow-y: visible !important;
+}
+
+@media (max-width: 767px) {
+  .zero-control-v2::before {
+    inset: -4%;
+    background-size: 38px 38px;
+    opacity: 0.22;
+  }
+
+  .zero-control-v2 main > div.relative.mx-auto {
+    padding: max(12px, env(safe-area-inset-top)) 12px max(18px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .zero-control-v2 header {
+    margin-bottom: 12px !important;
+    padding-bottom: 12px !important;
+  }
+
+  .zero-control-v2 header h1 {
+    font-size: clamp(24px, 8vw, 32px) !important;
+  }
+
+  .zero-control-v2 header p {
+    max-width: calc(100vw - 24px);
+    padding-left: 0 !important;
+    overflow-wrap: anywhere;
+    font-size: 11px !important;
+  }
+
+  .zero-control-v2 header > div:last-child {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .zero-control-v2 header button {
+    min-height: 42px;
+    justify-content: center;
+    padding: 8px 10px !important;
+    letter-spacing: 0.1em !important;
+  }
+
+  .zero-control-v2 main > div.relative.mx-auto > section:first-of-type {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .zero-control-v2 main > div.relative.mx-auto > section:first-of-type > div {
+    min-height: 84px !important;
+    padding: 10px 11px !important;
+  }
+
+  .zero-control-v2 main > div.relative.mx-auto > section:first-of-type > div span {
+    font-size: 8px !important;
+    letter-spacing: 0.1em !important;
+  }
+
+  .zero-control-v2 main > div.relative.mx-auto > section:first-of-type > div > div:last-child {
+    font-size: 30px !important;
+  }
+
+  .zero-control-v2 main > div.relative.mx-auto > section:nth-of-type(2) {
+    gap: 12px !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .zero-control-v2 main > div.relative.mx-auto > section:nth-of-type(2) > section {
+    min-height: 0 !important;
+  }
+
+  .zero-control-v2 main > div.relative.mx-auto > section:nth-of-type(2) > section:first-child > div:last-child {
+    max-height: 280px !important;
+  }
+
+  .zero-control-v2 main > div.relative.mx-auto > section:nth-of-type(2) > section:nth-child(2) > div:last-child {
+    max-height: min(62svh, 580px) !important;
+  }
+
+  .zero-control-v2 section h2 {
+    max-width: 72vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 19px !important;
+  }
+
+  .zero-control-v2 section div[class*="max-w-"] {
+    max-width: 100% !important;
+  }
+
+  .zero-control-v2 section div[class*="tracking-"] {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+
+  .zero-control-v2 section div[class*="shadow-"] {
+    overflow-wrap: anywhere;
+  }
+
+  .zero-control-v2 form,
+  .zero-control-v2 input,
+  .zero-control-v2 button {
+    min-width: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .zero-control-v2 main > div.relative.mx-auto > section:first-of-type {
+    grid-template-columns: 1fr !important;
+  }
+}

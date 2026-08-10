@@ -429,11 +429,11 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
           </motion.button>
         </form>
 
-        <div className="flex items-center justify-center gap-2 mt-3 pb-1 text-[10px] text-zinc-500 font-sans select-none">
-          <div className="h-[1px] w-12 bg-gradient-to-r from-transparent via-red-900/60 to-red-600/50" />
+        <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-2 sm:mt-3 pb-1 text-[9px] sm:text-[10px] text-zinc-500 font-sans select-none">
+          <div className="h-[1px] w-6 sm:w-12 bg-gradient-to-r from-transparent via-red-900/60 to-red-600/50" />
           <Bug size={14} className="text-racing-red shrink-0 stroke-[2.2]" />
           <span className="text-zinc-500 tracking-wide font-medium">I survived my trip to Manipur!</span>
-          <div className="h-[1px] w-12 bg-gradient-to-l from-transparent via-red-900/60 to-red-600/50" />
+          <div className="h-[1px] w-6 sm:w-12 bg-gradient-to-l from-transparent via-red-900/60 to-red-600/50" />
         </div>
       </div>
     </motion.div>
