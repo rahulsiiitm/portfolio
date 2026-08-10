@@ -297,6 +297,7 @@ export default function Footer() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
+                            onMouseEnter={playEngineSound}
                             onPointerDown={playEngineSound}
                             aria-label="Submit form"
                             className="slant-action form-element mt-1 md:mt-2 py-4 md:py-5 px-5 md:px-6 bg-black text-white text-sm md:text-base font-black uppercase tracking-widest hover:bg-red-600 hover:animate-engine-start transition-colors duration-300 flex justify-between items-center group/btn cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
