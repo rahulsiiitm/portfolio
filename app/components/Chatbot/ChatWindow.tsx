@@ -50,17 +50,49 @@ function getOrCreateSession() {
   return session;
 }
 
-function TypingDots() {
+function SpideyThinker() {
   return (
-    <div className="flex items-center gap-1 px-4 py-3 bg-[#17181c] border border-white/10 rounded-[9px] rounded-bl-[3px] w-fit">
-      {[0, 1, 2].map((i) => (
+    <div className="relative flex w-fit max-w-[88%] items-center gap-3 rounded-[10px] rounded-bl-[3px] border border-red-500/20 bg-[#17181c]/95 px-3.5 py-3 shadow-[0_10px_24px_rgba(0,0,0,0.28)] overflow-hidden">
+      <div className="chat-web-pattern absolute -right-8 -top-10 h-24 w-24 opacity-50 pointer-events-none" />
+      <div className="relative flex h-10 w-10 shrink-0 items-center justify-center">
         <motion.span
-          key={i}
-          className="w-1.5 h-1.5 rounded-full bg-racing-red"
-          animate={{ opacity: [0.3, 1, 0.3], y: [0, -3, 0] }}
-          transition={{ duration: 0.9, repeat: Infinity, delay: i * 0.15 }}
+          className="absolute inset-0 rounded-full border border-racing-red/45"
+          animate={{ scale: [0.9, 1.22, 0.9], opacity: [0.65, 0.15, 0.65] }}
+          transition={{ duration: 1.45, repeat: Infinity, ease: "easeInOut" }}
         />
-      ))}
+        <motion.span
+          className="absolute inset-[5px] rounded-full border border-white/10"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
+        />
+        <div className="relative h-8 w-8 overflow-hidden rounded-full border border-racing-red/70 bg-black">
+          <Image src="/mask-circle.png" alt="Zero thinking" fill sizes="32px" className="object-cover" />
+        </div>
+      </div>
+
+      <div className="relative min-w-0">
+        <div className="mb-1 flex items-center gap-2">
+          <span className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-racing-red">Spider-sense</span>
+          <div className="flex items-center gap-1">
+            {[0, 1, 2].map((i) => (
+              <motion.span
+                key={i}
+                className="h-1.5 w-1.5 rounded-full bg-racing-red"
+                animate={{ opacity: [0.2, 1, 0.2], y: [0, -2, 0] }}
+                transition={{ duration: 0.85, repeat: Infinity, delay: i * 0.14 }}
+              />
+            ))}
+          </div>
+        </div>
+        <div className="flex items-center gap-1.5 text-[11px] font-medium text-zinc-300">
+          <motion.span
+            className="h-px w-7 bg-racing-red/70"
+            animate={{ scaleX: [0.35, 1, 0.35], opacity: [0.45, 1, 0.45] }}
+            transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <span>Zero is tracing the web</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -316,7 +348,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
               <h3 className="font-ammonite text-racing-red text-xl leading-none tracking-wide lowercase">zero</h3>
               <span className={`w-1.5 h-1.5 rounded-full ${isTyping ? "bg-racing-red" : serverState === "online" ? "bg-emerald-500" : serverState === "checking" ? "bg-zinc-400" : "bg-zinc-600"} animate-pulse`} />
               <span className="text-[9px] font-semibold text-zinc-400 tracking-widest uppercase">
-                {isTyping ? "typing" : serverState}
+                {isTyping ? "spider-sense" : serverState}
               </span>
             </div>
             <p className="text-[11px] text-zinc-400 mt-0.5">Rahul&#39;s AI alter ego</p>
@@ -353,7 +385,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             ))}
             {isTyping && (
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-                <TypingDots />
+                <SpideyThinker />
               </motion.div>
             )}
             <div ref={messagesEndRef} />
