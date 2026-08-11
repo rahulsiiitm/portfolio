@@ -53,52 +53,65 @@ function getOrCreateSession() {
 function SpideyThinker() {
   return (
     <motion.div
-      className="relative h-[68px] w-[92px] overflow-visible"
+      className="relative h-[76px] w-[104px] overflow-visible"
       role="status"
       aria-label="Zero is thinking"
-      initial={{ opacity: 0, scale: 0.88 }}
+      initial={{ opacity: 0, scale: 0.86 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.82, y: -4 }}
+      exit={{ opacity: 0, scale: 0.8, y: -6 }}
+      transition={{ duration: 0.22 }}
     >
-      <svg viewBox="0 0 92 68" className="h-full w-full overflow-visible" aria-hidden="true">
+      <svg viewBox="0 0 104 76" className="h-full w-full overflow-visible" aria-hidden="true">
         <defs>
-          <linearGradient id="senseRed" x1="0" y1="0" x2="1" y2="1">
-            <stop stopColor="#ff4b43" />
-            <stop offset="1" stopColor="#b30f1b" />
+          <linearGradient id="spideyMaskRed" x1="0" y1="0" x2="1" y2="1">
+            <stop stopColor="#ff5148" />
+            <stop offset="0.55" stopColor="#dc2626" />
+            <stop offset="1" stopColor="#840f19" />
           </linearGradient>
-          <filter id="senseGlow" x="-70%" y="-70%" width="240%" height="240%">
-            <feGaussianBlur stdDeviation="2.4" result="blur" />
+          <filter id="spideySenseGlow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="2.8" result="blur" />
             <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
         </defs>
 
-        {[0, 1, 2].map((ring) => (
+        {[0, 1, 2].map((wave) => (
           <motion.path
-            key={ring}
-            d={`M${18 + ring * 8} ${35 - ring * 2} Q46 ${3 + ring * 8} ${74 - ring * 8} ${35 - ring * 2}`}
+            key={wave}
+            d={`M${14 + wave * 9} ${39 - wave * 3} Q52 ${-5 + wave * 11} ${90 - wave * 9} ${39 - wave * 3}`}
             fill="none"
-            stroke={ring === 0 ? "#ef2b25" : "rgba(255,255,255,0.55)"}
-            strokeWidth={ring === 0 ? 1.8 : 1.1}
+            stroke={wave === 0 ? "#ef2b25" : "rgba(255,255,255,0.72)"}
+            strokeWidth={wave === 0 ? 2 : 1.2}
             strokeLinecap="round"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: [0, 1, 1], opacity: [0, 0.9 - ring * 0.18, 0] }}
-            transition={{ duration: 1.35, repeat: Infinity, delay: ring * 0.16, ease: "easeOut" }}
+            animate={{ pathLength: [0, 1, 1], opacity: [0, 0.95 - wave * 0.18, 0] }}
+            transition={{ duration: 1.18, repeat: Infinity, delay: wave * 0.14, ease: "easeOut" }}
           />
         ))}
 
+        <motion.path
+          d="M12 47 5 42m87 5 7-5M16 57 8 59m80-2 8 2"
+          fill="none"
+          stroke="#ef2b25"
+          strokeWidth="1.7"
+          strokeLinecap="round"
+          animate={{ opacity: [0.15, 1, 0.15], pathLength: [0.35, 1, 0.35] }}
+          transition={{ duration: 0.9, repeat: Infinity, ease: "easeInOut" }}
+        />
+
         <motion.g
-          filter="url(#senseGlow)"
-          animate={{ scale: [0.96, 1.05, 0.96] }}
-          transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut" }}
-          style={{ transformOrigin: "46px 44px" }}
+          filter="url(#spideySenseGlow)"
+          animate={{ scale: [0.96, 1.045, 0.96], y: [1, -1, 1] }}
+          transition={{ duration: 1.08, repeat: Infinity, ease: "easeInOut" }}
+          style={{ transformOrigin: "52px 51px" }}
         >
-          <path d="M46 25 61 32l5 16-10 15H36L26 48l5-16Z" fill="#0b0c10" stroke="url(#senseRed)" strokeWidth="1.6" />
-          <path d="M46 30c-3.1 0-4.9 2.5-4.9 5.5 0 2.1 1 4.2 2.5 5.7l-4.9 3.3-5.1-3.3m12.4 0v15m0-15c1.5-1.5 2.5-3.6 2.5-5.7 0-3-1.8-5.5-2.5-5.5Zm2.4 11.2 4.9 3.3 5.1-3.3M43.5 45l-5.8 5.2-4.3-.5m15.1-4.7 5.8 5.2 4.3-.5m-15 0-3.8 6.2m8.6-6.2 3.8 6.2" fill="none" stroke="#f5f5f5" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
-          <circle cx="46" cy="36" r="2.2" fill="#ef2b25" />
+          <path d="M52 25c-11.6 0-18.2 8.1-17.2 19.7C35.7 56 42.3 66.3 52 71c9.7-4.7 16.3-15 17.2-26.3C70.2 33.1 63.6 25 52 25Z" fill="url(#spideyMaskRed)" stroke="#090a0d" strokeWidth="2.4" />
+          <path d="M52 27v41M38.7 38.5 52 46l13.3-7.5M35.2 47h33.6M39 57l13-11 13 11M43.7 65 52 56l8.3 9" fill="none" stroke="#15161a" strokeWidth="1.15" opacity="0.95" />
+          <path d="M40 42.7c4.5-4.8 8.1-4.5 10.5-.5-2.4 5.1-6.2 7.4-11 7.3Z" fill="#f8fafc" stroke="#08090c" strokeWidth="1.8" />
+          <path d="M64 42.7c-4.5-4.8-8.1-4.5-10.5-.5 2.4 5.1 6.2 7.4 11 7.3Z" fill="#f8fafc" stroke="#08090c" strokeWidth="1.8" />
+          <motion.path d="M41.2 45.1c3.2-2.8 5.5-2.8 7.2-.6M62.8 45.1c-3.2-2.8-5.5-2.8-7.2-.6" fill="none" stroke="#dbeafe" strokeWidth="1" animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 0.72, repeat: Infinity }} />
         </motion.g>
 
-        <motion.path d="M11 48h10M71 48h10" stroke="#ef2b25" strokeWidth="1.5" animate={{ opacity: [0.2, 1, 0.2] }} transition={{ duration: 0.8, repeat: Infinity }} />
-        <motion.circle cx="18" cy="48" r="2" fill="#fff" animate={{ cx: [18, 74], opacity: [0, 1, 0] }} transition={{ duration: 1.25, repeat: Infinity, ease: "easeInOut" }} />
+        <motion.circle cx="52" cy="51" r="23.5" fill="none" stroke="rgba(239,43,37,0.48)" strokeWidth="1" strokeDasharray="2 6" animate={{ rotate: 360 }} transition={{ duration: 6, repeat: Infinity, ease: "linear" }} style={{ transformOrigin: "52px 51px" }} />
       </svg>
     </motion.div>
   );
@@ -356,7 +369,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
         <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-racing-red to-transparent" />
         <div className="absolute right-[-34px] top-0 h-full w-28 -skew-x-[20deg] bg-gradient-to-l from-red-700/70 to-racing-red/10" />
         <div className="flex items-center gap-3">
-          <div className="relative w-10 h-10 rounded-[9px] flex items-center justify-center border border-red-500/55 overflow-hidden bg-[#090a0d] shrink-0 shadow-[0_0_16px_rgba(239,43,37,0.24)]">
+          <div className="relative w-10 h-10 rounded-full flex items-center justify-center border border-red-500/70 overflow-hidden bg-[#090a0d] shrink-0 shadow-[0_0_16px_rgba(239,43,37,0.24)]">
             <Image src="/mask-circle.png" alt="Zero" width={36} height={36} className="h-full w-full object-cover" />
           </div>
           <div>
