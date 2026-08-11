@@ -53,7 +53,7 @@ function getOrCreateSession() {
 function SpideyThinker() {
   return (
     <motion.div
-      className="relative h-[88px] w-[116px] overflow-visible"
+      className="relative h-[76px] w-[100px] overflow-visible"
       role="status"
       aria-label="Zero is thinking"
       initial={{ opacity: 0, scale: 0.82 }}
