@@ -63,17 +63,9 @@ function SpideyThinker() {
     >
       <svg viewBox="0 0 116 88" className="h-full w-full overflow-visible" aria-hidden="true">
         <defs>
-          <linearGradient id="senseMask" x1="0.2" y1="0" x2="0.85" y2="1">
-            <stop stopColor="#ff5148" />
-            <stop offset="0.52" stopColor="#e3292f" />
-            <stop offset="1" stopColor="#8f101a" />
-          </linearGradient>
-          <linearGradient id="senseEye" x1="0" y1="0" x2="0" y2="1">
-            <stop stopColor="#ffffff" />
-            <stop offset="1" stopColor="#cbd5e1" />
-          </linearGradient>
-          <filter id="senseAura" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
+          <clipPath id="thinkerMaskClip"><circle cx="58" cy="58" r="25" /></clipPath>
+          <filter id="thinkerGlow" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="2.5" result="blur" />
             <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
         </defs>
@@ -81,66 +73,46 @@ function SpideyThinker() {
         {[0, 1, 2].map((wave) => (
           <motion.path
             key={wave}
-            d={`M${18 + wave * 10} ${44 - wave * 4} Q58 ${-5 + wave * 12} ${98 - wave * 10} ${44 - wave * 4}`}
+            d={`M${18 + wave * 10} ${43 - wave * 4} Q58 ${-4 + wave * 12} ${98 - wave * 10} ${43 - wave * 4}`}
             fill="none"
-            stroke={wave === 0 ? "#f13438" : "rgba(255,255,255,0.7)"}
-            strokeWidth={wave === 0 ? 2.2 : 1.25}
+            stroke={wave === 0 ? "#ef2b25" : "rgba(255,255,255,0.72)"}
+            strokeWidth={wave === 0 ? 2.2 : 1.2}
             strokeLinecap="round"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: [0, 1, 1], opacity: [0, 0.92 - wave * 0.18, 0] }}
-            transition={{ duration: 1.28, repeat: Infinity, delay: wave * 0.13, ease: "easeOut" }}
+            animate={{ pathLength: [0, 1, 1], opacity: [0, 0.95 - wave * 0.2, 0] }}
+            transition={{ duration: 1.24, repeat: Infinity, delay: wave * 0.14, ease: "easeOut" }}
           />
         ))}
 
-        <motion.g
-          animate={{ opacity: [0.2, 1, 0.2] }}
-          transition={{ duration: 0.82, repeat: Infinity, ease: "easeInOut" }}
-          stroke="#ef2b25"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-        >
-          <path d="m14 49-7-4m8 15-9 1m96-12 7-4m-8 15 9 1" />
+        <motion.g animate={{ opacity: [0.18, 1, 0.18] }} transition={{ duration: 0.82, repeat: Infinity, ease: "easeInOut" }} stroke="#ef2b25" strokeWidth="1.8" strokeLinecap="round">
+          <path d="m17 52-8-4m8 15-10 2m92-13 8-4m-8 15 10 2" />
         </motion.g>
 
         <motion.circle
           cx="58"
-          cy="57"
+          cy="58"
           r="29"
-          fill="none"
-          stroke="rgba(239,43,37,0.42)"
+          fill="rgba(9,10,13,0.86)"
+          stroke="rgba(239,43,37,0.55)"
           strokeWidth="1.2"
-          strokeDasharray="3 7"
+          strokeDasharray="3 6"
           animate={{ rotate: 360, scale: [0.96, 1.05, 0.96] }}
-          transition={{ rotate: { duration: 7, repeat: Infinity, ease: "linear" }, scale: { duration: 1.35, repeat: Infinity, ease: "easeInOut" } }}
-          style={{ transformOrigin: "58px 57px" }}
+          transition={{ rotate: { duration: 7, repeat: Infinity, ease: "linear" }, scale: { duration: 1.3, repeat: Infinity, ease: "easeInOut" } }}
+          style={{ transformOrigin: "58px 58px" }}
         />
 
         <motion.g
-          filter="url(#senseAura)"
-          animate={{ y: [1, -1.5, 1], scale: [0.975, 1.025, 0.975] }}
-          transition={{ duration: 1.16, repeat: Infinity, ease: "easeInOut" }}
+          filter="url(#thinkerGlow)"
+          animate={{ y: [1, -1.5, 1], scale: [0.97, 1.035, 0.97] }}
+          transition={{ duration: 1.12, repeat: Infinity, ease: "easeInOut" }}
           style={{ transformOrigin: "58px 58px" }}
         >
-          <path d="M58 27c-14.5 0-23 10.5-21.8 25.2C37.4 67 45.7 79.7 58 85c12.3-5.3 20.6-18 21.8-32.8C81 37.5 72.5 27 58 27Z" fill="url(#senseMask)" stroke="#08090c" strokeWidth="2.8" />
-
-          <g fill="none" stroke="#17181c" strokeWidth="1.2" opacity="0.96">
-            <path d="M58 29v52M41.5 40.5Q58 49 74.5 40.5M36.8 53Q58 61 79.2 53M40.5 67Q58 73.5 75.5 67" />
-            <path d="M42 32.5 58 46l16-13.5M37.8 47 58 58l20.2-11M41 70l17-12 17 12M48 81l10-12 10 12" />
-          </g>
-
-          <path d="M42.2 45.5c4.3-6.2 9.4-8.1 14-5.7-1.4 10.5-5.8 17.6-14.8 21.7-2.4-6.1-2.1-11.7.8-16Z" fill="url(#senseEye)" stroke="#07080a" strokeWidth="2.7" strokeLinejoin="round" />
-          <path d="M73.8 45.5c-4.3-6.2-9.4-8.1-14-5.7 1.4 10.5 5.8 17.6 14.8 21.7 2.4-6.1 2.1-11.7-.8-16Z" fill="url(#senseEye)" stroke="#07080a" strokeWidth="2.7" strokeLinejoin="round" />
-
-          <motion.path
-            d="M43.7 46.8c3.8-4.8 7.5-6.1 10.7-4.8M72.3 46.8c-3.8-4.8-7.5-6.1-10.7-4.8"
-            fill="none"
-            stroke="#ffffff"
-            strokeWidth="1.3"
-            strokeLinecap="round"
-            animate={{ opacity: [0.35, 1, 0.35] }}
-            transition={{ duration: 0.76, repeat: Infinity, ease: "easeInOut" }}
-          />
+          <image href="/mask-circle.png" x="33" y="33" width="50" height="50" preserveAspectRatio="xMidYMid slice" clipPath="url(#thinkerMaskClip)" />
+          <circle cx="58" cy="58" r="25" fill="none" stroke="#07080a" strokeWidth="2.5" />
+          <circle cx="58" cy="58" r="23.5" fill="none" stroke="rgba(255,255,255,0.34)" strokeWidth="0.8" />
         </motion.g>
+
+        <motion.path d="M28 72h10m40 0h10" stroke="#ef2b25" strokeWidth="1.4" strokeLinecap="round" animate={{ opacity: [0.2, 0.9, 0.2] }} transition={{ duration: 0.9, repeat: Infinity }} />
       </svg>
     </motion.div>
   );

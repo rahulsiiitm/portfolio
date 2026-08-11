@@ -2,107 +2,165 @@
 
 import { UIMessage } from "ai";
 import { motion } from "framer-motion";
-import { Fragment, useEffect, useRef, useState } from "react";
-import { Copy, Check, CheckCheck, ChevronDown } from "lucide-react";
+import { Fragment, useEffect, useRef, useState, type ReactNode } from "react";
+import { Copy, Check, CheckCheck } from "lucide-react";
 import Image from "next/image";
 
-// Markdown renderer supporting compact sections and formatting
-function renderFormatted(text: string) {
-  const lines = text.split("\n");
-  return lines.map((line, li) => {
-    const trimmed = line.trim();
+function renderInline(text: string, keyPrefix: string) {
+  const parts = text
+    .split(/(\[(?:[^\]]+)\]\((?:[^)]+)\)|\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g)
+    .filter(Boolean);
 
-    // Check for compact section headers starting with >
-    if (/^>\s+/.test(trimmed)) {
-      const sectionText = trimmed.replace(/^>\s+/, "");
+  return parts.map((part, index) => {
+    const key = `${keyPrefix}-${index}`;
+    const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (linkMatch) {
       return (
-        <details key={li} className="group my-1.5 border border-white/10 rounded-xl bg-white/[0.03] overflow-hidden text-xs">
-          <summary className="flex items-center justify-between px-3 py-2 cursor-pointer font-semibold text-zinc-200 hover:bg-white/5 transition-colors select-none">
-            <span className="flex items-center gap-2">
-              <span className="text-racing-red text-[10px]">&gt;</span>
-              {sectionText}
-            </span>
-            <ChevronDown size={13} className="text-zinc-400 group-open:rotate-180 transition-transform" />
-          </summary>
-        </details>
+        <a key={key} href={linkMatch[2]} target="_blank" rel="noopener noreferrer" className="font-medium text-red-400 underline decoration-red-500/45 underline-offset-2 transition-colors hover:text-red-300 break-words">
+          {linkMatch[1]}
+        </a>
       );
     }
-
-    // Horizontal Rule
-    if (/^---+$/.test(trimmed)) {
-      return <div key={li} className="h-px w-full bg-white/10 my-2" />;
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={key} className="font-semibold text-white">{part.slice(2, -2)}</strong>;
     }
-
-    // Headings (e.g. ### Title)
-    const headingMatch = trimmed.match(/^(#{1,6})\s+(.*)/);
-    let isHeading = false;
-    let headingLevel = 0;
-    let content = trimmed;
-
-    if (headingMatch) {
-      isHeading = true;
-      headingLevel = headingMatch[1].length;
-      content = headingMatch[2];
-    } else {
-      const isBullet = /^[-*]\s+/.test(trimmed);
-      content = isBullet ? trimmed.replace(/^[-*]\s+/, "") : line;
+    if (part.startsWith("`") && part.endsWith("`")) {
+      return <code key={key} className="rounded-[4px] border border-white/10 bg-black/40 px-1.5 py-0.5 font-mono text-[11px] text-red-300 break-all">{part.slice(1, -1)}</code>;
     }
-
-    // Inline formatting: Links, Bold, Code, Italic
-    const parts = content.split(/(\[(?:[^\]]+)\]\((?:[^)]+)\)|\*\*[^*]+\*\*|`[^`]+`|\*[^*]+\*)/g).filter(Boolean);
-    const rendered = parts.map((part, pi) => {
-      const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
-      if (linkMatch)
-        return (
-          <a
-            key={pi}
-            href={linkMatch[2]}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-racing-red underline underline-offset-2 decoration-racing-red/50 hover:decoration-racing-red transition-colors break-all font-semibold"
-          >
-            {linkMatch[1]}
-          </a>
-        );
-      if (part.startsWith("**") && part.endsWith("**"))
-        return <strong key={pi} className="font-bold text-white tracking-wide">{part.slice(2, -2)}</strong>;
-      if (part.startsWith("`") && part.endsWith("`"))
-        return (
-          <code key={pi} className="bg-black/40 border border-white/10 rounded px-1.5 py-0.5 text-[11px] text-racing-red font-mono">
-            {part.slice(1, -1)}
-          </code>
-        );
-      if (part.startsWith("*") && part.endsWith("*") && part.length > 1)
-        return <em key={pi} className="italic text-zinc-300">{part.slice(1, -1)}</em>;
-      return <Fragment key={pi}>{part}</Fragment>;
-    });
-
-    if (isHeading) {
-      return (
-        <div key={li} className={`font-bold text-white mt-3 mb-1 tracking-wide ${headingLevel === 1 ? 'text-sm sm:text-[15px] uppercase text-racing-red' : headingLevel === 2 ? 'text-[13px] sm:text-[14px] text-zinc-100' : 'text-xs sm:text-[13px] text-zinc-300'}`}>
-          {rendered}
-        </div>
-      );
+    if (part.startsWith("*") && part.endsWith("*") && part.length > 1) {
+      return <em key={key} className="italic text-zinc-300">{part.slice(1, -1)}</em>;
     }
-
-    if (/^[-*]\s+/.test(trimmed)) {
-      return (
-        <div key={li} className="flex gap-2.5 pl-1 py-0.5 leading-relaxed">
-          <span className="text-racing-red shrink-0 font-bold select-none text-[11px] mt-[1px]">{"//"}</span>
-          <span className="text-zinc-200">{rendered}</span>
-        </div>
-      );
-    }
-    
-    return (
-      <div key={li} className="leading-relaxed">
-        {rendered}
-        {trimmed === "" && li !== lines.length - 1 && <br />}
-      </div>
-    );
+    return <Fragment key={key}>{part}</Fragment>;
   });
 }
 
+function renderFormatted(text: string) {
+  const lines = text.replace(/\r\n/g, "\n").split("\n");
+  const blocks: ReactNode[] = [];
+  let index = 0;
+
+  const startsBlock = (line: string) => {
+    const value = line.trim();
+    return !value || /^```/.test(value) || /^#{1,6}\s+/.test(value) || /^---+$/.test(value) || /^>\s?/.test(value) || /^[-*]\s+/.test(value) || /^\d+[.)]\s+/.test(value);
+  };
+
+  while (index < lines.length) {
+    const trimmed = lines[index].trim();
+
+    if (!trimmed) {
+      index += 1;
+      continue;
+    }
+
+    const fence = trimmed.match(/^```([\w+#.-]*)\s*$/);
+    if (fence) {
+      const language = fence[1] || "code";
+      const codeLines: string[] = [];
+      index += 1;
+      while (index < lines.length && !/^```\s*$/.test(lines[index].trim())) {
+        codeLines.push(lines[index]);
+        index += 1;
+      }
+      if (index < lines.length) index += 1;
+      blocks.push(
+        <div key={`code-${index}`} className="overflow-hidden rounded-[8px] border border-white/10 bg-[#090a0d] shadow-[0_8px_20px_rgba(0,0,0,0.2)]">
+          <div className="flex items-center justify-between border-b border-white/10 bg-white/[0.035] px-3 py-1.5">
+            <span className="font-mono text-[9px] font-semibold uppercase tracking-[0.18em] text-zinc-500">{language}</span>
+            <span className="h-1.5 w-1.5 rounded-full bg-racing-red shadow-[0_0_7px_rgba(239,43,37,0.8)]" />
+          </div>
+          <pre className="max-w-full overflow-x-auto px-3.5 py-3 text-[11px] leading-5 text-zinc-200 custom-scrollbar">
+            <code className="font-mono whitespace-pre">{codeLines.join("\n")}</code>
+          </pre>
+        </div>
+      );
+      continue;
+    }
+
+    const heading = trimmed.match(/^(#{1,6})\s+(.*)/);
+    if (heading) {
+      const level = heading[1].length;
+      blocks.push(
+        <div key={`heading-${index}`} className={`${level <= 2 ? "text-[14px]" : "text-[13px]"} font-semibold leading-snug text-white`}>
+          {renderInline(heading[2], `heading-${index}`)}
+        </div>
+      );
+      index += 1;
+      continue;
+    }
+
+    if (/^---+$/.test(trimmed)) {
+      blocks.push(<div key={`rule-${index}`} className="h-px bg-white/10" />);
+      index += 1;
+      continue;
+    }
+
+    if (/^>\s?/.test(trimmed)) {
+      const quoteLines: string[] = [];
+      while (index < lines.length && /^>\s?/.test(lines[index].trim())) {
+        quoteLines.push(lines[index].trim().replace(/^>\s?/, ""));
+        index += 1;
+      }
+      blocks.push(
+        <blockquote key={`quote-${index}`} className="rounded-r-[7px] border-l-2 border-racing-red bg-red-500/[0.055] px-3 py-2 text-[12px] leading-5 text-zinc-300">
+          {renderInline(quoteLines.join(" "), `quote-${index}`)}
+        </blockquote>
+      );
+      continue;
+    }
+
+    if (/^[-*]\s+/.test(trimmed)) {
+      const items: string[] = [];
+      while (index < lines.length && /^[-*]\s+/.test(lines[index].trim())) {
+        items.push(lines[index].trim().replace(/^[-*]\s+/, ""));
+        index += 1;
+      }
+      blocks.push(
+        <ul key={`list-${index}`} className="space-y-1.5">
+          {items.map((item, itemIndex) => (
+            <li key={itemIndex} className="flex gap-2 text-[13px] leading-5 text-zinc-200">
+              <span className="mt-[7px] h-1 w-1 shrink-0 rotate-45 bg-racing-red" />
+              <span className="min-w-0 break-words">{renderInline(item, `list-${index}-${itemIndex}`)}</span>
+            </li>
+          ))}
+        </ul>
+      );
+      continue;
+    }
+
+    if (/^\d+[.)]\s+/.test(trimmed)) {
+      const items: string[] = [];
+      while (index < lines.length && /^\d+[.)]\s+/.test(lines[index].trim())) {
+        items.push(lines[index].trim().replace(/^\d+[.)]\s+/, ""));
+        index += 1;
+      }
+      blocks.push(
+        <ol key={`ordered-${index}`} className="space-y-1.5">
+          {items.map((item, itemIndex) => (
+            <li key={itemIndex} className="grid grid-cols-[18px_1fr] gap-2 text-[13px] leading-5 text-zinc-200">
+              <span className="font-mono text-[10px] text-red-400">{String(itemIndex + 1).padStart(2, "0")}</span>
+              <span className="min-w-0 break-words">{renderInline(item, `ordered-${index}-${itemIndex}`)}</span>
+            </li>
+          ))}
+        </ol>
+      );
+      continue;
+    }
+
+    const paragraph: string[] = [trimmed];
+    index += 1;
+    while (index < lines.length && !startsBlock(lines[index])) {
+      paragraph.push(lines[index].trim());
+      index += 1;
+    }
+    blocks.push(
+      <p key={`paragraph-${index}`} className="break-words text-[13px] leading-[1.65] text-zinc-200">
+        {renderInline(paragraph.join(" "), `paragraph-${index}`)}
+      </p>
+    );
+  }
+
+  return <div className="min-w-0 space-y-3">{blocks}</div>;
+}
 function useSmoothText(target: string) {
   const [visibleText, setVisibleText] = useState(target);
   const visibleRef = useRef(target);
@@ -174,7 +232,7 @@ export default function MessageBubble({
         </div>
       )}
 
-      <div className="relative max-w-[86%] sm:max-w-[84%]">
+      <div className="relative min-w-0 max-w-[86%] sm:max-w-[84%]">
         {/* Message bubble */}
         <div
           className={`relative px-3.5 py-3 text-[13px] sm:text-[13px] rounded-[12px] leading-relaxed ${
