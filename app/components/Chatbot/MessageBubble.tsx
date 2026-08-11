@@ -6,20 +6,20 @@ import { Fragment, useState } from "react";
 import { Copy, Check, CheckCheck, ChevronDown } from "lucide-react";
 import Image from "next/image";
 
-// Markdown renderer supporting collapsible sections & formatting
+// Markdown renderer supporting compact sections and formatting
 function renderFormatted(text: string) {
   const lines = text.split("\n");
   return lines.map((line, li) => {
     const trimmed = line.trim();
 
-    // Check for Collapsible / Section Headers starting with "► " or "▶ "
-    if (/^[►▶]\s+/.test(trimmed)) {
-      const sectionText = trimmed.replace(/^[►▶]\s+/, "");
+    // Check for compact section headers starting with >
+    if (/^>\s+/.test(trimmed)) {
+      const sectionText = trimmed.replace(/^>\s+/, "");
       return (
         <details key={li} className="group my-1.5 border border-white/10 rounded-xl bg-white/[0.03] overflow-hidden text-xs">
           <summary className="flex items-center justify-between px-3 py-2 cursor-pointer font-semibold text-zinc-200 hover:bg-white/5 transition-colors select-none">
             <span className="flex items-center gap-2">
-              <span className="text-racing-red text-[10px]">▶</span>
+              <span className="text-racing-red text-[10px]">&gt;</span>
               {sectionText}
             </span>
             <ChevronDown size={13} className="text-zinc-400 group-open:rotate-180 transition-transform" />
@@ -44,8 +44,8 @@ function renderFormatted(text: string) {
       headingLevel = headingMatch[1].length;
       content = headingMatch[2];
     } else {
-      const isBullet = /^[-*▸▶]\s+/.test(trimmed);
-      content = isBullet ? trimmed.replace(/^[-*▸▶]\s+/, "") : line;
+      const isBullet = /^[-*]\s+/.test(trimmed);
+      content = isBullet ? trimmed.replace(/^[-*]\s+/, "") : line;
     }
 
     // Inline formatting: Links, Bold, Code, Italic
@@ -85,10 +85,10 @@ function renderFormatted(text: string) {
       );
     }
 
-    if (/^[-*▸▶]\s+/.test(trimmed)) {
+    if (/^[-*]\s+/.test(trimmed)) {
       return (
         <div key={li} className="flex gap-2.5 pl-1 py-0.5 leading-relaxed">
-          <span className="text-racing-red shrink-0 font-bold select-none text-[11px] mt-[1px]">▸</span>
+          <span className="text-racing-red shrink-0 font-bold select-none text-[11px] mt-[1px]">{"//"}</span>
           <span className="text-zinc-200">{rendered}</span>
         </div>
       );
@@ -137,13 +137,13 @@ export default function MessageBubble({
         </div>
       )}
 
-      <div className="relative max-w-[82%]">
+      <div className="relative max-w-[86%] sm:max-w-[84%]">
         {/* Message bubble */}
         <div
-          className={`relative px-4 py-3 text-[13px] sm:text-[13px] rounded-[15px] leading-relaxed ${
+          className={`relative px-3.5 py-3 text-[13px] sm:text-[13px] rounded-[9px] leading-relaxed ${
             isUser
-              ? "bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white rounded-tr-[2px] shadow-[0_4px_15px_rgba(185,28,28,0.4)] border border-red-500/30 after:content-[''] after:absolute after:-right-[5px] after:top-3.5 after:w-2.5 after:h-2.5 after:bg-[#801a1a] after:border-t after:border-r after:border-red-500/40 after:rotate-45"
-              : "bg-[#141518] text-zinc-200 border border-white/10 rounded-tl-[2px] shadow-md space-y-1 before:content-[''] before:absolute before:-left-[5px] before:top-3.5 before:w-2.5 before:h-2.5 before:bg-[#141518] before:border-l before:border-b before:border-white/10 before:rotate-45"
+              ? "bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white rounded-tr-[3px] shadow-[0_8px_18px_rgba(185,28,28,0.22)] border border-red-500/30 after:content-[''] after:absolute after:-right-[5px] after:top-3.5 after:w-2.5 after:h-2.5 after:bg-[#801a1a] after:border-t after:border-r after:border-red-500/40 after:rotate-45"
+              : "bg-[#17181c]/95 text-zinc-200 border border-white/10 rounded-tl-[3px] shadow-md space-y-1 before:content-[''] before:absolute before:-left-[5px] before:top-3.5 before:w-2.5 before:h-2.5 before:bg-[#141518] before:border-l before:border-b before:border-white/10 before:rotate-45"
           }`}
         >
           {message.parts.map((part, index) => {

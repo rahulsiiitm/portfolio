@@ -56,13 +56,13 @@ export default function ChatWidget() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
             transition={{ delay: 0.5, duration: 0.5 }}
-            className="hidden sm:flex items-center gap-2 mr-4 pointer-events-none"
+            className="hidden lg:flex items-center gap-2 mr-4 pointer-events-none"
           >
-            <div className={`text-gray-300 text-2xl tracking-wide whitespace-nowrap flex flex-col items-center leading-tight ${caveat.className}`}>
+            <div className={`text-zinc-300 text-xl tracking-wide whitespace-nowrap flex flex-col items-center leading-tight ${caveat.className}`}>
               <span>Tap to chat</span>
               <span>with ZERO</span>
             </div>
-            <svg width="80" height="40" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-gray-300">
+            <svg width="62" height="32" viewBox="0 0 100 50" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-zinc-400">
               <path d="M5,15 Q50,45 95,25" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" fill="none" />
               <path d="M85,15 L97,24 L85,35" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
             </svg>
@@ -72,20 +72,13 @@ export default function ChatWidget() {
         <div className="relative pointer-events-auto">
           {/* Rotating scan ring (hidden when open to save GPU power) */}
           {!isOpen && (
-            <>
-              <motion.div
-                className="absolute inset-[-8px] rounded-full border border-racing-red/40 pointer-events-none"
-                style={{ borderStyle: "dashed" }}
-                animate={{ rotate: 360 }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-              />
-              <div className="absolute inset-[-6px] rounded-full border border-white/60 pointer-events-none" />
+            <>`r`n              <div className="absolute inset-[-5px] rounded-full border border-racing-red/35 pointer-events-none" />
             </>
           )}
 
           <motion.button
-            className="w-16 h-16 rounded-full bg-black border-2 border-racing-red shadow-[0_0_15px_rgba(255,0,0,0.5)] flex items-center justify-center relative group z-10 overflow-hidden"
-            whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(255,0,0,0.8)" }}
+            className="w-[60px] h-[60px] sm:w-16 sm:h-16 rounded-full bg-black border border-racing-red shadow-[0_10px_28px_rgba(0,0,0,0.35),0_0_14px_rgba(255,0,0,0.35)] flex items-center justify-center relative group z-10 overflow-hidden"
+            whileHover={{ scale: 1.04, boxShadow: "0 0 20px rgba(255,0,0,0.55)" }}
             whileTap={{ scale: 0.95 }}
             onClick={toggle}
             aria-label="Toggle Chat"

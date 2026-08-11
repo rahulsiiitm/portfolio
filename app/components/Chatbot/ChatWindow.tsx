@@ -4,7 +4,7 @@ import { useRef, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useChat } from "@ai-sdk/react";
 import { TextStreamChatTransport, type UIMessage } from "ai";
-import { SendHorizontal, Minus, User, Bot, Cpu, RotateCcw, ChevronDown, Bug } from "lucide-react";
+import { SendHorizontal, Minus, User, Bot, Cpu, RotateCcw, ChevronDown, Bug, Sparkles } from "lucide-react";
 import MessageBubble from "@/app/components/Chatbot/MessageBubble";
 import { sfx } from "./sound";
 import { Outfit, JetBrains_Mono } from "next/font/google";
@@ -19,7 +19,7 @@ const INITIAL_MESSAGES: UIMessage[] = [
   {
     id: "1",
     role: "assistant",
-    parts: [{ type: "text", text: "Hey — I'm Zero, Rahul's AI. Fair warning: I'm still being trained, so I don't know everything about him yet. But ask anyway." }],
+    parts: [{ type: "text", text: "Hey - I'm Zero, Rahul's AI co-driver. Ask about his projects, stack, internships, or the weird little details behind the build." }],
   },
 ];
 
@@ -52,7 +52,7 @@ function getOrCreateSession() {
 
 function TypingDots() {
   return (
-    <div className="flex items-center gap-1 px-4 py-3 bg-[#222222] border border-white/5 rounded-[15px] rounded-bl-sm w-fit">
+    <div className="flex items-center gap-1 px-4 py-3 bg-[#17181c] border border-white/10 rounded-[9px] rounded-bl-[3px] w-fit">
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
@@ -187,7 +187,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
           {
             id: "wakeup-" + Date.now(),
             role: "assistant",
-            parts: [{ type: "text", text: "*(Yawns...)* I was sleeping! Waking up the servers takes a minute. Hang tight..." }],
+            parts: [{ type: "text", text: "Cold start in progress. The server is waking up - give me a few seconds." }],
           },
         ]);
       }, 5000);
@@ -285,9 +285,9 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
 
   const suggestions = [
     { label: "Who is Rahul?", icon: <User size={13} className="text-racing-red shrink-0" /> },
-    { label: "His projects", icon: <Bot size={13} className="text-racing-red shrink-0" /> },
-    { label: "IIT Roorkee Internship", icon: <Cpu size={13} className="text-racing-red shrink-0" /> },
-    { label: "Tech stack & skills", icon: <User size={13} className="text-racing-red shrink-0" /> },
+    { label: "Project telemetry", icon: <Bot size={13} className="text-racing-red shrink-0" /> },
+    { label: "IIT Roorkee run", icon: <Cpu size={13} className="text-racing-red shrink-0" /> },
+    { label: "Stack check", icon: <Sparkles size={13} className="text-racing-red shrink-0" /> },
   ];
 
   const handleSuggestionClick = (text: string) => {
@@ -303,11 +303,12 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       exit={{ opacity: 0, y: 30 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
       style={{ height: viewportHeight ? `${viewportHeight}px` : undefined }}
-      className={`fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[440px] h-[100dvh] sm:h-[600px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-white sm:border-2 sm:border-red-600/50 sm:rounded-[15px] flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_0_30px_rgba(220,38,38,0.25)] ${outfit.className} ${outfit.variable} ${jbMono.variable}`}
+      className={`fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[430px] h-[100dvh] sm:h-[580px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-[#08090b] sm:border sm:border-red-500/45 sm:rounded-[15px] flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_20px_60px_rgba(0,0,0,0.45),0_0_26px_rgba(220,38,38,0.22)] ${outfit.className} ${outfit.variable} ${jbMono.variable}`}
     >
-      <div className="bg-white px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:pt-3 flex items-center justify-between border-b border-zinc-100 shrink-0">
+      <div className="relative bg-[#f4f4f4] px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:pt-3 flex items-center justify-between border-b border-red-500/25 shrink-0 overflow-hidden">
+        <div className="absolute right-[-28px] top-0 h-full w-24 -skew-x-[18deg] bg-racing-red/95" />
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full flex items-center justify-center border-2 border-zinc-900 overflow-hidden bg-[#1a1a1a] shrink-0">
+          <div className="w-9 h-9 rounded-full flex items-center justify-center border border-zinc-900 overflow-hidden bg-[#1a1a1a] shrink-0">
             <Image src="/mask-circle.png" alt="Zero" width={36} height={36} className="h-full w-full object-cover" />
           </div>
           <div>
@@ -329,22 +330,22 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
               whileTap={{ scale: 0.9 }}
               onClick={clearChat}
               title="Clear conversation"
-              className="p-2 hover:bg-zinc-100 rounded-full transition-colors text-zinc-400 hover:text-zinc-800"
+              className="relative z-10 p-2 border border-zinc-300/70 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-900 hover:border-zinc-900 bg-white/45"
             >
               <RotateCcw size={15} />
             </motion.button>
           )}
-          <button onClick={onClose} className="p-2 hover:bg-zinc-100 rounded-full transition-colors text-zinc-400 hover:text-zinc-800">
+          <button onClick={onClose} className="relative z-10 p-2 border border-zinc-300/70 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-900 hover:border-zinc-900 bg-white/45">
             <Minus size={18} />
           </button>
         </div>
       </div>
 
-      <div className="flex-1 relative overflow-hidden min-h-0 bg-[#0e0e0e] rounded-t-[5px] border-t border-white/5">
-        <div className="chat-web-pattern absolute right-0 top-0 h-[220px] w-[220px] pointer-events-none z-0" />
-        <div className="chat-web-pattern absolute bottom-0 left-0 h-[150px] w-[150px] rotate-180 opacity-50 pointer-events-none z-0" />
-        <div ref={scrollContainerRef} onScroll={handleScroll} className="chat-scroll-area h-full overflow-y-auto overscroll-contain px-4 pt-4 pb-2 custom-scrollbar bg-transparent relative">
-          <div className="relative z-10 space-y-3">
+      <div className="flex-1 relative overflow-hidden min-h-0 bg-[#0d0e11] border-t border-white/5">
+        <div className="chat-web-pattern absolute right-0 top-0 h-[260px] w-[260px] pointer-events-none z-0" />
+        <div className="chat-web-pattern absolute bottom-0 left-0 h-[190px] w-[190px] rotate-180 opacity-60 pointer-events-none z-0" />
+        <div ref={scrollContainerRef} onScroll={handleScroll} className="chat-scroll-area h-full overflow-y-auto overscroll-contain px-3.5 sm:px-4 pt-3.5 pb-2 custom-scrollbar bg-transparent relative">
+          <div className="relative z-10 space-y-2.5">
             {messages.map((message, i) => (
               <motion.div key={message.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, ease: "easeOut" }}>
                 <MessageBubble message={message} isLast={i === messages.length - 1 && isTyping} />
@@ -366,7 +367,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
               animate={{ opacity: 1, x: "-50%", y: 0 }}
               exit={{ opacity: 0, x: "-50%", y: 10 }}
               onClick={scrollToBottom}
-              className="absolute bottom-4 left-1/2 flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0a0b0d]/80 backdrop-blur-md border border-white/10 rounded-[15px] text-[11px] font-medium text-zinc-200 hover:bg-[#0a0b0d] hover:text-white transition-colors shadow-[0_4px_20px_rgba(0,0,0,0.6)] z-20 group"
+              className="absolute bottom-4 left-1/2 flex items-center gap-1.5 px-3.5 py-1.5 bg-[#0a0b0d]/80 backdrop-blur-md border border-white/10 rounded-[8px] text-[11px] font-medium text-zinc-200 hover:bg-[#0a0b0d] hover:text-white transition-colors shadow-[0_4px_20px_rgba(0,0,0,0.6)] z-20 group"
             >
               <ChevronDown size={13} className="text-racing-red group-hover:translate-y-[2px] transition-transform" />
               <span className="tracking-wide">Scroll down</span>
@@ -377,7 +378,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
 
       <AnimatePresence>
         {messages.length <= 1 && (
-          <motion.div initial={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }} className="px-4 pb-2 bg-[#0e0e0e] overflow-hidden">
+          <motion.div initial={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }} className="px-3.5 sm:px-4 pb-2 bg-[#0d0e11] overflow-hidden">
             <div className="flex items-center gap-2 mb-2">
               <div className="h-px w-6 bg-racing-red" />
               <span className="text-[9px] font-bold text-zinc-500 tracking-[0.2em] uppercase">Try asking</span>
@@ -391,7 +392,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
                   whileTap={{ scale: 0.97 }}
                   onClick={() => handleSuggestionClick(s.label)}
                   disabled={!sessionId || isTyping}
-                  className="flex items-center gap-2 px-3 py-2 text-[11px] text-zinc-400 border border-white/8 rounded-[15px] hover:text-white hover:border-racing-red/40 transition-all bg-white/[0.03] text-left disabled:opacity-50"
+                  className="slant-action flex min-w-0 items-center gap-2 px-3 py-2 text-[11px] text-zinc-400 border border-white/10 rounded-[6px] hover:text-white hover:border-racing-red/50 transition-all bg-white/[0.035] text-left disabled:opacity-50"
                 >
                   {s.icon}
                   <span className="truncate">{s.label}</span>
@@ -402,7 +403,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
         )}
       </AnimatePresence>
 
-      <div className="px-3 pt-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:pb-3 bg-[#0a0b0d] border-t border-white/10">
+      <div className="px-3 pt-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:pb-3 bg-[#090a0d] border-t border-white/10">
         <form onSubmit={handleSubmit} className="flex items-center gap-2">
           <textarea
             ref={textareaRef}
@@ -414,7 +415,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             }}
             placeholder="Ask me anything..."
             rows={1}
-            className="flex-1 bg-[#121316] text-white border border-white/10 rounded-[15px] px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:border-racing-red/60 transition-all placeholder:text-zinc-600 resize-none leading-relaxed overflow-hidden shadow-inner"
+            className="flex-1 bg-[#121316] text-white border border-white/10 rounded-[10px] px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:border-racing-red/60 transition-all placeholder:text-zinc-600 resize-none leading-relaxed overflow-hidden shadow-inner"
             style={{ minHeight: "40px", maxHeight: "120px" }}
           />
 
@@ -423,7 +424,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             disabled={!input.trim() || isTyping || !sessionId}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="shrink-0 w-10 h-10 flex items-center justify-center rounded-[15px] bg-gradient-to-br from-red-600 via-red-700 to-red-900 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_0_15px_rgba(220,38,38,0.5)] border border-red-500/40"
+            className="shrink-0 w-10 h-10 flex items-center justify-center rounded-[10px] bg-gradient-to-br from-red-600 via-red-700 to-red-900 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_0_15px_rgba(220,38,38,0.5)] border border-red-500/40"
           >
             <SendHorizontal size={17} />
           </motion.button>
