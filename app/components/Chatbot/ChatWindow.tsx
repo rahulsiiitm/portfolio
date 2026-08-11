@@ -162,14 +162,14 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`History request failed: ${r.status}`))))
       .then((data) => {
         if (data.messages?.length > 0) {
-          const formatted: UIMessage[] = data.messages.map(
-            (m: { role: string; content?: string }, i: number) => ({
+          const formatted: UIMessage[] = data.messages
+            .filter((m: { content?: string }) => !m.content?.trim().toLowerCase().startsWith("cold start in progress"))
+            .map((m: { role: string; content?: string }, i: number) => ({
               id: `history-${i}`,
-              role: m.role === "model" ? "assistant" : "user",
+              role: m.role === "model" || m.role === "assistant" ? "assistant" : "user",
               parts: [{ type: "text", text: m.content || "" }],
-            })
-          );
-          setMessages(formatted);
+            }));
+          setMessages(formatted.length > 0 ? formatted : INITIAL_MESSAGES);
         }
       })
       .catch((e) => console.error("Failed to fetch history:", e));
@@ -238,22 +238,6 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
     };
   }, [baseUrl]);
 
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    if (status === "submitted" && serverState !== "online") {
-      timeoutId = setTimeout(() => {
-        setMessages((prev) => [
-          ...prev,
-          {
-            id: "wakeup-" + Date.now(),
-            role: "assistant",
-            parts: [{ type: "text", text: "Cold start in progress. The server is waking up - give me a few seconds." }],
-          },
-        ]);
-      }, 5000);
-    }
-    return () => clearTimeout(timeoutId);
-  }, [status, serverState, setMessages]);
 
   const adjustHeight = () => {
     const el = textareaRef.current;
