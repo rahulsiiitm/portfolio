@@ -387,8 +387,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       </div>
 
       <div className="chat-spidey-grid flex-1 relative overflow-hidden min-h-0 bg-[#0b0d11] border-t border-white/5">
-        <div className="chat-web-pattern absolute right-0 top-0 h-[260px] w-[260px] pointer-events-none z-0" />
-        <div className="chat-web-pattern absolute bottom-0 left-0 h-[190px] w-[190px] rotate-180 opacity-60 pointer-events-none z-0" />
+
         <div ref={scrollContainerRef} onScroll={handleScroll} className="chat-scroll-area h-full overflow-y-auto overscroll-contain px-3.5 sm:px-4 pt-3.5 pb-2 custom-scrollbar bg-transparent relative">
           <div className="relative z-10 space-y-2.5">
             {messages.map((message, i) => (

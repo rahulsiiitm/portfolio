@@ -110,14 +110,6 @@ body::-webkit-scrollbar,
 .slant-action:active {
   transform: translateY(0) scale(0.98);
 }
-/* Subtle procedural spider-web: crisp at every size, no enlarged bitmap artifacts. */
-.chat-web-pattern {
-  opacity: 0.36;
-  background-image:
-    repeating-radial-gradient(circle at 100% 0%, transparent 0 20px, rgba(220, 38, 38, 0.22) 21px 22px, transparent 23px 40px),
-    repeating-conic-gradient(from 180deg at 100% 0%, transparent 0deg 14deg, rgba(220, 38, 38, 0.18) 14.5deg 15deg, transparent 15.5deg 30deg);
-  background-repeat: no-repeat;
-}
 
 /* Spider HUD treatment used by Zero's chat console. */
 .chat-hud-shell {
@@ -135,10 +127,11 @@ body::-webkit-scrollbar,
 
 .chat-spidey-grid {
   background-image:
-    linear-gradient(rgba(239, 43, 37, 0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(239, 43, 37, 0.025) 1px, transparent 1px),
-    radial-gradient(circle at 85% 8%, rgba(214, 28, 37, 0.12), transparent 34%);
-  background-size: 28px 28px, 28px 28px, 100% 100%;
+    linear-gradient(180deg, rgba(7, 8, 11, 0.42), rgba(7, 8, 11, 0.64)),
+    url("/web-watermark.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 .chat-spidey-grid::after {
@@ -153,6 +146,3 @@ body::-webkit-scrollbar,
   clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
 }
 
-.chat-message-cut {
-  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
-}

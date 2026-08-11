@@ -177,10 +177,10 @@ export default function MessageBubble({
       <div className="relative max-w-[86%] sm:max-w-[84%]">
         {/* Message bubble */}
         <div
-          className={`chat-message-cut relative px-3.5 py-3 text-[13px] sm:text-[13px] rounded-[9px] leading-relaxed ${
+          className={`relative px-3.5 py-3 text-[13px] sm:text-[13px] rounded-[12px] leading-relaxed ${
             isUser
-              ? "bg-gradient-to-br from-[#d82b31] via-[#b91f28] to-[#74101a] text-white rounded-tr-[2px] shadow-[0_8px_24px_rgba(185,28,28,0.2)] border border-red-400/35"
-              : "bg-[#14161b]/95 text-zinc-200 border border-white/10 rounded-tl-[2px] shadow-[0_10px_28px_rgba(0,0,0,0.24)] space-y-1 before:content-[''] before:absolute before:left-3 before:top-0 before:h-px before:w-12 before:bg-gradient-to-r before:from-racing-red before:to-transparent"
+              ? "bg-gradient-to-br from-[#d82b31] via-[#b91f28] to-[#74101a] text-white rounded-tr-[4px] shadow-[0_8px_24px_rgba(185,28,28,0.2)] border border-red-400/35"
+              : "bg-[#14161b]/95 text-zinc-200 border border-white/10 rounded-tl-[4px] shadow-[0_10px_28px_rgba(0,0,0,0.24)] space-y-1 before:content-[''] before:absolute before:left-3 before:top-0 before:h-px before:w-12 before:bg-gradient-to-r before:from-racing-red before:to-transparent"
           }`}
         >
           {isUser ? (
