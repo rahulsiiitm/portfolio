@@ -52,20 +52,55 @@ function getOrCreateSession() {
 
 function SpideyThinker() {
   return (
-    <div className="relative h-16 w-16" role="status" aria-label="Zero is thinking">
-      <motion.svg viewBox="0 0 64 64" className="h-full w-full overflow-visible" animate={{ rotate: 360 }} transition={{ duration: 7, repeat: Infinity, ease: "linear" }}>
-        <circle cx="32" cy="32" r="27" fill="none" stroke="rgba(239, 43, 37, 0.2)" strokeWidth="1" strokeDasharray="2 5" />
-        <path d="M32 5v54M5 32h54M12.9 12.9l38.2 38.2M51.1 12.9 12.9 51.1" fill="none" stroke="rgba(239, 43, 37, 0.24)" strokeWidth="0.8" />
-      </motion.svg>
-      <motion.svg viewBox="0 0 64 64" className="absolute inset-0 h-full w-full" animate={{ scale: [0.74, 1.08, 0.74], opacity: [0.18, 0.72, 0.18] }} transition={{ duration: 1.65, repeat: Infinity, ease: "easeInOut" }}>
-        <circle cx="32" cy="32" r="22" fill="none" stroke="#ef2b25" strokeWidth="1" />
-      </motion.svg>
-      <motion.svg viewBox="0 0 64 64" className="absolute inset-[13px] h-[38px] w-[38px] drop-shadow-[0_0_9px_rgba(239,43,37,0.65)]" animate={{ y: [0, -1.5, 0], scale: [1, 1.04, 1] }} transition={{ duration: 1.15, repeat: Infinity, ease: "easeInOut" }}>
-        <path d="M32 8c-8.7 0-14 6.6-14 15.6 0 10.4 5.4 21.3 14 31.4 8.6-10.1 14-21 14-31.4C46 14.6 40.7 8 32 8Z" fill="#e62d27" stroke="#fff3ee" strokeWidth="1.4" />
-        <path d="M32 10v39M20.5 22.5h23M19.3 31.7h25.4M22.6 40.8h18.8M25.5 16.2l6.5 6.3 6.5-6.3M21.4 34.7l10.6-3 10.6 3M26.2 47.8l5.8-7.1 5.8 7.1" fill="none" stroke="#0a0a0c" strokeWidth="2" strokeLinecap="round" />
-        <path d="M22 24.5c3.8-3.4 6.7-2.9 8.4.1-2.2 2.5-5.1 2.9-8.4-.1ZM42 24.5c-3.8-3.4-6.7-2.9-8.4.1 2.2 2.5 5.1 2.9 8.4-.1Z" fill="#f8fafc" stroke="#09090b" strokeWidth="1.4" />
-      </motion.svg>
-    </div>
+    <motion.div
+      className="relative h-[68px] w-[92px] overflow-visible"
+      role="status"
+      aria-label="Zero is thinking"
+      initial={{ opacity: 0, scale: 0.88 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.82, y: -4 }}
+    >
+      <svg viewBox="0 0 92 68" className="h-full w-full overflow-visible" aria-hidden="true">
+        <defs>
+          <linearGradient id="senseRed" x1="0" y1="0" x2="1" y2="1">
+            <stop stopColor="#ff4b43" />
+            <stop offset="1" stopColor="#b30f1b" />
+          </linearGradient>
+          <filter id="senseGlow" x="-70%" y="-70%" width="240%" height="240%">
+            <feGaussianBlur stdDeviation="2.4" result="blur" />
+            <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+          </filter>
+        </defs>
+
+        {[0, 1, 2].map((ring) => (
+          <motion.path
+            key={ring}
+            d={`M${18 + ring * 8} ${35 - ring * 2} Q46 ${3 + ring * 8} ${74 - ring * 8} ${35 - ring * 2}`}
+            fill="none"
+            stroke={ring === 0 ? "#ef2b25" : "rgba(255,255,255,0.55)"}
+            strokeWidth={ring === 0 ? 1.8 : 1.1}
+            strokeLinecap="round"
+            initial={{ pathLength: 0, opacity: 0 }}
+            animate={{ pathLength: [0, 1, 1], opacity: [0, 0.9 - ring * 0.18, 0] }}
+            transition={{ duration: 1.35, repeat: Infinity, delay: ring * 0.16, ease: "easeOut" }}
+          />
+        ))}
+
+        <motion.g
+          filter="url(#senseGlow)"
+          animate={{ scale: [0.96, 1.05, 0.96] }}
+          transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut" }}
+          style={{ transformOrigin: "46px 44px" }}
+        >
+          <path d="M46 25 61 32l5 16-10 15H36L26 48l5-16Z" fill="#0b0c10" stroke="url(#senseRed)" strokeWidth="1.6" />
+          <path d="M46 30c-3.1 0-4.9 2.5-4.9 5.5 0 2.1 1 4.2 2.5 5.7l-4.9 3.3-5.1-3.3m12.4 0v15m0-15c1.5-1.5 2.5-3.6 2.5-5.7 0-3-1.8-5.5-2.5-5.5Zm2.4 11.2 4.9 3.3 5.1-3.3M43.5 45l-5.8 5.2-4.3-.5m15.1-4.7 5.8 5.2 4.3-.5m-15 0-3.8 6.2m8.6-6.2 3.8 6.2" fill="none" stroke="#f5f5f5" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+          <circle cx="46" cy="36" r="2.2" fill="#ef2b25" />
+        </motion.g>
+
+        <motion.path d="M11 48h10M71 48h10" stroke="#ef2b25" strokeWidth="1.5" animate={{ opacity: [0.2, 1, 0.2] }} transition={{ duration: 0.8, repeat: Infinity }} />
+        <motion.circle cx="18" cy="48" r="2" fill="#fff" animate={{ cx: [18, 74], opacity: [0, 1, 0] }} transition={{ duration: 1.25, repeat: Infinity, ease: "easeInOut" }} />
+      </svg>
+    </motion.div>
   );
 }
 export default function ChatWindow({ onClose }: { onClose: () => void }) {
@@ -133,6 +168,15 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   };
 
   const isTyping = status === "submitted" || status === "streaming";
+  const latestMessage = messages[messages.length - 1];
+  const latestAssistantText = latestMessage?.role === "assistant"
+    ? latestMessage.parts
+        .filter((part) => part.type === "text")
+        .map((part) => (part as { type: "text"; text: string }).text)
+        .join("")
+        .trim()
+    : "";
+  const showThinker = isTyping && !latestAssistantText;
 
   useEffect(() => {
     const focusTimer = setTimeout(() => textareaRef.current?.focus(), 100);
@@ -306,23 +350,24 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       exit={{ opacity: 0, y: 30 }}
       transition={{ duration: 0.2, ease: "easeOut" }}
       style={{ height: viewportHeight ? `${viewportHeight}px` : undefined }}
-      className={`fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[430px] h-[100dvh] sm:h-[580px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-[#08090b] sm:border sm:border-red-500/45 sm:rounded-[15px] flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_20px_60px_rgba(0,0,0,0.45),0_0_26px_rgba(220,38,38,0.22)] ${outfit.className} ${outfit.variable} ${jbMono.variable}`}
+      className={`chat-hud-shell fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[430px] h-[100dvh] sm:h-[580px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-[#08090c] sm:border sm:border-red-500/55 sm:rounded-[15px] flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_22px_70px_rgba(0,0,0,0.62),0_0_32px_rgba(221,32,39,0.18)] ${outfit.className} ${outfit.variable} ${jbMono.variable}`}
     >
-      <div className="relative bg-[#f4f4f4] px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:pt-3 flex items-center justify-between border-b border-red-500/25 shrink-0 overflow-hidden">
-        <div className="absolute right-[-28px] top-0 h-full w-24 -skew-x-[18deg] bg-racing-red/95" />
+      <div className="relative bg-[#0d0f14] px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:pt-3 flex items-center justify-between border-b border-red-500/35 shrink-0 overflow-hidden">
+        <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-racing-red to-transparent" />
+        <div className="absolute right-[-34px] top-0 h-full w-28 -skew-x-[20deg] bg-gradient-to-l from-red-700/70 to-racing-red/10" />
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full flex items-center justify-center border border-zinc-900 overflow-hidden bg-[#1a1a1a] shrink-0">
+          <div className="relative w-10 h-10 rounded-[9px] flex items-center justify-center border border-red-500/55 overflow-hidden bg-[#090a0d] shrink-0 shadow-[0_0_16px_rgba(239,43,37,0.24)]">
             <Image src="/mask-circle.png" alt="Zero" width={36} height={36} className="h-full w-full object-cover" />
           </div>
           <div>
             <div className="flex items-center gap-2 mt-1">
-              <h3 className="font-ammonite text-racing-red text-xl leading-none tracking-wide lowercase">zero</h3>
-              <span className={`w-1.5 h-1.5 rounded-full ${isTyping ? "bg-racing-red" : serverState === "online" ? "bg-emerald-500" : serverState === "checking" ? "bg-zinc-400" : "bg-zinc-600"} animate-pulse`} />
+              <h3 className="font-ammonite text-white text-xl leading-none tracking-wide lowercase">zero</h3>
+              <span className={`w-1.5 h-1.5 rounded-full ${showThinker ? "bg-racing-red" : serverState === "online" ? "bg-emerald-500" : serverState === "checking" ? "bg-zinc-400" : "bg-zinc-600"} animate-pulse`} />
               <span className="text-[9px] font-semibold text-zinc-400 tracking-widest uppercase">
-                {isTyping ? "spider-sense" : serverState}
+                {showThinker ? "spider-sense" : serverState}
               </span>
             </div>
-            <p className="text-[11px] text-zinc-400 mt-0.5">Rahul&#39;s AI alter ego</p>
+            <p className="text-[10px] text-zinc-500 mt-0.5 font-medium tracking-wide">Rahul&#39;s AI alter ego</p>
           </div>
         </div>
 
@@ -333,18 +378,18 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
               whileTap={{ scale: 0.9 }}
               onClick={clearChat}
               title="Clear conversation"
-              className="relative z-10 p-2 border border-zinc-300/70 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-900 hover:border-zinc-900 bg-white/45"
+              className="relative z-10 p-2 border border-white/10 rounded-[7px] transition-colors text-zinc-400 hover:text-white hover:border-red-500/60 bg-black/25"
             >
               <RotateCcw size={15} />
             </motion.button>
           )}
-          <button onClick={onClose} className="relative z-10 p-2 border border-zinc-300/70 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-900 hover:border-zinc-900 bg-white/45">
+          <button onClick={onClose} className="relative z-10 p-2 border border-white/10 rounded-[7px] transition-colors text-zinc-400 hover:text-white hover:border-red-500/60 bg-black/25">
             <Minus size={18} />
           </button>
         </div>
       </div>
 
-      <div className="flex-1 relative overflow-hidden min-h-0 bg-[#0d0e11] border-t border-white/5">
+      <div className="chat-spidey-grid flex-1 relative overflow-hidden min-h-0 bg-[#0b0d11] border-t border-white/5">
         <div className="chat-web-pattern absolute right-0 top-0 h-[260px] w-[260px] pointer-events-none z-0" />
         <div className="chat-web-pattern absolute bottom-0 left-0 h-[190px] w-[190px] rotate-180 opacity-60 pointer-events-none z-0" />
         <div ref={scrollContainerRef} onScroll={handleScroll} className="chat-scroll-area h-full overflow-y-auto overscroll-contain px-3.5 sm:px-4 pt-3.5 pb-2 custom-scrollbar bg-transparent relative">
@@ -354,11 +399,13 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
                 <MessageBubble message={message} isLast={i === messages.length - 1 && isTyping} />
               </motion.div>
             ))}
-            {isTyping && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-start">
-                <SpideyThinker />
-              </motion.div>
-            )}
+            <AnimatePresence>
+              {showThinker && (
+                <motion.div initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }} className="flex justify-start pl-1">
+                  <SpideyThinker />
+                </motion.div>
+              )}
+            </AnimatePresence>
             <div ref={messagesEndRef} />
           </div>
         </div>
@@ -406,7 +453,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
         )}
       </AnimatePresence>
 
-      <div className="px-3 pt-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:pb-3 bg-[#090a0d] border-t border-white/10">
+      <div className="relative px-3 pt-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:pb-3 bg-[#090a0d] border-t border-red-500/25 before:absolute before:top-0 before:left-3 before:h-px before:w-16 before:bg-racing-red">
         <form onSubmit={handleSubmit} className="flex items-center gap-2">
           <textarea
             ref={textareaRef}
@@ -418,7 +465,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             }}
             placeholder="Ask me anything..."
             rows={1}
-            className="flex-1 bg-[#121316] text-white border border-white/10 rounded-[10px] px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:border-racing-red/60 transition-all placeholder:text-zinc-600 resize-none leading-relaxed overflow-hidden shadow-inner"
+            className="flex-1 bg-[#111319] text-white border border-white/10 rounded-[8px] px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:border-racing-red/70 focus:shadow-[0_0_0_1px_rgba(239,43,37,0.16)] transition-all placeholder:text-zinc-600 resize-none leading-relaxed overflow-hidden shadow-inner"
             style={{ minHeight: "40px", maxHeight: "120px" }}
           />
 
@@ -427,7 +474,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             disabled={!input.trim() || isTyping || !sessionId}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className="shrink-0 w-10 h-10 flex items-center justify-center rounded-[10px] bg-gradient-to-br from-red-600 via-red-700 to-red-900 text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_0_15px_rgba(220,38,38,0.5)] border border-red-500/40"
+            className="chat-send-cut shrink-0 w-10 h-10 flex items-center justify-center rounded-[7px] bg-gradient-to-br from-[#f23a35] via-[#cc2028] to-[#7f101c] text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_0_18px_rgba(220,38,38,0.38)] border border-red-400/40"
           >
             <SendHorizontal size={17} />
           </motion.button>

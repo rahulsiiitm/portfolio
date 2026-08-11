@@ -118,3 +118,42 @@ body::-webkit-scrollbar,
     repeating-conic-gradient(from 180deg at 100% 0%, transparent 0deg 14deg, rgba(220, 38, 38, 0.18) 14.5deg 15deg, transparent 15.5deg 30deg);
   background-repeat: no-repeat;
 }
+
+/* Spider HUD treatment used by Zero's chat console. */
+.chat-hud-shell {
+  isolation: isolate;
+}
+
+.chat-hud-shell::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  z-index: 80;
+  pointer-events: none;
+  border: 1px solid rgba(255, 255, 255, 0.025);
+}
+
+.chat-spidey-grid {
+  background-image:
+    linear-gradient(rgba(239, 43, 37, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(239, 43, 37, 0.025) 1px, transparent 1px),
+    radial-gradient(circle at 85% 8%, rgba(214, 28, 37, 0.12), transparent 34%);
+  background-size: 28px 28px, 28px 28px, 100% 100%;
+}
+
+.chat-spidey-grid::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(115deg, transparent 0 45%, rgba(255, 255, 255, 0.018) 45% 47%, transparent 47% 100%);
+}
+
+.chat-avatar-cut,
+.chat-send-cut {
+  clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+}
+
+.chat-message-cut {
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}

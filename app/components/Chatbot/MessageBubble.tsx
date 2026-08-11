@@ -132,7 +132,7 @@ export default function MessageBubble({
     <div className={`flex w-full items-start gap-2.5 group ${isUser ? "justify-end" : "justify-start"}`}>
       {/* Bot Spider Avatar */}
       {!isUser && (
-        <div className="relative w-8 h-8 rounded-full shrink-0 flex items-center justify-center border-2 border-racing-red/80 bg-[#16171a] shadow-[0_0_10px_rgba(220,38,38,0.4)] overflow-hidden mt-0.5">
+        <div className="chat-avatar-cut relative w-8 h-8 rounded-[7px] shrink-0 flex items-center justify-center border border-racing-red/80 bg-[#0b0c10] shadow-[0_0_14px_rgba(220,38,38,0.32)] overflow-hidden mt-0.5">
           <Image src="/mask-circle.png" alt="Zero" fill sizes="32px" className="object-cover" />
         </div>
       )}
@@ -140,10 +140,10 @@ export default function MessageBubble({
       <div className="relative max-w-[86%] sm:max-w-[84%]">
         {/* Message bubble */}
         <div
-          className={`relative px-3.5 py-3 text-[13px] sm:text-[13px] rounded-[9px] leading-relaxed ${
+          className={`chat-message-cut relative px-3.5 py-3 text-[13px] sm:text-[13px] rounded-[9px] leading-relaxed ${
             isUser
-              ? "bg-gradient-to-r from-red-600 via-red-700 to-red-800 text-white rounded-tr-[3px] shadow-[0_8px_18px_rgba(185,28,28,0.22)] border border-red-500/30 after:content-[''] after:absolute after:-right-[5px] after:top-3.5 after:w-2.5 after:h-2.5 after:bg-[#801a1a] after:border-t after:border-r after:border-red-500/40 after:rotate-45"
-              : "bg-[#17181c]/95 text-zinc-200 border border-white/10 rounded-tl-[3px] shadow-md space-y-1 before:content-[''] before:absolute before:-left-[5px] before:top-3.5 before:w-2.5 before:h-2.5 before:bg-[#141518] before:border-l before:border-b before:border-white/10 before:rotate-45"
+              ? "bg-gradient-to-br from-[#d82b31] via-[#b91f28] to-[#74101a] text-white rounded-tr-[2px] shadow-[0_8px_24px_rgba(185,28,28,0.2)] border border-red-400/35"
+              : "bg-[#14161b]/95 text-zinc-200 border border-white/10 rounded-tl-[2px] shadow-[0_10px_28px_rgba(0,0,0,0.24)] space-y-1 before:content-[''] before:absolute before:left-3 before:top-0 before:h-px before:w-12 before:bg-gradient-to-r before:from-racing-red before:to-transparent"
           }`}
         >
           {message.parts.map((part, index) => {
