@@ -53,23 +53,27 @@ function getOrCreateSession() {
 function SpideyThinker() {
   return (
     <motion.div
-      className="relative h-[76px] w-[104px] overflow-visible"
+      className="relative h-[88px] w-[116px] overflow-visible"
       role="status"
       aria-label="Zero is thinking"
-      initial={{ opacity: 0, scale: 0.86 }}
+      initial={{ opacity: 0, scale: 0.82 }}
       animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.8, y: -6 }}
-      transition={{ duration: 0.22 }}
+      exit={{ opacity: 0, scale: 0.78, y: -7 }}
+      transition={{ duration: 0.24, ease: "easeOut" }}
     >
-      <svg viewBox="0 0 104 76" className="h-full w-full overflow-visible" aria-hidden="true">
+      <svg viewBox="0 0 116 88" className="h-full w-full overflow-visible" aria-hidden="true">
         <defs>
-          <linearGradient id="spideyMaskRed" x1="0" y1="0" x2="1" y2="1">
+          <linearGradient id="senseMask" x1="0.2" y1="0" x2="0.85" y2="1">
             <stop stopColor="#ff5148" />
-            <stop offset="0.55" stopColor="#dc2626" />
-            <stop offset="1" stopColor="#840f19" />
+            <stop offset="0.52" stopColor="#e3292f" />
+            <stop offset="1" stopColor="#8f101a" />
           </linearGradient>
-          <filter id="spideySenseGlow" x="-80%" y="-80%" width="260%" height="260%">
-            <feGaussianBlur stdDeviation="2.8" result="blur" />
+          <linearGradient id="senseEye" x1="0" y1="0" x2="0" y2="1">
+            <stop stopColor="#ffffff" />
+            <stop offset="1" stopColor="#cbd5e1" />
+          </linearGradient>
+          <filter id="senseAura" x="-80%" y="-80%" width="260%" height="260%">
+            <feGaussianBlur stdDeviation="3" result="blur" />
             <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
           </filter>
         </defs>
@@ -77,41 +81,66 @@ function SpideyThinker() {
         {[0, 1, 2].map((wave) => (
           <motion.path
             key={wave}
-            d={`M${14 + wave * 9} ${39 - wave * 3} Q52 ${-5 + wave * 11} ${90 - wave * 9} ${39 - wave * 3}`}
+            d={`M${18 + wave * 10} ${44 - wave * 4} Q58 ${-5 + wave * 12} ${98 - wave * 10} ${44 - wave * 4}`}
             fill="none"
-            stroke={wave === 0 ? "#ef2b25" : "rgba(255,255,255,0.72)"}
-            strokeWidth={wave === 0 ? 2 : 1.2}
+            stroke={wave === 0 ? "#f13438" : "rgba(255,255,255,0.7)"}
+            strokeWidth={wave === 0 ? 2.2 : 1.25}
             strokeLinecap="round"
             initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: [0, 1, 1], opacity: [0, 0.95 - wave * 0.18, 0] }}
-            transition={{ duration: 1.18, repeat: Infinity, delay: wave * 0.14, ease: "easeOut" }}
+            animate={{ pathLength: [0, 1, 1], opacity: [0, 0.92 - wave * 0.18, 0] }}
+            transition={{ duration: 1.28, repeat: Infinity, delay: wave * 0.13, ease: "easeOut" }}
           />
         ))}
 
-        <motion.path
-          d="M12 47 5 42m87 5 7-5M16 57 8 59m80-2 8 2"
-          fill="none"
+        <motion.g
+          animate={{ opacity: [0.2, 1, 0.2] }}
+          transition={{ duration: 0.82, repeat: Infinity, ease: "easeInOut" }}
           stroke="#ef2b25"
-          strokeWidth="1.7"
+          strokeWidth="1.8"
           strokeLinecap="round"
-          animate={{ opacity: [0.15, 1, 0.15], pathLength: [0.35, 1, 0.35] }}
-          transition={{ duration: 0.9, repeat: Infinity, ease: "easeInOut" }}
+        >
+          <path d="m14 49-7-4m8 15-9 1m96-12 7-4m-8 15 9 1" />
+        </motion.g>
+
+        <motion.circle
+          cx="58"
+          cy="57"
+          r="29"
+          fill="none"
+          stroke="rgba(239,43,37,0.42)"
+          strokeWidth="1.2"
+          strokeDasharray="3 7"
+          animate={{ rotate: 360, scale: [0.96, 1.05, 0.96] }}
+          transition={{ rotate: { duration: 7, repeat: Infinity, ease: "linear" }, scale: { duration: 1.35, repeat: Infinity, ease: "easeInOut" } }}
+          style={{ transformOrigin: "58px 57px" }}
         />
 
         <motion.g
-          filter="url(#spideySenseGlow)"
-          animate={{ scale: [0.96, 1.045, 0.96], y: [1, -1, 1] }}
-          transition={{ duration: 1.08, repeat: Infinity, ease: "easeInOut" }}
-          style={{ transformOrigin: "52px 51px" }}
+          filter="url(#senseAura)"
+          animate={{ y: [1, -1.5, 1], scale: [0.975, 1.025, 0.975] }}
+          transition={{ duration: 1.16, repeat: Infinity, ease: "easeInOut" }}
+          style={{ transformOrigin: "58px 58px" }}
         >
-          <path d="M52 25c-11.6 0-18.2 8.1-17.2 19.7C35.7 56 42.3 66.3 52 71c9.7-4.7 16.3-15 17.2-26.3C70.2 33.1 63.6 25 52 25Z" fill="url(#spideyMaskRed)" stroke="#090a0d" strokeWidth="2.4" />
-          <path d="M52 27v41M38.7 38.5 52 46l13.3-7.5M35.2 47h33.6M39 57l13-11 13 11M43.7 65 52 56l8.3 9" fill="none" stroke="#15161a" strokeWidth="1.15" opacity="0.95" />
-          <path d="M40 42.7c4.5-4.8 8.1-4.5 10.5-.5-2.4 5.1-6.2 7.4-11 7.3Z" fill="#f8fafc" stroke="#08090c" strokeWidth="1.8" />
-          <path d="M64 42.7c-4.5-4.8-8.1-4.5-10.5-.5 2.4 5.1 6.2 7.4 11 7.3Z" fill="#f8fafc" stroke="#08090c" strokeWidth="1.8" />
-          <motion.path d="M41.2 45.1c3.2-2.8 5.5-2.8 7.2-.6M62.8 45.1c-3.2-2.8-5.5-2.8-7.2-.6" fill="none" stroke="#dbeafe" strokeWidth="1" animate={{ opacity: [0.4, 1, 0.4] }} transition={{ duration: 0.72, repeat: Infinity }} />
-        </motion.g>
+          <path d="M58 27c-14.5 0-23 10.5-21.8 25.2C37.4 67 45.7 79.7 58 85c12.3-5.3 20.6-18 21.8-32.8C81 37.5 72.5 27 58 27Z" fill="url(#senseMask)" stroke="#08090c" strokeWidth="2.8" />
 
-        <motion.circle cx="52" cy="51" r="23.5" fill="none" stroke="rgba(239,43,37,0.48)" strokeWidth="1" strokeDasharray="2 6" animate={{ rotate: 360 }} transition={{ duration: 6, repeat: Infinity, ease: "linear" }} style={{ transformOrigin: "52px 51px" }} />
+          <g fill="none" stroke="#17181c" strokeWidth="1.2" opacity="0.96">
+            <path d="M58 29v52M41.5 40.5Q58 49 74.5 40.5M36.8 53Q58 61 79.2 53M40.5 67Q58 73.5 75.5 67" />
+            <path d="M42 32.5 58 46l16-13.5M37.8 47 58 58l20.2-11M41 70l17-12 17 12M48 81l10-12 10 12" />
+          </g>
+
+          <path d="M42.2 45.5c4.3-6.2 9.4-8.1 14-5.7-1.4 10.5-5.8 17.6-14.8 21.7-2.4-6.1-2.1-11.7.8-16Z" fill="url(#senseEye)" stroke="#07080a" strokeWidth="2.7" strokeLinejoin="round" />
+          <path d="M73.8 45.5c-4.3-6.2-9.4-8.1-14-5.7 1.4 10.5 5.8 17.6 14.8 21.7 2.4-6.1 2.1-11.7-.8-16Z" fill="url(#senseEye)" stroke="#07080a" strokeWidth="2.7" strokeLinejoin="round" />
+
+          <motion.path
+            d="M43.7 46.8c3.8-4.8 7.5-6.1 10.7-4.8M72.3 46.8c-3.8-4.8-7.5-6.1-10.7-4.8"
+            fill="none"
+            stroke="#ffffff"
+            strokeWidth="1.3"
+            strokeLinecap="round"
+            animate={{ opacity: [0.35, 1, 0.35] }}
+            transition={{ duration: 0.76, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </motion.g>
       </svg>
     </motion.div>
   );
