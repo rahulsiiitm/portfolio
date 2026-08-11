@@ -19,7 +19,7 @@ const INITIAL_MESSAGES: UIMessage[] = [
   {
     id: "1",
     role: "assistant",
-    parts: [{ type: "text", text: "Hey - I'm Zero, Rahul's AI co-driver. Ask about his projects, stack, internships, or the weird little details behind the build." }],
+    parts: [{ type: "text", text: "Hey - I'm Zero, Rahul's AI assistant. Ask me about Rahul, his projects, experience, or technical skills." }],
   },
 ];
 
@@ -330,9 +330,9 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
 
   const suggestions = [
     { label: "Who is Rahul?", icon: <User size={13} className="text-racing-red shrink-0" /> },
-    { label: "Project telemetry", icon: <Bot size={13} className="text-racing-red shrink-0" /> },
-    { label: "IIT Roorkee run", icon: <Cpu size={13} className="text-racing-red shrink-0" /> },
-    { label: "Stack check", icon: <Sparkles size={13} className="text-racing-red shrink-0" /> },
+    { label: "His projects", icon: <Bot size={13} className="text-racing-red shrink-0" /> },
+    { label: "Work experience", icon: <Cpu size={13} className="text-racing-red shrink-0" /> },
+    { label: "Skills & technologies", icon: <Sparkles size={13} className="text-racing-red shrink-0" /> },
   ];
 
   const handleSuggestionClick = (text: string) => {
@@ -362,10 +362,10 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
               <h3 className="font-ammonite text-racing-red text-xl leading-none tracking-wide lowercase">zero</h3>
               <span className={`w-1.5 h-1.5 rounded-full ${showThinker ? "bg-racing-red" : serverState === "online" ? "bg-emerald-500" : serverState === "checking" ? "bg-zinc-400" : "bg-zinc-600"} animate-pulse`} />
               <span className="text-[9px] font-semibold text-zinc-400 tracking-widest uppercase">
-                {showThinker ? "spider-sense" : serverState}
+                {showThinker ? "thinking" : serverState}
               </span>
             </div>
-            <p className="text-[10px] text-zinc-500 mt-0.5 font-medium tracking-wide">Rahul&#39;s AI alter ego</p>
+            <p className="text-[10px] text-zinc-500 mt-0.5 font-medium tracking-wide">Rahul&#39;s AI assistant</p>
           </div>
         </div>
 
@@ -460,7 +460,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             onFocus={() => {
               if (window.innerWidth < 640) setTimeout(() => window.scrollTo(0, 0), 100);
             }}
-            placeholder="Ask me anything..."
+            placeholder="Ask about Rahul..."
             rows={1}
             className="flex-1 bg-[#111319] text-white border border-white/10 rounded-[8px] px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:border-racing-red/70 focus:shadow-[0_0_0_1px_rgba(239,43,37,0.16)] transition-all placeholder:text-zinc-600 resize-none leading-relaxed overflow-hidden shadow-inner"
             style={{ minHeight: "40px", maxHeight: "120px" }}
@@ -480,7 +480,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
         <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-2 sm:mt-3 pb-1 text-[9px] sm:text-[10px] text-zinc-500 font-sans select-none">
           <div className="h-[1px] w-6 sm:w-12 bg-gradient-to-r from-transparent via-red-900/60 to-red-600/50" />
           <Bug size={14} className="text-racing-red shrink-0 stroke-[2.2]" />
-          <span className="text-zinc-500 tracking-wide font-medium">I survived my trip to Manipur!</span>
+          <span className="text-zinc-500 tracking-wide font-medium">Powered by Rahul&#39;s portfolio data</span>
           <div className="h-[1px] w-6 sm:w-12 bg-gradient-to-l from-transparent via-red-900/60 to-red-600/50" />
         </div>
       </div>

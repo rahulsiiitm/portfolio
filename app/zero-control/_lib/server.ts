@@ -143,3 +143,21 @@ export async function supabaseData<T>(query: string, accessToken: string): Promi
 
   return (await response.json()) as T;
 }
+
+export async function supabaseDelete(query: string, accessToken: string): Promise<void> {
+  const { url, publishableKey } = config();
+  const response = await fetch(`${url}/rest/v1/${query}`, {
+    method: "DELETE",
+    headers: {
+      apikey: publishableKey,
+      Authorization: `Bearer ${accessToken}`,
+      Accept: "application/json",
+      Prefer: "return=minimal",
+    },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error(`Supabase delete request failed (${response.status}).`);
+  }
+}
