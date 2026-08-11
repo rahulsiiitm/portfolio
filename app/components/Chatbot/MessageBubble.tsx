@@ -2,7 +2,7 @@
 
 import { UIMessage } from "ai";
 import { motion } from "framer-motion";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Copy, Check, CheckCheck, ChevronDown } from "lucide-react";
 import Image from "next/image";
 
@@ -103,6 +103,41 @@ function renderFormatted(text: string) {
   });
 }
 
+function useSmoothText(target: string) {
+  const [visibleText, setVisibleText] = useState(target);
+  const visibleRef = useRef(target);
+  const targetRef = useRef(target);
+
+  useEffect(() => {
+    targetRef.current = target;
+
+
+    let frameId = 0;
+    const reveal = () => {
+      const current = visibleRef.current;
+      const desired = targetRef.current;
+      if (current === desired) return;
+
+      if (!desired.startsWith(current)) {
+        visibleRef.current = desired;
+        setVisibleText(desired);
+        return;
+      }
+
+      const remaining = desired.length - current.length;
+      const step = remaining > 90 ? 4 : remaining > 45 ? 3 : remaining > 18 ? 2 : 1;
+      const next = desired.slice(0, current.length + step);
+      visibleRef.current = next;
+      setVisibleText(next);
+      frameId = requestAnimationFrame(reveal);
+    };
+
+    if (visibleRef.current !== targetRef.current) frameId = requestAnimationFrame(reveal);
+    return () => cancelAnimationFrame(frameId);
+  }, [target]);
+
+  return visibleText;
+}
 export default function MessageBubble({
   message,
   isLast,
@@ -118,6 +153,8 @@ export default function MessageBubble({
     .map((p) => (p as { type: "text"; text: string }).text)
     .join("\n");
 
+  const displayedText = useSmoothText(fullText);
+
   const handleCopy = () => {
     navigator.clipboard.writeText(fullText).then(() => {
       setCopied(true);
@@ -132,7 +169,7 @@ export default function MessageBubble({
     <div className={`flex w-full items-start gap-2.5 group ${isUser ? "justify-end" : "justify-start"}`}>
       {/* Bot Spider Avatar */}
       {!isUser && (
-        <div className="chat-avatar-cut relative w-8 h-8 rounded-[7px] shrink-0 flex items-center justify-center border border-racing-red/80 bg-[#0b0c10] shadow-[0_0_14px_rgba(220,38,38,0.32)] overflow-hidden mt-0.5">
+        <div className="relative w-8 h-8 rounded-full shrink-0 flex items-center justify-center border border-racing-red/80 bg-[#0b0c10] shadow-[0_0_14px_rgba(220,38,38,0.32)] overflow-hidden mt-0.5">
           <Image src="/mask-circle.png" alt="Zero" fill sizes="32px" className="object-cover" />
         </div>
       )}
@@ -146,14 +183,11 @@ export default function MessageBubble({
               : "bg-[#14161b]/95 text-zinc-200 border border-white/10 rounded-tl-[2px] shadow-[0_10px_28px_rgba(0,0,0,0.24)] space-y-1 before:content-[''] before:absolute before:left-3 before:top-0 before:h-px before:w-12 before:bg-gradient-to-r before:from-racing-red before:to-transparent"
           }`}
         >
-          {message.parts.map((part, index) => {
-            if (part.type !== "text") return null;
-            return isUser ? (
-              <span key={index} className="font-medium text-white">{ (part as { type: "text"; text: string }).text }</span>
-            ) : (
-              <div key={index}>{renderFormatted((part as { type: "text"; text: string }).text)}</div>
-            );
-          })}
+          {isUser ? (
+            <span className="font-medium text-white">{fullText}</span>
+          ) : (
+            <div>{renderFormatted(displayedText)}</div>
+          )}
 
           {/* User timestamp and double checkmarks */}
           {isUser && (

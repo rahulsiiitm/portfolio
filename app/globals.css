@@ -149,7 +149,6 @@ body::-webkit-scrollbar,
   background: linear-gradient(115deg, transparent 0 45%, rgba(255, 255, 255, 0.018) 45% 47%, transparent 47% 100%);
 }
 
-.chat-avatar-cut,
 .chat-send-cut {
   clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
 }
