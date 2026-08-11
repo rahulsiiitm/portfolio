@@ -52,51 +52,22 @@ function getOrCreateSession() {
 
 function SpideyThinker() {
   return (
-    <div className="relative flex w-fit max-w-[88%] items-center gap-3 rounded-[10px] rounded-bl-[3px] border border-red-500/20 bg-[#17181c]/95 px-3.5 py-3 shadow-[0_10px_24px_rgba(0,0,0,0.28)] overflow-hidden">
-      <div className="chat-web-pattern absolute -right-8 -top-10 h-24 w-24 opacity-50 pointer-events-none" />
-      <div className="relative flex h-10 w-10 shrink-0 items-center justify-center">
-        <motion.span
-          className="absolute inset-0 rounded-full border border-racing-red/45"
-          animate={{ scale: [0.9, 1.22, 0.9], opacity: [0.65, 0.15, 0.65] }}
-          transition={{ duration: 1.45, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.span
-          className="absolute inset-[5px] rounded-full border border-white/10"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-        />
-        <div className="relative h-8 w-8 overflow-hidden rounded-full border border-racing-red/70 bg-black">
-          <Image src="/mask-circle.png" alt="Zero thinking" fill sizes="32px" className="object-cover" />
-        </div>
-      </div>
-
-      <div className="relative min-w-0">
-        <div className="mb-1 flex items-center gap-2">
-          <span className="font-mono text-[9px] font-bold uppercase tracking-[0.22em] text-racing-red">Spider-sense</span>
-          <div className="flex items-center gap-1">
-            {[0, 1, 2].map((i) => (
-              <motion.span
-                key={i}
-                className="h-1.5 w-1.5 rounded-full bg-racing-red"
-                animate={{ opacity: [0.2, 1, 0.2], y: [0, -2, 0] }}
-                transition={{ duration: 0.85, repeat: Infinity, delay: i * 0.14 }}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="flex items-center gap-1.5 text-[11px] font-medium text-zinc-300">
-          <motion.span
-            className="h-px w-7 bg-racing-red/70"
-            animate={{ scaleX: [0.35, 1, 0.35], opacity: [0.45, 1, 0.45] }}
-            transition={{ duration: 1.1, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <span>Zero is tracing the web</span>
-        </div>
-      </div>
+    <div className="relative h-16 w-16" role="status" aria-label="Zero is thinking">
+      <motion.svg viewBox="0 0 64 64" className="h-full w-full overflow-visible" animate={{ rotate: 360 }} transition={{ duration: 7, repeat: Infinity, ease: "linear" }}>
+        <circle cx="32" cy="32" r="27" fill="none" stroke="rgba(239, 43, 37, 0.2)" strokeWidth="1" strokeDasharray="2 5" />
+        <path d="M32 5v54M5 32h54M12.9 12.9l38.2 38.2M51.1 12.9 12.9 51.1" fill="none" stroke="rgba(239, 43, 37, 0.24)" strokeWidth="0.8" />
+      </motion.svg>
+      <motion.svg viewBox="0 0 64 64" className="absolute inset-0 h-full w-full" animate={{ scale: [0.74, 1.08, 0.74], opacity: [0.18, 0.72, 0.18] }} transition={{ duration: 1.65, repeat: Infinity, ease: "easeInOut" }}>
+        <circle cx="32" cy="32" r="22" fill="none" stroke="#ef2b25" strokeWidth="1" />
+      </motion.svg>
+      <motion.svg viewBox="0 0 64 64" className="absolute inset-[13px] h-[38px] w-[38px] drop-shadow-[0_0_9px_rgba(239,43,37,0.65)]" animate={{ y: [0, -1.5, 0], scale: [1, 1.04, 1] }} transition={{ duration: 1.15, repeat: Infinity, ease: "easeInOut" }}>
+        <path d="M32 8c-8.7 0-14 6.6-14 15.6 0 10.4 5.4 21.3 14 31.4 8.6-10.1 14-21 14-31.4C46 14.6 40.7 8 32 8Z" fill="#e62d27" stroke="#fff3ee" strokeWidth="1.4" />
+        <path d="M32 10v39M20.5 22.5h23M19.3 31.7h25.4M22.6 40.8h18.8M25.5 16.2l6.5 6.3 6.5-6.3M21.4 34.7l10.6-3 10.6 3M26.2 47.8l5.8-7.1 5.8 7.1" fill="none" stroke="#0a0a0c" strokeWidth="2" strokeLinecap="round" />
+        <path d="M22 24.5c3.8-3.4 6.7-2.9 8.4.1-2.2 2.5-5.1 2.9-8.4-.1ZM42 24.5c-3.8-3.4-6.7-2.9-8.4.1 2.2 2.5 5.1 2.9 8.4-.1Z" fill="#f8fafc" stroke="#09090b" strokeWidth="1.4" />
+      </motion.svg>
     </div>
   );
 }
-
 export default function ChatWindow({ onClose }: { onClose: () => void }) {
   const [input, setInput] = useState("");
   const [showScrollBtn, setShowScrollBtn] = useState(false);
