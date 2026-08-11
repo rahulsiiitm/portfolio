@@ -72,8 +72,7 @@ export default function ChatWidget() {
         <div className="relative pointer-events-auto">
           {/* Rotating scan ring (hidden when open to save GPU power) */}
           {!isOpen && (
-            <>`r`n              <div className="absolute inset-[-5px] rounded-full border border-racing-red/35 pointer-events-none" />
-            </>
+            <div className="absolute inset-[-5px] rounded-full border border-racing-red/35 pointer-events-none" />
           )}
 
           <motion.button
