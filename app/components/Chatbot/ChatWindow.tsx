@@ -365,16 +365,16 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
       style={{ height: viewportHeight ? `${viewportHeight}px` : undefined }}
       className={`chat-hud-shell fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[430px] h-[100dvh] sm:h-[580px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-[#08090c] sm:border sm:border-red-500/55 sm:rounded-[15px] flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_22px_70px_rgba(0,0,0,0.62),0_0_32px_rgba(221,32,39,0.18)] ${outfit.className} ${outfit.variable} ${jbMono.variable}`}
     >
-      <div className="relative bg-[#0d0f14] px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:pt-3 flex items-center justify-between border-b border-red-500/35 shrink-0 overflow-hidden">
+      <div className="relative bg-[#f4f4f4] px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:pt-3 flex items-center justify-between border-b border-red-500/25 shrink-0 overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-racing-red to-transparent" />
-        <div className="absolute right-[-34px] top-0 h-full w-28 -skew-x-[20deg] bg-gradient-to-l from-red-700/70 to-racing-red/10" />
+        <div className="absolute right-[-34px] top-0 h-full w-28 -skew-x-[20deg] bg-gradient-to-l from-red-700/90 to-racing-red/15" />
         <div className="flex items-center gap-3">
           <div className="relative w-10 h-10 rounded-full flex items-center justify-center border border-red-500/70 overflow-hidden bg-[#090a0d] shrink-0 shadow-[0_0_16px_rgba(239,43,37,0.24)]">
             <Image src="/mask-circle.png" alt="Zero" width={36} height={36} className="h-full w-full object-cover" />
           </div>
           <div>
             <div className="flex items-center gap-2 mt-1">
-              <h3 className="font-ammonite text-white text-xl leading-none tracking-wide lowercase">zero</h3>
+              <h3 className="font-ammonite text-racing-red text-xl leading-none tracking-wide lowercase">zero</h3>
               <span className={`w-1.5 h-1.5 rounded-full ${showThinker ? "bg-racing-red" : serverState === "online" ? "bg-emerald-500" : serverState === "checking" ? "bg-zinc-400" : "bg-zinc-600"} animate-pulse`} />
               <span className="text-[9px] font-semibold text-zinc-400 tracking-widest uppercase">
                 {showThinker ? "spider-sense" : serverState}
@@ -391,12 +391,12 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
               whileTap={{ scale: 0.9 }}
               onClick={clearChat}
               title="Clear conversation"
-              className="relative z-10 p-2 border border-white/10 rounded-[7px] transition-colors text-zinc-400 hover:text-white hover:border-red-500/60 bg-black/25"
+              className="relative z-10 p-2 border border-zinc-300/80 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-950 hover:border-zinc-900 bg-white/70"
             >
               <RotateCcw size={15} />
             </motion.button>
           )}
-          <button onClick={onClose} className="relative z-10 p-2 border border-white/10 rounded-[7px] transition-colors text-zinc-400 hover:text-white hover:border-red-500/60 bg-black/25">
+          <button onClick={onClose} className="relative z-10 p-2 border border-zinc-300/80 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-950 hover:border-zinc-900 bg-white/70">
             <Minus size={18} />
           </button>
         </div>
