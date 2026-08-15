@@ -209,7 +209,7 @@ export default function Footer() {
 
             {/* BACKGROUND TEXTURE */}
             <div className="absolute inset-0 z-0 opacity-20 pointer-events-none mix-blend-overlay"
-                style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }}></div>
+                style={{ backgroundImage: 'url("/noise.svg")' }}></div>
 
             {/* === THE GIANT F1 WHEEL - MOBILE OPTIMIZED === */}
             <div
