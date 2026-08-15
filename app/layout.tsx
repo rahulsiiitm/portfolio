@@ -95,8 +95,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <SiteChrome>{children}</SiteChrome>
         <Analytics />
         <SpeedInsights />
+        {GA_MEASUREMENT_ID && <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />}
       </body>
-      {GA_MEASUREMENT_ID && <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />}
     </html>
   );
 }
