@@ -36,18 +36,18 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      // Scripts: self + Vercel Analytics/Insights
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://vercel.live",
+      // Scripts: self + Vercel Analytics/Insights + Google Tag Manager
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://vercel.live https://www.googletagmanager.com",
       // Styles: self + Google Fonts
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
       // Fonts: self + Google Fonts
       "font-src 'self' https://fonts.gstatic.com",
-      // Images: self + data URIs (for canvas) + blob + external assets
-      "img-src 'self' data: blob: https://grainy-gradients.vercel.app",
+      // Images: self + data URIs (for canvas) + blob + external assets + GA
+      "img-src 'self' data: blob: https://grainy-gradients.vercel.app https://www.google-analytics.com https://*.google-analytics.com https://*.googletagmanager.com",
       // Media: self (for audio files)
       "media-src 'self'",
-      // Connections: self + AI API providers + Vercel + Backend
-      "connect-src 'self' https://api.x.ai https://generativelanguage.googleapis.com https://vitals.vercel-insights.com https://va.vercel-scripts.com https://rahul-ai.onrender.com http://localhost:8000",
+      // Connections: self + AI API providers + Vercel + Backend + Google Analytics
+      "connect-src 'self' https://api.x.ai https://generativelanguage.googleapis.com https://vitals.vercel-insights.com https://va.vercel-scripts.com https://rahul-ai.onrender.com http://localhost:8000 https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com",
       // Frames: YouTube only (for project demo iframes)
       "frame-src https://www.youtube.com https://www.youtube-nocookie.com",
       // Workers
