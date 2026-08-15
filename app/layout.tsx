@@ -75,7 +75,6 @@ export const metadata: Metadata = {
       { url: "/favicon.ico", sizes: "any" },
     ],
   },
-  manifest: "/site.webmanifest",
 };
 
 export const viewport: Viewport = {
