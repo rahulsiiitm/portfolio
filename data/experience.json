@@ -5,8 +5,8 @@
     "role": "Applied AI Intern",
     "company": "IIT Roorkee",
     "location": "Roorkee, IN",
-    "desc": "Working with the Academic Affairs IT department to develop and deploy 'Sutra', a production-ready RAG-based knowledge assistant for the institute's servers.",
-    "tags": ["RAG", "LLM", "Python", "FAISS"]
+    "desc": "Working with the Academic Affairs IT department to develop and deploy SUTRA, a production-ready RAG-based knowledge assistant for the institute's servers.",
+    "tags": ["RAG", "FastAPI", "Qdrant", "TEI", "Docker"]
   },
   {
     "id": "02",
