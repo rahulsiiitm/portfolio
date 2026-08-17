@@ -104,8 +104,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
                   gtag('js', new Date());
                   gtag('config', '${GA_MEASUREMENT_ID}', {
                     page_path: window.location.pathname,
-                    send_page_view: true,
-                    debug_mode: true
+                    send_page_view: true
                   });
                 `,
               }}
