@@ -1,33 +1,6 @@
-"use client";
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
 import Image from 'next/image';
 
 export default function Hero() {
-    const overlayRef = useRef(null);
-    const textRef = useRef(null);
-    const subTextRef = useRef(null);
-
-    useEffect(() => {
-        // 1. Reveal the White Slanted Overlay
-        gsap.fromTo(overlayRef.current,
-            { x: "-100%" },
-            { x: "0%", duration: 1.2, ease: "power4.out" }
-        );
-
-        // 2. Text Slide-in
-        gsap.fromTo(textRef.current,
-            { x: -100, opacity: 0 },
-            { x: 0, opacity: 1, duration: 1, delay: 0.5, ease: "power3.out" }
-        );
-
-        // 3. Subtext Slide-in
-        gsap.fromTo(subTextRef.current,
-            { y: 20, opacity: 0 },
-            { y: 0, opacity: 1, duration: 1, delay: 0.8, ease: "power3.out" }
-        );
-    }, []);
-
     return (
         <section id="home" className="relative w-full h-[100svh] min-h-[520px] overflow-hidden bg-black">
 
@@ -48,7 +21,6 @@ export default function Hero() {
 
             {/* 2. THE SLANTED "CUTOUT" PANEL - MOBILE OPTIMIZED */}
             <div
-                ref={overlayRef}
                 className="absolute top-0 left-[-5%] md:left-[-10%] w-[110%] md:w-[120%] h-full bg-off-white z-10 transform -skew-x-6 md:-skew-x-12 origin-bottom border-r-4 md:border-r-8 border-racing-red"
             >
 
@@ -56,7 +28,7 @@ export default function Hero() {
                 <div className="absolute inset-0 flex flex-col justify-center px-4 sm:px-6 md:px-40 transform skew-x-6 md:skew-x-12">
 
                     {/* The "Tag" */}
-                    <div ref={subTextRef} className="flex items-center gap-2 md:gap-4 mb-3 md:mb-2">
+                    <div className="flex items-center gap-2 md:gap-4 mb-3 md:mb-2">
                         <span className="h-[2px] w-6 md:w-10 bg-racing-red"></span>
                         <span className="text-[10px] md:text-sm font-bold tracking-[0.15em] md:tracking-[0.2em] uppercase text-gray-500">
                             Portfolio • 2026
@@ -64,7 +36,7 @@ export default function Hero() {
                     </div>
 
                     {/* The Massive Name - MOBILE OPTIMIZED */}
-                    <div ref={textRef}>
+                    <div>
                         <h1 className="text-[3rem] sm:text-6xl md:text-[8.8rem] font-black leading-[0.9] tracking-tighter text-carbon-black uppercase">
                             Rahul <br />
                             <span className="text-racing-red">Sharma</span>

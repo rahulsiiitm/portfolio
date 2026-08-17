@@ -22,7 +22,13 @@ export default function TelemetryMarquee() {
 
         // 1. Scrolling Text Ticker
         let animationFrameId = 0;
+        let isActive = false;
         const animateText = () => {
+            if (!isActive) {
+                animationFrameId = 0;
+                return;
+            }
+
             if (xPercent.current <= -100) xPercent.current = 0;
             if (xPercent.current > 0) xPercent.current = -100;
 
@@ -33,7 +39,6 @@ export default function TelemetryMarquee() {
             xPercent.current += 0.04 * direction;
             animationFrameId = requestAnimationFrame(animateText);
         };
-        animationFrameId = requestAnimationFrame(animateText);
 
         // 2. G-Force Mouse Tracker
         let lastX = 0;
@@ -42,6 +47,8 @@ export default function TelemetryMarquee() {
         const gForceDot = gForceDotRef.current;
 
         const handleMouseMove = (e: MouseEvent) => {
+            if (!isActive) return;
+
             const now = Date.now();
             const dt = now - lastTime || 1;
             const vx = (e.clientX - lastX) / dt;
@@ -73,6 +80,18 @@ export default function TelemetryMarquee() {
         };
 
         window.addEventListener("mousemove", handleMouseMove, { passive: true });
+
+        const visibilityObserver = new IntersectionObserver(([entry]) => {
+            isActive = entry.isIntersecting;
+            if (isActive && !animationFrameId) {
+                animationFrameId = requestAnimationFrame(animateText);
+            } else if (!isActive && animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+                animationFrameId = 0;
+            }
+        }, { rootMargin: "200px 0px" });
+
+        if (containerRef.current) visibilityObserver.observe(containerRef.current);
 
         // 3. Scroll-Activated Gear/RPM Telemetry
         const trigger = ScrollTrigger.create({
@@ -140,6 +159,7 @@ export default function TelemetryMarquee() {
         return () => {
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             window.removeEventListener("mousemove", handleMouseMove);
+            visibilityObserver.disconnect();
             trigger.kill();
         };
     }, []);
