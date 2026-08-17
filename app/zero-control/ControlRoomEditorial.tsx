@@ -1,64 +1,298 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { Activity, AlertTriangle, Bot, ChevronRight, Clock3, LogOut, Mail, MessageSquare, RefreshCw, Search, ShieldCheck, Trash2, User, Users } from "lucide-react";
+import {
+  FormEvent,
+  type ReactNode,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import Image from "next/image";
+import {
+  Activity,
+  AlertTriangle,
+  ArrowUpRight,
+  Bot,
+  ChevronRight,
+  Clock3,
+  Database,
+  Gauge,
+  LogOut,
+  Mail,
+  MessageSquare,
+  Radio,
+  RefreshCw,
+  Search,
+  ShieldCheck,
+  Trash2,
+  User,
+  Users,
+} from "lucide-react";
 
-type SessionRow={session_id:string;visitor_hash:string|null;user_agent:string|null;referrer:string|null;created_at:string;last_active_at:string;message_count:number};
-type MessageRow={id:string;session_id:string;role:"user"|"assistant"|"system";content:string;provider:string|null;model:string|null;latency_ms:number|null;status:string;created_at:string};
-type EventRow={id:string;session_id:string|null;event_type:string;provider:string|null;model:string|null;latency_ms:number|null;metadata:Record<string,unknown>;created_at:string};
-type LeadRow={id:string;session_id:string|null;email:string;message:string;status:string;created_at:string};
-type ControlData={admin:{email:string};metrics:{sessions:number;activeToday:number;messagesToday:number;avgResponseMs:number|null;failures:number;leads:number;providerUsage:Record<string,number>};sessions:SessionRow[];messages:MessageRow[];events:EventRow[];leads:LeadRow[];selectedSession:string|null};
+type SessionRow = {
+  session_id: string;
+  visitor_hash: string | null;
+  user_agent: string | null;
+  referrer: string | null;
+  created_at: string;
+  last_active_at: string;
+  message_count: number;
+};
+type MessageRow = {
+  id: string;
+  session_id: string;
+  role: "user" | "assistant" | "system";
+  content: string;
+  provider: string | null;
+  model: string | null;
+  latency_ms: number | null;
+  status: string;
+  created_at: string;
+};
+type EventRow = {
+  id: string;
+  session_id: string | null;
+  event_type: string;
+  provider: string | null;
+  model: string | null;
+  latency_ms: number | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+};
+type LeadRow = {
+  id: string;
+  session_id: string | null;
+  email: string;
+  message: string;
+  status: string;
+  created_at: string;
+};
+type ControlData = {
+  admin: { email: string };
+  metrics: {
+    sessions: number;
+    activeToday: number;
+    messagesToday: number;
+    avgResponseMs: number | null;
+    failures: number;
+    leads: number;
+    providerUsage: Record<string, number>;
+  };
+  sessions: SessionRow[];
+  messages: MessageRow[];
+  events: EventRow[];
+  leads: LeadRow[];
+  selectedSession: string | null;
+};
 
-const RED="#D62E37";
-const fmt=(value:string)=>new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(new Date(value));
-const shortId=(value:string)=>value.length>12?`${value.slice(0,6)}…${value.slice(-4)}`:value;
+const fmt = (value: string) =>
+  new Intl.DateTimeFormat("en-IN", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(value));
 
-function EnvelopeMark({small=false}:{small?:boolean}){
-  return <svg width={small?22:34} height={small?11:17} viewBox="0 0 34 17" aria-hidden="true"><polygon points="0,17 7,0 34,0 27,17" fill={RED}/></svg>;
+const shortId = (value: string) =>
+  value.length > 12 ? `${value.slice(0, 6)}…${value.slice(-4)}` : value;
+
+function SectionHead({ index, label, title, meta }: { index: string; label: string; title: string; meta?: string }) {
+  return (
+    <div className="zc-section-head">
+      <span className="zc-section-index">{index}</span>
+      <div><span className="zc-kicker">{label}</span><h2>{title}</h2></div>
+      {meta && <span className="zc-section-meta">{meta}</span>}
+    </div>
+  );
 }
-function Diamond({className}:{className:string}){return <div className={`pointer-events-none absolute rotate-45 border border-[#0b1220]/[0.035] bg-white/35 ${className}`}/>}
-function Backdrop(){return <div className="pointer-events-none absolute inset-0 overflow-hidden"><div className="absolute inset-0 opacity-[0.09] [background-image:linear-gradient(90deg,rgba(8,16,31,.22)_1px,transparent_1px),linear-gradient(rgba(8,16,31,.22)_1px,transparent_1px)] [background-size:64px_64px]"/><Diamond className="-left-48 top-24 h-[430px] w-[430px]"/><Diamond className="left-[25%] top-10 h-[560px] w-[560px] bg-[#e3e4e6]/45"/><Diamond className="right-[6%] top-[-180px] h-[500px] w-[500px] bg-[#f8f8f8]/60"/><Diamond className="bottom-[-270px] right-[-110px] h-[520px] w-[520px] bg-[#dfe1e4]/45"/></div>}
-function Heading({eyebrow,title,meta}:{eyebrow:string;title:string;meta?:string}){return <div className="relative flex items-start justify-between gap-4 border-b border-[#0b1220]/10 px-5 py-5"><div><div className="mb-3 flex items-center gap-3"><EnvelopeMark small/><span className="text-[10px] font-semibold uppercase tracking-[.24em] text-[#D62E37]">{eyebrow}</span></div><h2 className="font-[family-name:var(--font-ammonite)] text-[27px] leading-none tracking-[-.035em] text-[#08101f]">{title}</h2></div>{meta&&<span className="text-xs text-[#697384]">{meta}</span>}</div>}
-function Metric({label,value,icon:Icon,accent=false}:{label:string;value:string|number;icon:typeof Activity;accent?:boolean}){return <div className="relative min-h-[142px] overflow-hidden border border-[#0b1220]/10 bg-white/65 p-5 shadow-[0_12px_30px_rgba(8,16,31,.04)]"><div className="absolute right-0 top-0 h-16 w-24 [clip-path:polygon(30%_0,100%_0,100%_100%,0_100%)] bg-[#08101f]/[0.035]"/><div className="mb-5 flex items-center justify-between"><span className="text-[10px] font-semibold uppercase tracking-[.23em] text-[#747d8b]">{label}</span><Icon size={15} color={accent?RED:"#687282"}/></div><div className={`font-[family-name:var(--font-ammonite)] text-[48px] leading-none tracking-[-.055em] ${accent?"text-[#D62E37]":"text-[#08101f]"}`}>{value}</div></div>}
-function Panel({children,className=""}:{children:React.ReactNode;className?:string}){return <section className={`relative overflow-hidden border border-[#0b1220]/10 bg-[rgba(242,242,243,.82)] shadow-[0_18px_38px_rgba(8,16,31,.045)] ${className}`}>{children}</section>}
 
-function InlineText({text}:{text:string}){
- const parts=text.split(/(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/g);
- return <>{parts.map((part,index)=>{if(part.startsWith("**")&&part.endsWith("**"))return <strong key={index}>{part.slice(2,-2)}</strong>;if(part.startsWith("`")&&part.endsWith("`"))return <code key={index}>{part.slice(1,-1)}</code>;const link=part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);if(link)return <a key={index} href={link[2]} target={link[2].startsWith("http")?"_blank":undefined} rel={link[2].startsWith("http")?"noreferrer":undefined}>{link[1]}</a>;return <span key={index}>{part}</span>})}</>;
-}
-function MessageContent({content}:{content:string}){
- return <div className="zc-message-content">{content.split("\n").map((line,index)=>{const trimmed=line.trim();if(!trimmed)return <span className="zc-message-gap" key={index}/>;const bullet=trimmed.match(/^(?:[-*•▸›])\s+(.+)$/);if(bullet)return <div className="zc-message-bullet" key={index}><i/><p><InlineText text={bullet[1]}/></p></div>;return <p key={index}><InlineText text={trimmed}/></p>})}</div>;
+function Metric({ label, value, icon: Icon, signal = "neutral" }: { label: string; value: string | number; icon: typeof Activity; signal?: "neutral" | "hot" | "good" }) {
+  return (
+    <div className={`zc-metric zc-metric--${signal}`}>
+      <div className="zc-metric-label"><Icon size={14} strokeWidth={1.7} /><span>{label}</span></div>
+      <strong>{value}</strong><i aria-hidden="true" />
+    </div>
+  );
 }
 
-export default function ControlRoomEditorial(){
- const [data,setData]=useState<ControlData|null>(null);const [loading,setLoading]=useState(true);const [authRequired,setAuthRequired]=useState(false);const [error,setError]=useState("");const [email,setEmail]=useState("");const [password,setPassword]=useState("");const [signingIn,setSigningIn]=useState(false);const [selectedSession,setSelectedSession]=useState<string|null>(null);const [sessionQuery,setSessionQuery]=useState("");const [deletingSession,setDeletingSession]=useState<string|null>(null);
- const loadData=useCallback(async(session?:string|null)=>{setLoading(true);setError("");try{const q=session?`?session=${encodeURIComponent(session)}`:"";const r=await fetch(`/zero-control/api/data${q}`,{cache:"no-store"});if(r.status===401){setData(null);setAuthRequired(true);return}if(!r.ok)throw new Error("Failed to load Control Room data.");const p=await r.json() as ControlData;setData(p);setAuthRequired(false)}catch(e){setError(e instanceof Error?e.message:"Something went wrong.")}finally{setLoading(false)}},[]);
- useEffect(()=>{void loadData()},[loadData]);
- async function handleLogin(e:FormEvent){e.preventDefault();setSigningIn(true);setError("");try{const r=await fetch("/zero-control/api/login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password})});const p=await r.json() as{error?:string};if(!r.ok)throw new Error(p.error||"Access denied.");setPassword("");await loadData()}catch(err){setError(err instanceof Error?err.message:"Access denied.")}finally{setSigningIn(false)}}
- async function logout(){await fetch("/zero-control/api/logout",{method:"POST"});setData(null);setSelectedSession(null);setAuthRequired(true)}
- async function select(id:string){setSelectedSession(id);await loadData(id)}
- async function deleteSession(id:string){
-  if(!window.confirm("Delete this session and all related messages, events and leads? This cannot be undone."))return;
-  setDeletingSession(id);setError("");
-  try{const r=await fetch("/zero-control/api/session",{method:"DELETE",headers:{"Content-Type":"application/json"},body:JSON.stringify({sessionId:id})});const p=await r.json() as{error?:string};if(!r.ok)throw new Error(p.error||"Failed to delete session.");setSelectedSession(null);await loadData(null)}
-  catch(err){setError(err instanceof Error?err.message:"Failed to delete session.")}
-  finally{setDeletingSession(null)}
- }
- const providers=useMemo(()=>Object.entries(data?.metrics.providerUsage??{}).sort((a,b)=>b[1]-a[1]),[data]);
- const filteredSessions=useMemo(()=>{const query=sessionQuery.trim().toLowerCase();if(!query)return data?.sessions??[];return(data?.sessions??[]).filter(session=>session.session_id.toLowerCase().includes(query)||session.visitor_hash?.toLowerCase().includes(query)||session.referrer?.toLowerCase().includes(query))},[data,sessionQuery]);
+function Panel({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <section className={`zc-panel ${className}`}>{children}</section>;
+}
 
- if(authRequired&&!data)return <main className="relative min-h-screen overflow-hidden bg-[#efefef] text-[#08101f]"><Backdrop/><div className="relative flex min-h-screen items-center justify-center px-5"><div className="w-full max-w-xl border border-[#0b1220]/10 bg-[#f5f5f5]/90 shadow-[0_24px_64px_rgba(8,16,31,.08)]"><div className="flex items-start justify-between border-b border-[#0b1220]/10 p-7"><div><div className="mb-4 flex items-center gap-3"><EnvelopeMark/><span className="text-[10px] font-semibold uppercase tracking-[.25em] text-[#D62E37]">Restricted access</span></div><h1 className="font-[family-name:var(--font-ammonite)] text-[46px] leading-none tracking-[-.04em]">ZERO CONTROL</h1><p className="mt-3 max-w-md text-sm leading-6 text-[#667181]">Private observability for chatbot sessions, messages, model usage and inbound leads.</p></div><ShieldCheck size={22} color={RED}/></div><form onSubmit={handleLogin} className="grid gap-5 p-7"><label className="grid gap-2 text-[10px] font-semibold uppercase tracking-[.22em] text-[#6b7585]">Admin email<input type="email" required autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} className="border border-[#0b1220]/10 bg-white/80 px-4 py-3 text-sm normal-case tracking-normal text-[#08101f] outline-none focus:border-[#D62E37]"/></label><label className="grid gap-2 text-[10px] font-semibold uppercase tracking-[.22em] text-[#6b7585]">Password<input type="password" required autoComplete="current-password" value={password} onChange={e=>setPassword(e.target.value)} className="border border-[#0b1220]/10 bg-white/80 px-4 py-3 text-sm normal-case tracking-normal text-[#08101f] outline-none focus:border-[#D62E37]"/></label>{error&&<p className="text-sm text-[#D62E37]">{error}</p>}<button disabled={signingIn} className="bg-[#08101f] px-5 py-4 text-[11px] font-semibold uppercase tracking-[.22em] text-white hover:bg-[#D62E37] disabled:opacity-50">{signingIn?"Authenticating":"Enter control room"}</button></form></div></div></main>;
- if(loading&&!data)return <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#efefef]"><Backdrop/><RefreshCw className="relative animate-spin" color={RED}/></main>;
- if(!data)return null;
- const selected=data.sessions.find(s=>s.session_id===selectedSession)??data.sessions[0]??null;const totalProvider=providers.reduce((sum,[,v])=>sum+v,0)||1;
- return <main className="relative min-h-screen overflow-hidden bg-[#efefef] text-[#08101f]"><Backdrop/><div className="relative mx-auto max-w-[1720px] px-5 py-6 lg:px-9">
-  <header className="mb-7 flex flex-col gap-5 border-b border-[#0b1220]/10 pb-6 lg:flex-row lg:items-end lg:justify-between"><div><div className="flex items-center gap-4"><EnvelopeMark/><img src="/mask-circle.png" alt="Zero Spidey" className="zc-spidey-logo"/><h1 className="font-[family-name:var(--font-ammonite)] text-[40px] leading-none tracking-[-.05em]">ZERO <span className="text-[#D62E37]">CONTROL</span></h1></div><p className="mt-3 pl-[50px] text-sm text-[#667181]">Private observability · {data.admin.email}</p></div><div className="flex gap-2"><button onClick={()=>void loadData(selectedSession)} className="flex items-center gap-2 border border-[#0b1220]/10 bg-white/60 px-4 py-3 text-[10px] font-semibold uppercase tracking-[.2em] hover:border-[#D62E37] hover:text-[#D62E37]"><RefreshCw size={13} className={loading?"animate-spin":""}/>Refresh</button><button onClick={()=>void logout()} className="flex items-center gap-2 border border-[#0b1220]/10 bg-white/60 px-4 py-3 text-[10px] font-semibold uppercase tracking-[.2em] hover:border-[#D62E37] hover:text-[#D62E37]"><LogOut size={13}/>Exit</button></div></header>
-  {error&&<div className="mb-5 border-l-2 border-[#D62E37] bg-white/55 px-4 py-3 text-sm text-[#b21f27]">{error}</div>}
-  <section className="mb-6 grid gap-3 md:grid-cols-2 xl:grid-cols-6"><Metric label="Sessions" value={data.metrics.sessions} icon={Users}/><Metric label="Active today" value={data.metrics.activeToday} icon={Activity}/><Metric label="Messages" value={data.metrics.messagesToday} icon={MessageSquare}/><Metric label="Avg response" value={data.metrics.avgResponseMs?`${(data.metrics.avgResponseMs/1000).toFixed(2)}s`:"—"} icon={Clock3} accent/><Metric label="Failures" value={data.metrics.failures} icon={AlertTriangle} accent={data.metrics.failures>0}/><Metric label="Leads" value={data.metrics.leads} icon={Mail}/></section>
-  <section className="grid gap-5 xl:grid-cols-[310px_minmax(0,1fr)_340px]">
-   <Panel className="min-h-[720px]"><Heading eyebrow="Sessions" title="Recent visitors" meta={`${filteredSessions.length}/${data.sessions.length}`}/><label className="zc-session-search"><Search size={13}/><input aria-label="Search sessions" value={sessionQuery} onChange={event=>setSessionQuery(event.target.value)} placeholder="Search ID, visitor or source"/></label><div className="max-h-[650px] overflow-y-auto">{filteredSessions.map((s,i)=>{const active=(selectedSession??data.sessions[0]?.session_id)===s.session_id;return <button key={s.session_id} onClick={()=>void select(s.session_id)} className={`relative grid w-full grid-cols-[30px_1fr_auto] gap-3 border-b border-[#0b1220]/8 px-5 py-5 text-left transition ${active?"bg-[#D62E37]/[0.07]":"hover:bg-white/55"}`}>{active&&<span className="absolute inset-y-0 left-0 w-[3px] bg-[#D62E37]"/>}<span className="pt-0.5 text-[10px] font-semibold text-[#818a97]">{String(i+1).padStart(2,"0")}</span><div><div className="text-sm font-semibold">{shortId(s.session_id)}</div><div className="mt-1 text-xs text-[#747e8d]">{fmt(s.last_active_at)}</div><div className="mt-3 text-[11px] text-[#8a929e]">{s.message_count} messages{s.visitor_hash?` · UID ${s.visitor_hash.slice(0,7)}`:""}</div></div><ChevronRight size={14} color={active?RED:"#8b94a1"}/></button>})}{!filteredSessions.length&&<p className="px-4 py-8 text-center text-xs text-[#737d8c]">No matching sessions.</p>}</div></Panel>
-   <Panel className="min-h-[720px]"><Heading eyebrow="Conversation" title={selected?`Session ${shortId(selected.session_id)}`:"No session"} meta={selected?`${selected.message_count} messages`:undefined}/>{selected&&<div className="flex items-center justify-between gap-3 border-b border-[#0b1220]/10 px-5 py-3 text-xs text-[#727c8c]"><span>Last active {fmt(selected.last_active_at)}</span><button type="button" onClick={()=>void deleteSession(selected.session_id)} disabled={deletingSession===selected.session_id} className="flex items-center gap-1.5 rounded-[6px] border border-[#D62E37]/25 bg-[#D62E37]/[0.06] px-2.5 py-1.5 text-[9px] font-semibold uppercase tracking-[.16em] text-[#b82029] transition hover:border-[#D62E37] hover:bg-[#D62E37] hover:text-white disabled:cursor-wait disabled:opacity-50"><Trash2 size={11}/>{deletingSession===selected.session_id?"Deleting":"Delete session"}</button></div>}<div className="max-h-[640px] space-y-6 overflow-y-auto p-5">{[...data.messages].reverse().map(m=><div key={m.id} className={m.role==="user"?"ml-auto max-w-[340px]":"max-w-[86%]"}><div className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[.17em] text-[#7b8492]"><span className="flex h-7 w-7 items-center justify-center border border-[#0b1220]/10 bg-white/65">{m.role==="assistant"?<Bot size={13} color={RED}/>:<User size={13}/>}</span><strong className="text-[#08101f]">{m.role==="assistant"?"ZERO":"Visitor"}</strong>{m.provider&&<span>{m.provider}</span>}{m.latency_ms!=null&&<span>{m.latency_ms}ms</span>}<span>{fmt(m.created_at)}</span></div><div className={`border px-5 py-4 text-[15px] leading-7 shadow-[0_8px_20px_rgba(8,16,31,.025)] ${m.role==="user"?"border-[#D62E37]/20 bg-[#D62E37]/[0.08]":"border-[#0b1220]/10 bg-white/75 text-[#263142]"}`}><MessageContent content={m.content}/></div></div>)}{!data.messages.length&&<p className="text-sm text-[#737d8c]">No messages in this view.</p>}</div></Panel>
-   <div className="space-y-5"><Panel><Heading eyebrow="Providers" title="Model usage"/><div className="space-y-5 p-5">{providers.map(([provider,count])=>{const pct=Math.round(count/totalProvider*100);return <div key={provider}><div className="mb-2 flex justify-between text-sm"><strong>{provider}</strong><span className="text-[#6d7786]">{count} · {pct}%</span></div><div className="h-[5px] bg-[#d4d8de]"><div className="h-full bg-[#D62E37]" style={{width:`${pct}%`}}/></div></div>})}{!providers.length&&<p className="text-sm text-[#737d8c]">No provider telemetry.</p>}</div></Panel><Panel><Heading eyebrow="Events" title="Latest activity"/><div className="divide-y divide-[#0b1220]/8">{data.events.slice(0,8).map(e=><div key={e.id} className="px-5 py-4"><div className="flex items-center justify-between gap-3"><strong className="text-sm">{e.event_type}</strong>{e.latency_ms!=null&&<span className="text-xs text-[#D62E37]">{e.latency_ms}ms</span>}</div><div className="mt-1 text-xs text-[#737d8c]">{e.provider||"system"} · {fmt(e.created_at)}</div></div>)}</div></Panel><Panel><Heading eyebrow="Leads" title="Inbound contacts" meta={`${data.leads.length}`}/><div className="divide-y divide-[#0b1220]/8">{data.leads.slice(0,5).map(l=><div key={l.id} className="px-5 py-4"><strong className="text-sm">{l.email}</strong><p className="mt-1 text-xs leading-5 text-[#707a89]">{l.message}</p></div>)}{!data.leads.length&&<p className="px-5 py-5 text-sm text-[#737d8c]">No leads captured yet.</p>}</div></Panel></div>
-  </section>
- </div></main>;
+function InlineText({ text }: { text: string }) {
+  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/g);
+  return <>{parts.map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) return <strong key={index}>{part.slice(2, -2)}</strong>;
+    if (part.startsWith("`") && part.endsWith("`")) return <code key={index}>{part.slice(1, -1)}</code>;
+    const link = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+    if (link) {
+      const href = link[2].trim();
+      if (!/^https?:\/\//i.test(href) && !href.startsWith("/")) return <span key={index}>{link[1]}</span>;
+      return <a key={index} href={href} target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noreferrer" : undefined}>{link[1]}<ArrowUpRight size={11} aria-hidden="true" /></a>;
+    }
+    return <span key={index}>{part}</span>;
+  })}</>;
+}
+
+function MessageContent({ content }: { content: string }) {
+  return <div className="zc-message-content">{content.split("\n").map((line, index) => {
+    const trimmed = line.trim();
+    if (!trimmed) return <span className="zc-message-gap" key={index} />;
+    const bullet = trimmed.match(/^(?:[-*•▸›])\s+(.+)$/);
+    if (bullet) return <div className="zc-message-bullet" key={index}><i /><p><InlineText text={bullet[1]} /></p></div>;
+    return <p key={index}><InlineText text={trimmed} /></p>;
+  })}</div>;
+}
+
+export default function ControlRoomEditorial() {
+  const [data, setData] = useState<ControlData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [authRequired, setAuthRequired] = useState(false);
+  const [error, setError] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [signingIn, setSigningIn] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<string | null>(null);
+  const [sessionQuery, setSessionQuery] = useState("");
+  const [deletingSession, setDeletingSession] = useState<string | null>(null);
+  const [deletingAll, setDeletingAll] = useState(false);
+
+  const loadData = useCallback(async (session?: string | null) => {
+    setLoading(true); setError("");
+    try {
+      const query = session ? `?session=${encodeURIComponent(session)}` : "";
+      const response = await fetch(`/zero-control/api/data${query}`, { cache: "no-store" });
+      if (response.status === 401) { setData(null); setAuthRequired(true); return; }
+      if (!response.ok) throw new Error("Failed to load Control Room data.");
+      const payload = await response.json() as ControlData;
+      setData(payload); setAuthRequired(false);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Something went wrong.");
+    } finally { setLoading(false); }
+  }, []);
+
+  useEffect(() => { void loadData(); }, [loadData]);
+
+  async function handleLogin(event: FormEvent) {
+    event.preventDefault(); setSigningIn(true); setError("");
+    try {
+      const response = await fetch("/zero-control/api/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, password }) });
+      const payload = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(payload.error || "Access denied.");
+      setPassword(""); await loadData();
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Access denied."); }
+    finally { setSigningIn(false); }
+  }
+
+  async function logout() {
+    await fetch("/zero-control/api/logout", { method: "POST" });
+    setData(null); setSelectedSession(null); setAuthRequired(true);
+  }
+
+  async function selectSession(id: string) { setSelectedSession(id); await loadData(id); }
+
+  async function deleteSession(id: string) {
+    if (!window.confirm("Delete this session and all related messages, events and leads? This cannot be undone.")) return;
+    setDeletingSession(id); setError("");
+    try {
+      const response = await fetch("/zero-control/api/session", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId: id }) });
+      const payload = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(payload.error || "Failed to delete session.");
+      setSelectedSession(null); await loadData(null);
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Failed to delete session."); }
+    finally { setDeletingSession(null); }
+  }
+
+  async function deleteAllSessions() {
+    if (!window.confirm("Delete every stored chat, message, event and lead? This cannot be undone.")) return;
+    const confirmation = window.prompt("Type DELETE_ALL_CHATS to confirm.");
+    if (confirmation !== "DELETE_ALL_CHATS") return;
+    setDeletingAll(true); setError("");
+    try {
+      const response = await fetch("/zero-control/api/session", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ deleteAll: true, confirmation }) });
+      const payload = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(payload.error || "Failed to delete all chats.");
+      setSelectedSession(null); await loadData(null);
+    } catch (cause) { setError(cause instanceof Error ? cause.message : "Failed to delete all chats."); }
+    finally { setDeletingAll(false); }
+  }
+
+  const providers = useMemo(() => Object.entries(data?.metrics.providerUsage ?? {}).sort((a, b) => b[1] - a[1]), [data]);
+  const filteredSessions = useMemo(() => {
+    const query = sessionQuery.trim().toLowerCase();
+    if (!query) return data?.sessions ?? [];
+    return (data?.sessions ?? []).filter((session) => session.session_id.toLowerCase().includes(query) || session.visitor_hash?.toLowerCase().includes(query) || session.referrer?.toLowerCase().includes(query));
+  }, [data, sessionQuery]);
+
+  if (authRequired && !data) {
+    return <main className="zc-login-shell">
+      <div className="zc-login-brand" aria-hidden="true"><span>ZERO</span><strong>OPS</strong><p>Private conversation intelligence</p></div>
+      <section className="zc-login-card">
+        <div className="zc-login-card-head"><span className="zc-login-icon"><ShieldCheck size={22} /></span><span className="zc-kicker">Authorised personnel only</span><h1>Enter the<br />control layer.</h1><p>Monitor sessions, model traffic and visitor intent from one private surface.</p></div>
+        <form onSubmit={handleLogin}>
+          <label><span>Admin email</span><input type="email" required autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="you@domain.com" /></label>
+          <label><span>Password</span><input type="password" required autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="••••••••••••" /></label>
+          {error && <p className="zc-form-error" role="alert">{error}</p>}
+          <button className="zc-primary-action" disabled={signingIn}><span>{signingIn ? "Authenticating" : "Open console"}</span>{signingIn ? <RefreshCw size={15} className="zc-spin" /> : <ArrowUpRight size={15} />}</button>
+        </form>
+        <div className="zc-login-foot"><i />Encrypted admin session</div>
+      </section>
+    </main>;
+  }
+
+  if (loading && !data) return <main className="zc-loading-shell"><div className="zc-loading-mark"><RefreshCw className="zc-spin" size={21} /></div><span>Synchronising telemetry</span></main>;
+  if (!data) return null;
+
+  const selected = data.sessions.find((session) => session.session_id === selectedSession) ?? data.sessions[0] ?? null;
+  const totalProvider = providers.reduce((sum, [, value]) => sum + value, 0) || 1;
+  const activeSessionId = selectedSession ?? data.sessions[0]?.session_id;
+
+  return <main className="zc-shell"><div className="zc-frame">
+    <header className="zc-topbar">
+      <div className="zc-brand"><Image src="/mask-circle.png" alt="" width={36} height={36} priority /><div className="zc-brand-wordmark"><strong>ZERO<span>/</span>OPS</strong><span>Conversation intelligence</span></div></div>
+      <div className="zc-system-state"><span className="zc-live-dot" /><div><strong>System live</strong><span>Secure observer · {data.admin.email}</span></div></div>
+      <nav className="zc-actions" aria-label="Control room actions"><button onClick={() => void loadData(selectedSession)} disabled={loading}><RefreshCw size={14} className={loading ? "zc-spin" : ""} /><span>Sync</span></button><button onClick={() => void logout()}><LogOut size={14} /><span>Exit</span></button></nav>
+    </header>
+
+    <section className="zc-masthead"><div><span className="zc-kicker">Private telemetry surface · Live operations</span><h1>Signal over<br /><em>noise.</em></h1></div><div className="zc-masthead-note"><Radio size={17} /><p>Track who is talking to Zero, what they need, and how the system responds.</p></div></section>
+    {error && <div className="zc-alert" role="alert"><AlertTriangle size={16} />{error}</div>}
+
+    <section className="zc-metrics" aria-label="Live performance summary">
+      <Metric label="Total sessions" value={data.metrics.sessions} icon={Database} />
+      <Metric label="Active today" value={data.metrics.activeToday} icon={Activity} signal="good" />
+      <Metric label="Messages today" value={data.metrics.messagesToday} icon={MessageSquare} />
+      <Metric label="Mean response" value={data.metrics.avgResponseMs ? `${(data.metrics.avgResponseMs / 1000).toFixed(2)}s` : "—"} icon={Gauge} signal="hot" />
+      <Metric label="Failures" value={data.metrics.failures} icon={AlertTriangle} signal={data.metrics.failures > 0 ? "hot" : "neutral"} />
+      <Metric label="Inbound leads" value={data.metrics.leads} icon={Mail} />
+    </section>
+
+    <section className="zc-workspace">
+      <Panel className="zc-sessions-panel">
+        <SectionHead index="01" label="Channel index" title="Sessions" meta={`${filteredSessions.length}/${data.sessions.length}`} />
+        <label className="zc-session-search"><Search size={14} /><input aria-label="Search sessions" value={sessionQuery} onChange={(event) => setSessionQuery(event.target.value)} placeholder="Search visitor or source" /></label>
+        <div className="zc-session-list">{filteredSessions.map((session, index) => {
+          const active = activeSessionId === session.session_id;
+          return <button key={session.session_id} onClick={() => void selectSession(session.session_id)} aria-current={active ? "true" : undefined} className={active ? "is-active" : ""}>
+            <span className="zc-session-number">{String(index + 1).padStart(2, "0")}</span><span className="zc-session-copy"><strong>{shortId(session.session_id)}</strong><span>{fmt(session.last_active_at)}</span><small>{session.message_count} msgs{session.visitor_hash ? ` · ${session.visitor_hash.slice(0, 7)}` : ""}</small></span><ChevronRight size={14} />
+          </button>;
+        })}{!filteredSessions.length && <p className="zc-empty">No matching sessions.</p>}</div>
+      </Panel>
+
+      <Panel className="zc-transcript-panel">
+        <SectionHead index="02" label="Transcript channel" title={selected ? shortId(selected.session_id) : "No session"} meta={selected ? `${selected.message_count} messages` : undefined} />
+        {selected && <div className="zc-transcript-toolbar"><span><Clock3 size={13} />Last signal {fmt(selected.last_active_at)}</span><button type="button" onClick={() => void deleteSession(selected.session_id)} disabled={deletingSession === selected.session_id}><Trash2 size={12} />{deletingSession === selected.session_id ? "Deleting" : "Delete session"}</button></div>}
+        <div className="zc-transcript">{[...data.messages].reverse().map((message) => <article key={message.id} className={`zc-message zc-message--${message.role}`}><div className="zc-message-meta"><span className="zc-message-avatar">{message.role === "assistant" ? <Bot size={13} /> : <User size={13} />}</span><strong>{message.role === "assistant" ? "ZERO" : "Visitor"}</strong>{message.provider && <span>{message.provider}</span>}{message.latency_ms != null && <span>{message.latency_ms}ms</span>}<time>{fmt(message.created_at)}</time></div><div className="zc-message-body"><MessageContent content={message.content} /></div></article>)}{!data.messages.length && <p className="zc-empty">No messages in this view.</p>}</div>
+      </Panel>
+
+      <aside className="zc-telemetry-column">
+        <Panel><SectionHead index="03A" label="Routing" title="Model traffic" /><div className="zc-provider-list">{providers.map(([provider, count]) => { const percentage = Math.round((count / totalProvider) * 100); return <div className="zc-provider" key={provider}><div><strong>{provider}</strong><span>{count} calls · {percentage}%</span></div><div className="zc-provider-track"><i style={{ width: `${percentage}%` }} /></div></div>; })}{!providers.length && <p className="zc-empty">No provider telemetry.</p>}</div></Panel>
+        <Panel><SectionHead index="03B" label="Event stream" title="Latest activity" /><div className="zc-event-list">{data.events.slice(0, 8).map((event) => <div key={event.id} className="zc-event"><i /><div><strong>{event.event_type}</strong><span>{event.provider || "system"} · {fmt(event.created_at)}</span></div>{event.latency_ms != null && <small>{event.latency_ms}ms</small>}</div>)}{!data.events.length && <p className="zc-empty">No recent events.</p>}</div></Panel>
+        <Panel><SectionHead index="03C" label="Intent capture" title="Inbound leads" meta={`${data.leads.length}`} /><div className="zc-lead-list">{data.leads.slice(0, 5).map((lead) => <article key={lead.id}><strong>{lead.email}</strong><p>{lead.message}</p></article>)}{!data.leads.length && <p className="zc-empty">No leads captured yet.</p>}</div></Panel>
+        <Panel className="zc-danger-panel"><div><span className="zc-kicker">Data controls</span><strong>Destructive actions</strong></div><button onClick={() => void deleteAllSessions()} disabled={deletingAll || !data.sessions.length}><Trash2 size={13} />{deletingAll ? "Deleting all" : "Delete all chats"}</button></Panel>
+      </aside>
+    </section>
+
+    <footer className="zc-footer"><span>ZERO/OPS · Internal system</span><span><Users size={12} /> {data.metrics.sessions} indexed sessions</span></footer>
+  </div></main>;
 }

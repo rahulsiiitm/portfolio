@@ -15,9 +15,12 @@ Add these to the portfolio deployment, not the Python backend:
 ```env
 SUPABASE_URL=https://YOUR_PROJECT.supabase.co
 SUPABASE_PUBLISHABLE_KEY=sb_publishable_...
+ZERO_BACKEND_API_URL=https://YOUR_ZERO_BACKEND.example.com
+ZERO_BACKEND_ADMIN_KEY=generate-a-separate-long-random-secret
 ```
 
 The publishable key is safe for application use. The privileged `sb_secret_...` / service-role key must NOT be added to the portfolio deployment.
+`ZERO_BACKEND_ADMIN_KEY` is server-only and must match `ZERO_ADMIN_API_KEY` on the Python backend. Never prefix it with `NEXT_PUBLIC_`.
 
 ## Create the admin user
 
@@ -51,6 +54,7 @@ You should see `"role": "zero_admin"`.
 - access and refresh tokens are stored in HttpOnly, Secure (production), SameSite=Strict cookies scoped to `/zero-control`
 - every data request verifies the Supabase user and checks `app_metadata.role`
 - database reads use the authenticated user's token, so the existing Supabase RLS policies remain the final authorization boundary
+- destructive chat deletion is proxied to the Python backend only after the Control Room session is verified
 - unauthenticated or non-admin accounts cannot read telemetry
 - the route is marked `noindex`, but obscurity is not treated as authorization
 
