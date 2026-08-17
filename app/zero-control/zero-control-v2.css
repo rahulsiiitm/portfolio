@@ -317,7 +317,7 @@
   display: grid;
   grid-template-columns: 286px minmax(480px, 1fr) 326px;
   gap: 12px;
-  align-items: start;
+  align-items: stretch;
   margin-top: 12px;
 }
 
@@ -371,7 +371,7 @@
 
 .zc-sessions-panel,
 .zc-transcript-panel {
-  height: min(760px, calc(100vh - 96px));
+  height: auto;
   min-height: 620px;
 }
 
