@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { requireAdminSession } from "../../_lib/server";
+import { requireAdminSession, supabaseData } from "../../_lib/server";
 
 type DeleteSessionBody = {
   sessionId?: string;
@@ -10,6 +10,42 @@ type DeleteSessionBody = {
 };
 
 const SESSION_ID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+type MessageRow = {
+  id: string;
+  session_id: string;
+  role: "user" | "assistant" | "system";
+  content: string;
+  provider: string | null;
+  model: string | null;
+  latency_ms: number | null;
+  status: string;
+  created_at: string;
+};
+
+export async function GET(request: NextRequest) {
+  try {
+    const admin = await requireAdminSession();
+    if (!admin) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const sessionId = request.nextUrl.searchParams.get("session")?.trim() ?? "";
+    if (!SESSION_ID_PATTERN.test(sessionId)) {
+      return NextResponse.json({ error: "Session ID is invalid." }, { status: 400 });
+    }
+
+    const messages = await supabaseData<MessageRow[]>(
+      `zero_messages?select=id,session_id,role,content,provider,model,latency_ms,status,created_at&session_id=eq.${encodeURIComponent(sessionId)}&order=created_at.asc&limit=250`,
+      admin.accessToken,
+    );
+
+    return NextResponse.json({ sessionId, messages });
+  } catch (error) {
+    console.error("[ZERO CONTROL] transcript request failed", error);
+    return NextResponse.json({ error: "Failed to load this transcript." }, { status: 500 });
+  }
+}
 
 export async function DELETE(request: NextRequest) {
   try {

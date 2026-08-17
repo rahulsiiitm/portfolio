@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
 import { requireAdminSession, supabaseData } from "../../_lib/server";
 
@@ -12,15 +12,7 @@ type SessionRow = {
   message_count: number;
 };
 
-type MessageRow = {
-  id: string;
-  session_id: string;
-  role: "user" | "assistant" | "system";
-  content: string;
-  provider: string | null;
-  model: string | null;
-  latency_ms: number | null;
-  status: string;
+type MessageMetricRow = {
   created_at: string;
 };
 
@@ -44,29 +36,28 @@ type LeadRow = {
   created_at: string;
 };
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const admin = await requireAdminSession();
     if (!admin) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const selectedSession = request.nextUrl.searchParams.get("session")?.trim() || null;
-    const sessionFilter = selectedSession
-      ? `&session_id=eq.${encodeURIComponent(selectedSession)}`
-      : "";
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayIso = encodeURIComponent(todayStart.toISOString());
 
-    const [sessions, messages, events, leads] = await Promise.all([
+    const [sessions, messageMetrics, events, leads] = await Promise.all([
       supabaseData<SessionRow[]>(
         "zero_sessions?select=session_id,visitor_hash,user_agent,referrer,created_at,last_active_at,message_count&order=last_active_at.desc&limit=75",
         admin.accessToken,
       ),
-      supabaseData<MessageRow[]>(
-        `zero_messages?select=id,session_id,role,content,provider,model,latency_ms,status,created_at${sessionFilter}&order=created_at.desc&limit=${selectedSession ? 250 : 150}`,
+      supabaseData<MessageMetricRow[]>(
+        `zero_messages?select=created_at&created_at=gte.${todayIso}&order=created_at.desc&limit=1000`,
         admin.accessToken,
       ),
       supabaseData<EventRow[]>(
-        `zero_events?select=id,session_id,event_type,provider,model,latency_ms,metadata,created_at${sessionFilter}&order=created_at.desc&limit=${selectedSession ? 250 : 200}`,
+        "zero_events?select=id,session_id,event_type,provider,model,latency_ms,metadata,created_at&order=created_at.desc&limit=200",
         admin.accessToken,
       ),
       supabaseData<LeadRow[]>(
@@ -75,8 +66,6 @@ export async function GET(request: NextRequest) {
       ),
     ]);
 
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
     const todayMs = todayStart.getTime();
 
     const responseEvents = events.filter((event) => event.event_type === "response_complete");
@@ -95,7 +84,7 @@ export async function GET(request: NextRequest) {
     const metrics = {
       sessions: sessions.length,
       activeToday: sessions.filter((session) => new Date(session.last_active_at).getTime() >= todayMs).length,
-      messagesToday: messages.filter((message) => new Date(message.created_at).getTime() >= todayMs).length,
+      messagesToday: messageMetrics.filter((message) => new Date(message.created_at).getTime() >= todayMs).length,
       avgResponseMs: latencies.length
         ? Math.round(latencies.reduce((sum, value) => sum + value, 0) / latencies.length)
         : null,
@@ -108,10 +97,8 @@ export async function GET(request: NextRequest) {
       admin: { email: admin.user.email ?? "zero_admin" },
       metrics,
       sessions,
-      messages,
       events,
       leads,
-      selectedSession,
     });
   } catch (error) {
     console.error("[ZERO CONTROL] data request failed", error);
