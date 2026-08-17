@@ -61,6 +61,22 @@ async function getOrCreateSession(baseUrl: string): Promise<ChatSession> {
   return createSession(baseUrl);
 }
 
+function serializeChatHistory(messages: UIMessage[]) {
+  return messages
+    .filter((message) => message.role === "user" || message.role === "assistant")
+    .map((message) => ({
+      role: message.role,
+      content: message.parts
+        .filter((part) => part.type === "text")
+        .map((part) => ("text" in part && typeof part.text === "string" ? part.text : ""))
+        .filter(Boolean)
+        .join("\n")
+        .trim(),
+    }))
+    .filter((message) => message.content.length > 0)
+    .slice(-10);
+}
+
 function SpideyThinker() {
   return (
     <motion.div
@@ -152,7 +168,7 @@ export default function ChatWindow({
     () => new TextStreamChatTransport({
       api: backendUrl,
       prepareSendMessagesRequest: ({ messages: outgoingMessages, body, headers }) => ({
-        body: { ...body, messages: outgoingMessages.slice(-10) },
+        body: { ...body, messages: serializeChatHistory(outgoingMessages) },
         headers,
       }),
     }),
@@ -233,8 +249,8 @@ export default function ChatWindow({
         body: { session_id: sessionId },
         headers: { "X-Session-Token": sessionToken },
       },
-    ).catch((error: unknown) => {
-      setChatError(error instanceof Error ? error.message : "Zero could not send that message.");
+    ).catch(() => {
+      setChatError("Zero hit a communication error. Please try again.");
     });
   };
 
@@ -279,7 +295,7 @@ export default function ChatWindow({
   }, [status]);
 
   useEffect(() => {
-    if (sdkError) setChatError(sdkError.message || "Zero lost the connection.");
+    if (sdkError) setChatError("Zero hit a communication error. Please try again.");
   }, [sdkError]);
 
   const adjustHeight = () => {
