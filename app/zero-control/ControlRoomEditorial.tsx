@@ -6,6 +6,7 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import Image from "next/image";
@@ -80,11 +81,11 @@ type ControlData = {
     providerUsage: Record<string, number>;
   };
   sessions: SessionRow[];
-  messages: MessageRow[];
   events: EventRow[];
   leads: LeadRow[];
-  selectedSession: string | null;
 };
+
+type SessionDetail = { messages: MessageRow[] };
 
 const fmt = (value: string) =>
   new Intl.DateTimeFormat("en-IN", {
@@ -157,12 +158,16 @@ export default function ControlRoomEditorial() {
   const [sessionQuery, setSessionQuery] = useState("");
   const [deletingSession, setDeletingSession] = useState<string | null>(null);
   const [deletingAll, setDeletingAll] = useState(false);
+  const [sessionDetails, setSessionDetails] = useState<Record<string, SessionDetail>>({});
+  const [loadingSession, setLoadingSession] = useState<string | null>(null);
+  const sessionDetailsRef = useRef<Record<string, SessionDetail>>({});
+  const pendingSessionsRef = useRef(new Map<string, Promise<SessionDetail>>());
+  const transcriptRef = useRef<HTMLDivElement>(null);
 
-  const loadData = useCallback(async (session?: string | null) => {
+  const loadData = useCallback(async () => {
     setLoading(true); setError("");
     try {
-      const query = session ? `?session=${encodeURIComponent(session)}` : "";
-      const response = await fetch(`/zero-control/api/data${query}`, { cache: "no-store" });
+      const response = await fetch("/zero-control/api/data", { cache: "no-store" });
       if (response.status === 401) { setData(null); setAuthRequired(true); return; }
       if (!response.ok) throw new Error("Failed to load Control Room data.");
       const payload = await response.json() as ControlData;
@@ -170,6 +175,30 @@ export default function ControlRoomEditorial() {
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "Something went wrong.");
     } finally { setLoading(false); }
+  }, []);
+
+  const getSessionDetail = useCallback(async (id: string, force = false) => {
+    if (!force && sessionDetailsRef.current[id]) return sessionDetailsRef.current[id];
+    const pending = pendingSessionsRef.current.get(id);
+    if (!force && pending) return pending;
+
+    const request = fetch(`/zero-control/api/session?session=${encodeURIComponent(id)}`, { cache: "no-store" })
+      .then(async (response) => {
+        const payload = await response.json() as SessionDetail & { error?: string };
+        if (!response.ok) throw new Error(payload.error || "Failed to load this transcript.");
+        return { messages: payload.messages };
+      });
+
+    pendingSessionsRef.current.set(id, request);
+    try {
+      const detail = await request;
+      const next = { ...sessionDetailsRef.current, [id]: detail };
+      sessionDetailsRef.current = next;
+      setSessionDetails(next);
+      return detail;
+    } finally {
+      pendingSessionsRef.current.delete(id);
+    }
   }, []);
 
   useEffect(() => { void loadData(); }, [loadData]);
@@ -187,10 +216,42 @@ export default function ControlRoomEditorial() {
 
   async function logout() {
     await fetch("/zero-control/api/logout", { method: "POST" });
+    sessionDetailsRef.current = {};
+    setSessionDetails({});
     setData(null); setSelectedSession(null); setAuthRequired(true);
   }
 
-  async function selectSession(id: string) { setSelectedSession(id); await loadData(id); }
+  async function selectSession(id: string) {
+    setSelectedSession(id);
+    setError("");
+    if (sessionDetailsRef.current[id]) return;
+    setLoadingSession(id);
+    try {
+      await getSessionDetail(id);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Failed to load this transcript.");
+    } finally {
+      setLoadingSession((current) => current === id ? null : current);
+    }
+  }
+
+  function prefetchSession(id: string) {
+    if (sessionDetailsRef.current[id] || pendingSessionsRef.current.has(id)) return;
+    void getSessionDetail(id).catch(() => undefined);
+  }
+
+  async function refreshData() {
+    await loadData();
+    if (!selectedSession) return;
+    setLoadingSession(selectedSession);
+    try {
+      await getSessionDetail(selectedSession, true);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "Failed to refresh this transcript.");
+    } finally {
+      setLoadingSession((current) => current === selectedSession ? null : current);
+    }
+  }
 
   async function deleteSession(id: string) {
     if (!window.confirm("Delete this session and all related messages, events and leads? This cannot be undone.")) return;
@@ -199,7 +260,11 @@ export default function ControlRoomEditorial() {
       const response = await fetch("/zero-control/api/session", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ sessionId: id }) });
       const payload = await response.json() as { error?: string };
       if (!response.ok) throw new Error(payload.error || "Failed to delete session.");
-      setSelectedSession(null); await loadData(null);
+      const next = { ...sessionDetailsRef.current };
+      delete next[id];
+      sessionDetailsRef.current = next;
+      setSessionDetails(next);
+      setSelectedSession(null); await loadData();
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Failed to delete session."); }
     finally { setDeletingSession(null); }
   }
@@ -213,7 +278,9 @@ export default function ControlRoomEditorial() {
       const response = await fetch("/zero-control/api/session", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ deleteAll: true, confirmation }) });
       const payload = await response.json() as { error?: string };
       if (!response.ok) throw new Error(payload.error || "Failed to delete all chats.");
-      setSelectedSession(null); await loadData(null);
+      sessionDetailsRef.current = {};
+      setSessionDetails({});
+      setSelectedSession(null); await loadData();
     } catch (cause) { setError(cause instanceof Error ? cause.message : "Failed to delete all chats."); }
     finally { setDeletingAll(false); }
   }
@@ -224,6 +291,12 @@ export default function ControlRoomEditorial() {
     if (!query) return data?.sessions ?? [];
     return (data?.sessions ?? []).filter((session) => session.session_id.toLowerCase().includes(query) || session.visitor_hash?.toLowerCase().includes(query) || session.referrer?.toLowerCase().includes(query));
   }, [data, sessionQuery]);
+  const activeDetail = selectedSession ? sessionDetails[selectedSession] : undefined;
+  const activeMessages = activeDetail?.messages ?? [];
+
+  useEffect(() => {
+    transcriptRef.current?.scrollTo({ top: 0, behavior: "auto" });
+  }, [selectedSession, activeMessages.length]);
 
   if (authRequired && !data) {
     return <main className="zc-login-shell">
@@ -244,15 +317,18 @@ export default function ControlRoomEditorial() {
   if (loading && !data) return <main className="zc-loading-shell"><div className="zc-loading-mark"><RefreshCw className="zc-spin" size={21} /></div><span>Synchronising telemetry</span></main>;
   if (!data) return null;
 
-  const selected = data.sessions.find((session) => session.session_id === selectedSession) ?? data.sessions[0] ?? null;
+  const selected = selectedSession
+    ? data.sessions.find((session) => session.session_id === selectedSession) ?? null
+    : null;
   const totalProvider = providers.reduce((sum, [, value]) => sum + value, 0) || 1;
-  const activeSessionId = selectedSession ?? data.sessions[0]?.session_id;
+  const activeSessionId = selectedSession;
+  const transcriptLoading = Boolean(selectedSession && loadingSession === selectedSession && !activeDetail);
 
   return <main className="zc-shell"><div className="zc-frame">
     <header className="zc-topbar">
       <div className="zc-brand"><Image src="/mask-circle.png" alt="" width={36} height={36} priority /><div className="zc-brand-wordmark"><strong>ZERO<span>/</span>OPS</strong><span>Conversation intelligence</span></div></div>
       <div className="zc-system-state"><span className="zc-live-dot" /><div><strong>System live</strong><span>Secure observer · {data.admin.email}</span></div></div>
-      <nav className="zc-actions" aria-label="Control room actions"><button onClick={() => void loadData(selectedSession)} disabled={loading}><RefreshCw size={14} className={loading ? "zc-spin" : ""} /><span>Sync</span></button><button onClick={() => void logout()}><LogOut size={14} /><span>Exit</span></button></nav>
+      <nav className="zc-actions" aria-label="Control room actions"><button onClick={() => void refreshData()} disabled={loading || Boolean(loadingSession)}><RefreshCw size={14} className={loading || loadingSession ? "zc-spin" : ""} /><span>Sync</span></button><button onClick={() => void logout()}><LogOut size={14} /><span>Exit</span></button></nav>
     </header>
 
     <section className="zc-masthead"><div><span className="zc-kicker">Private telemetry surface · Live operations</span><h1>Signal over<br /><em>noise.</em></h1></div><div className="zc-masthead-note"><Radio size={17} /><p>Track who is talking to Zero, what they need, and how the system responds.</p></div></section>
@@ -273,7 +349,7 @@ export default function ControlRoomEditorial() {
         <label className="zc-session-search"><Search size={14} /><input aria-label="Search sessions" value={sessionQuery} onChange={(event) => setSessionQuery(event.target.value)} placeholder="Search visitor or source" /></label>
         <div className="zc-session-list">{filteredSessions.map((session, index) => {
           const active = activeSessionId === session.session_id;
-          return <button key={session.session_id} onClick={() => void selectSession(session.session_id)} aria-current={active ? "true" : undefined} className={active ? "is-active" : ""}>
+          return <button key={session.session_id} onPointerEnter={() => prefetchSession(session.session_id)} onFocus={() => prefetchSession(session.session_id)} onClick={() => void selectSession(session.session_id)} aria-current={active ? "true" : undefined} className={active ? "is-active" : ""}>
             <span className="zc-session-number">{String(index + 1).padStart(2, "0")}</span><span className="zc-session-copy"><strong>{shortId(session.session_id)}</strong><span>{fmt(session.last_active_at)}</span><small>{session.message_count} msgs{session.visitor_hash ? ` · ${session.visitor_hash.slice(0, 7)}` : ""}</small></span><ChevronRight size={14} />
           </button>;
         })}{!filteredSessions.length && <p className="zc-empty">No matching sessions.</p>}</div>
@@ -282,7 +358,12 @@ export default function ControlRoomEditorial() {
       <Panel className="zc-transcript-panel">
         <SectionHead index="02" label="Transcript channel" title={selected ? shortId(selected.session_id) : "No session"} meta={selected ? `${selected.message_count} messages` : undefined} />
         {selected && <div className="zc-transcript-toolbar"><span><Clock3 size={13} />Last signal {fmt(selected.last_active_at)}</span><button type="button" onClick={() => void deleteSession(selected.session_id)} disabled={deletingSession === selected.session_id}><Trash2 size={12} />{deletingSession === selected.session_id ? "Deleting" : "Delete session"}</button></div>}
-        <div className="zc-transcript">{[...data.messages].reverse().map((message) => <article key={message.id} className={`zc-message zc-message--${message.role}`}><div className="zc-message-meta"><span className="zc-message-avatar">{message.role === "assistant" ? <Bot size={13} /> : <User size={13} />}</span><strong>{message.role === "assistant" ? "ZERO" : "Visitor"}</strong>{message.provider && <span>{message.provider}</span>}{message.latency_ms != null && <span>{message.latency_ms}ms</span>}<time>{fmt(message.created_at)}</time></div><div className="zc-message-body"><MessageContent content={message.content} /></div></article>)}{!data.messages.length && <p className="zc-empty">No messages in this view.</p>}</div>
+        <div ref={transcriptRef} className="zc-transcript" aria-busy={transcriptLoading}>
+          {!selected && <div className="zc-transcript-state"><MessageSquare size={22} /><strong>Select a session</strong><p>Choose a visitor from the channel index to open its transcript.</p></div>}
+          {selected && transcriptLoading && <div className="zc-transcript-state"><RefreshCw size={18} className="zc-spin" /><strong>Opening channel</strong><p>Loading only this conversation.</p></div>}
+          {selected && !transcriptLoading && activeMessages.map((message) => <article key={message.id} className={`zc-message zc-message--${message.role}`}><div className="zc-message-meta"><span className="zc-message-avatar">{message.role === "assistant" ? <Bot size={13} /> : <User size={13} />}</span><strong>{message.role === "assistant" ? "ZERO" : "Visitor"}</strong>{message.provider && <span>{message.provider}</span>}{message.latency_ms != null && <span>{message.latency_ms}ms</span>}<time>{fmt(message.created_at)}</time></div><div className="zc-message-body"><MessageContent content={message.content} /></div></article>)}
+          {selected && !transcriptLoading && !activeMessages.length && <p className="zc-empty">No messages in this session.</p>}
+        </div>
       </Panel>
 
       <aside className="zc-telemetry-column">
