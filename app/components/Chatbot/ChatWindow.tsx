@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useChat } from "@ai-sdk/react";
 import { TextStreamChatTransport, type UIMessage } from "ai";
@@ -14,6 +14,7 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 const jbMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jbmono" });
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 const SESSION_STORAGE_KEY = "zero_chat_session";
+const MAX_INPUT_CHARS = 4000;
 
 const INITIAL_MESSAGES: UIMessage[] = [
   {
@@ -23,20 +24,37 @@ const INITIAL_MESSAGES: UIMessage[] = [
   },
 ];
 
-function createSession() {
-  return {
-    id: crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2, 15),
-    createdAt: Date.now(),
+type ChatSession = {
+  id: string;
+  token: string;
+  expiresAt: number;
+};
+
+async function createSession(baseUrl: string): Promise<ChatSession> {
+  const response = await fetch(`${baseUrl}/api/chat/session`, { method: "POST" });
+  if (!response.ok) throw new Error("Zero could not start a secure chat session.");
+  const data = await response.json() as {
+    session_id?: string;
+    session_token?: string;
+    expires_at?: number;
   };
+  if (!data.session_id || !data.session_token) throw new Error("The chat session response was invalid.");
+  const session = {
+    id: data.session_id,
+    token: data.session_token,
+    expiresAt: data.expires_at ? data.expires_at * 1000 : Date.now() + SESSION_TTL_MS,
+  };
+  localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+  return session;
 }
 
-function getOrCreateSession() {
+async function getOrCreateSession(baseUrl: string): Promise<ChatSession> {
   const raw = localStorage.getItem(SESSION_STORAGE_KEY);
   if (raw) {
     try {
-      const parsed = JSON.parse(raw) as { id?: string; createdAt?: number };
-      if (parsed.id && parsed.createdAt && Date.now() - parsed.createdAt < SESSION_TTL_MS) {
-        return { id: parsed.id, createdAt: parsed.createdAt };
+      const parsed = JSON.parse(raw) as Partial<ChatSession>;
+      if (parsed.id && parsed.token && parsed.expiresAt && Date.now() < parsed.expiresAt) {
+        return parsed as ChatSession;
       }
     } catch {
       // Ignore malformed/legacy state and rotate the session below.
@@ -45,9 +63,7 @@ function getOrCreateSession() {
 
   // Migrate away from the legacy indefinite session key.
   localStorage.removeItem("zero_chat_session_id");
-  const session = createSession();
-  localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
-  return session;
+  return createSession(baseUrl);
 }
 
 function SpideyThinker() {
@@ -117,19 +133,37 @@ function SpideyThinker() {
     </motion.div>
   );
 }
-export default function ChatWindow({ onClose }: { onClose: () => void }) {
+export default function ChatWindow({
+  onClose,
+  serverState,
+}: {
+  onClose: () => void;
+  serverState: "checking" | "online" | "offline";
+}) {
   const [input, setInput] = useState("");
   const [showScrollBtn, setShowScrollBtn] = useState(false);
-  const [serverState, setServerState] = useState<"checking" | "online" | "offline">("checking");
   const [viewportHeight, setViewportHeight] = useState<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [sessionId, setSessionId] = useState<string>("");
+  const [sessionToken, setSessionToken] = useState<string>("");
+  const [historyLoading, setHistoryLoading] = useState(true);
+  const [chatError, setChatError] = useState("");
+  const conversationTouched = useRef(false);
 
   const backendUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || "http://localhost:8000/api/chat";
   const baseUrl = backendUrl.replace(/\/api\/chat\/?$/, "");
 
-  const transport = new TextStreamChatTransport({ api: backendUrl });
-  const { messages, sendMessage, status, setMessages } = useChat({
+  const transport = useMemo(
+    () => new TextStreamChatTransport({
+      api: backendUrl,
+      prepareSendMessagesRequest: ({ messages: outgoingMessages, body, headers }) => ({
+        body: { ...body, messages: outgoingMessages.slice(-10) },
+        headers,
+      }),
+    }),
+    [backendUrl],
+  );
+  const { messages, sendMessage, status, setMessages, error: sdkError } = useChat({
     transport,
     messages: INITIAL_MESSAGES,
   });
@@ -156,29 +190,57 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   }, []);
 
   useEffect(() => {
-    const session = getOrCreateSession();
-    setSessionId(session.id);
+    let active = true;
+    const initialize = async () => {
+      setHistoryLoading(true);
+      setChatError("");
+      try {
+        const session = await getOrCreateSession(baseUrl);
+        if (!active) return;
+        setSessionId(session.id);
+        setSessionToken(session.token);
 
-    fetch(`${baseUrl}/api/chat/history/${session.id}`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`History request failed: ${r.status}`))))
-      .then((data) => {
+        const response = await fetch(`${baseUrl}/api/chat/history/${session.id}`, {
+          headers: { "X-Session-Token": session.token },
+        });
+        if (!response.ok) throw new Error(`History request failed: ${response.status}`);
+        const data = await response.json();
+        if (!active || conversationTouched.current) return;
         if (data.messages?.length > 0) {
-          const formatted: UIMessage[] = data.messages
-            .filter((m: { content?: string }) => !m.content?.trim().toLowerCase().startsWith("cold start in progress"))
-            .map((m: { role: string; content?: string }, i: number) => ({
+          const formatted: UIMessage[] = data.messages.map(
+            (m: { role: string; content?: string }, i: number) => ({
               id: `history-${i}`,
-              role: m.role === "model" || m.role === "assistant" ? "assistant" : "user",
+              role: m.role === "assistant" ? "assistant" : "user",
               parts: [{ type: "text", text: m.content || "" }],
-            }));
-          setMessages(formatted.length > 0 ? formatted : INITIAL_MESSAGES);
+            }),
+          );
+          setMessages(formatted);
         }
-      })
-      .catch((e) => console.error("Failed to fetch history:", e));
+      } catch (error) {
+        if (active) setChatError(error instanceof Error ? error.message : "Zero failed to initialize.");
+      } finally {
+        if (active) setHistoryLoading(false);
+      }
+    };
+    void initialize();
+    return () => {
+      active = false;
+    };
   }, [baseUrl, setMessages]);
 
   const customSendMessage = (text: string) => {
-    if (!sessionId) return;
-    sendMessage({ text }, { body: { session_id: sessionId } });
+    if (!sessionId || !sessionToken) return;
+    conversationTouched.current = true;
+    setChatError("");
+    void sendMessage(
+      { text },
+      {
+        body: { session_id: sessionId },
+        headers: { "X-Session-Token": sessionToken },
+      },
+    ).catch((error: unknown) => {
+      setChatError(error instanceof Error ? error.message : "Zero could not send that message.");
+    });
   };
 
   const isTyping = status === "submitted" || status === "streaming";
@@ -220,25 +282,8 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   }, [status]);
 
   useEffect(() => {
-    let active = true;
-    const ping = async () => {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3000);
-      try {
-        const res = await fetch(`${baseUrl}/keep-alive`, { signal: controller.signal });
-        if (active) setServerState(res.ok ? "online" : "offline");
-      } catch {
-        if (active) setServerState("offline");
-      } finally {
-        clearTimeout(timeoutId);
-      }
-    };
-    ping();
-    return () => {
-      active = false;
-    };
-  }, [baseUrl]);
-
+    if (sdkError) setChatError(sdkError.message || "Zero lost the connection.");
+  }, [sdkError]);
 
   const adjustHeight = () => {
     const el = textareaRef.current;
@@ -262,7 +307,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   };
 
   const submitMessage = () => {
-    if (!input.trim() || isTyping || !sessionId) return;
+    if (!input.trim() || isTyping || historyLoading || !sessionId || !sessionToken) return;
     sfx.send();
     customSendMessage(input.trim());
     setInput("");
@@ -275,20 +320,21 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
     submitMessage();
   };
 
-  const clearChat = async () => {
-    const oldSessionId = sessionId;
-    setMessages(INITIAL_MESSAGES);
-
-    const nextSession = createSession();
-    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(nextSession));
-    setSessionId(nextSession.id);
-
-    if (!oldSessionId) return;
+  const refreshChat = async () => {
+    if (historyLoading || isTyping) return;
+    setHistoryLoading(true);
+    setChatError("");
     try {
-      const response = await fetch(`${baseUrl}/api/chat/history/${oldSessionId}`, { method: "DELETE" });
-      if (!response.ok) console.error(`Failed to clear server history: ${response.status}`);
+      const nextSession = await createSession(baseUrl);
+      conversationTouched.current = false;
+      setSessionId(nextSession.id);
+      setSessionToken(nextSession.token);
+      setMessages(INITIAL_MESSAGES);
+      setInput("");
     } catch (error) {
-      console.error("Failed to clear server history:", error);
+      setChatError(error instanceof Error ? error.message : "Zero could not start a fresh chat.");
+    } finally {
+      setHistoryLoading(false);
     }
   };
 
@@ -336,7 +382,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
   ];
 
   const handleSuggestionClick = (text: string) => {
-    if (!sessionId || isTyping) return;
+    if (!sessionId || !sessionToken || historyLoading || isTyping) return;
     sfx.send();
     customSendMessage(text);
   };
@@ -374,9 +420,10 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
-              onClick={clearChat}
-              title="Clear conversation"
-              className="relative z-10 p-2 border border-zinc-300/80 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-950 hover:border-zinc-900 bg-white/70"
+              onClick={() => void refreshChat()}
+              disabled={historyLoading || isTyping}
+              title="Start a fresh chat"
+              className="relative z-10 p-2 border border-zinc-300/80 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-950 hover:border-zinc-900 bg-white/70 disabled:cursor-wait disabled:opacity-50"
             >
               <RotateCcw size={15} />
             </motion.button>
@@ -391,6 +438,11 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
 
         <div ref={scrollContainerRef} onScroll={handleScroll} className="chat-scroll-area h-full overflow-y-auto overscroll-contain px-3.5 sm:px-4 pt-3.5 pb-2 custom-scrollbar bg-transparent relative">
           <div className="relative z-10 space-y-2.5">
+            {chatError && (
+              <div role="alert" className="rounded-[8px] border border-red-500/35 bg-red-500/10 px-3 py-2 text-[11px] leading-5 text-red-200">
+                {chatError}
+              </div>
+            )}
             {messages.map((message, i) => (
               <motion.div key={message.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, ease: "easeOut" }}>
                 <MessageBubble message={message} isLast={i === messages.length - 1 && isTyping} />
@@ -438,7 +490,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={() => handleSuggestionClick(s.label)}
-                  disabled={!sessionId || isTyping}
+                  disabled={!sessionId || !sessionToken || historyLoading || isTyping}
                   className="slant-action flex min-w-0 items-center gap-2 px-3 py-2 text-[11px] text-zinc-400 border border-white/10 rounded-[6px] hover:text-white hover:border-racing-red/50 transition-all bg-white/[0.035] text-left disabled:opacity-50"
                 >
                   {s.icon}
@@ -457,6 +509,8 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
             value={input}
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
+            maxLength={MAX_INPUT_CHARS}
+            disabled={historyLoading || !sessionId || !sessionToken}
             onFocus={() => {
               if (window.innerWidth < 640) setTimeout(() => window.scrollTo(0, 0), 100);
             }}
@@ -468,7 +522,7 @@ export default function ChatWindow({ onClose }: { onClose: () => void }) {
 
           <motion.button
             type="submit"
-            disabled={!input.trim() || isTyping || !sessionId}
+            disabled={!input.trim() || isTyping || historyLoading || !sessionId || !sessionToken}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className="chat-send-cut shrink-0 w-10 h-10 flex items-center justify-center rounded-[7px] bg-gradient-to-br from-[#f23a35] via-[#cc2028] to-[#7f101c] text-white disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-[0_0_18px_rgba(220,38,38,0.38)] border border-red-400/40"

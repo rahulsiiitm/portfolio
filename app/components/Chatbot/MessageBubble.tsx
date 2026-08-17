@@ -15,8 +15,12 @@ function renderInline(text: string, keyPrefix: string) {
     const key = `${keyPrefix}-${index}`;
     const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
     if (linkMatch) {
+      const href = linkMatch[2].trim();
+      if (!/^https?:\/\//i.test(href) && !href.startsWith("/")) {
+        return <Fragment key={key}>{linkMatch[1]}</Fragment>;
+      }
       return (
-        <a key={key} href={linkMatch[2]} target="_blank" rel="noopener noreferrer" className="font-medium text-red-400 underline decoration-red-500/45 underline-offset-2 transition-colors hover:text-red-300 break-words">
+        <a key={key} href={href} target={href.startsWith("/") ? undefined : "_blank"} rel={href.startsWith("/") ? undefined : "noopener noreferrer"} className="font-medium text-red-400 underline decoration-red-500/45 underline-offset-2 transition-colors hover:text-red-300 break-words">
           {linkMatch[1]}
         </a>
       );

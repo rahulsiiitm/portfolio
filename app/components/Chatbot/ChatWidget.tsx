@@ -21,17 +21,12 @@ export default function ChatWidget() {
       try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
-        const url = `${baseUrl}/keep-alive`;
+        const url = `${baseUrl}/ready`;
         const res = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
         if (active) setServerState(res.ok ? "online" : "offline");
       } catch {
         if (active) setServerState("offline");
-        try {
-          const url = `${baseUrl}/keep-alive`;
-          const res = await fetch(url);
-          if (active && res.ok) setServerState("online");
-        } catch {}
       }
     };
     ping();
@@ -47,7 +42,7 @@ export default function ChatWidget() {
 
   return (
     <>
-      <AnimatePresence>{isOpen && <ChatWindow onClose={() => { sfx.close(); setIsOpen(false); }} />}</AnimatePresence>
+      <AnimatePresence>{isOpen && <ChatWindow serverState={serverState} onClose={() => { sfx.close(); setIsOpen(false); }} />}</AnimatePresence>
 
       <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center justify-end pointer-events-none">
         {!isOpen && (
