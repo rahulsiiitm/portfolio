@@ -116,6 +116,10 @@ body::-webkit-scrollbar,
   isolation: isolate;
 }
 
+.zero-chat-hint {
+  animation: zero-chat-hint-in 420ms ease-out 500ms both;
+}
+
 .chat-hud-shell::after {
   content: "";
   position: absolute;
@@ -144,5 +148,542 @@ body::-webkit-scrollbar,
 
 .chat-send-cut {
   clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+}
+
+/* ZERO neural portfolio launch interface. */
+.zero-launchpad {
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+  padding: 14px 16px 12px;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(222, 35, 40, 0.13), transparent 27%),
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: auto, 32px 32px, 32px 32px;
+  isolation: isolate;
+}
+
+.zero-launchpad::before {
+  content: "ZERO";
+  position: absolute;
+  right: -20px;
+  top: 120px;
+  z-index: -1;
+  color: rgba(255, 255, 255, 0.018);
+  font-size: 116px;
+  font-weight: 900;
+  letter-spacing: -0.08em;
+  line-height: 0.8;
+  transform: rotate(-90deg);
+}
+
+.zero-launchpad__status,
+.zero-launchpad__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #717784;
+  font-family: var(--font-jbmono), ui-monospace, monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.zero-launchpad__status > span:first-child,
+.zero-launchpad__foot > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.zero-launchpad__status i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #54e88c;
+  box-shadow: 0 0 10px rgba(84, 232, 140, 0.75);
+}
+
+.zero-launchpad__graph {
+  position: relative;
+  height: 196px;
+  margin: 2px 0 0;
+}
+
+.zero-graph-ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border: 1px solid rgba(239, 43, 37, 0.2);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.zero-graph-ring--outer {
+  width: 164px;
+  height: 164px;
+  border-style: dashed;
+  animation: zero-orbit 18s linear infinite;
+}
+
+.zero-graph-ring--inner {
+  width: 110px;
+  height: 110px;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.zero-graph-line {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 150px;
+  height: 1px;
+  overflow: hidden;
+  background: linear-gradient(90deg, rgba(239, 43, 37, 0.65), rgba(239, 43, 37, 0.04));
+  transform-origin: left center;
+  pointer-events: none;
+}
+
+.zero-graph-line::after {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 -30px;
+  width: 30px;
+  background: linear-gradient(90deg, transparent, #ff4b46, transparent);
+  animation: zero-signal 2.6s ease-in-out infinite;
+}
+
+.zero-graph-line--nw { transform: rotate(205deg); }
+.zero-graph-line--ne { transform: rotate(335deg); }
+.zero-graph-line--sw { transform: rotate(155deg); }
+.zero-graph-line--se { transform: rotate(25deg); }
+.zero-graph-line--ne::after { animation-delay: 0.35s; }
+.zero-graph-line--sw::after { animation-delay: 0.7s; }
+.zero-graph-line--se::after { animation-delay: 1.05s; }
+
+.zero-core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  display: grid;
+  width: 84px;
+  height: 84px;
+  place-items: center;
+  border: 1px solid rgba(239, 43, 37, 0.65);
+  border-radius: 50%;
+  background: #07080a;
+  box-shadow: 0 0 0 7px rgba(239, 43, 37, 0.04), 0 0 38px rgba(239, 43, 37, 0.24);
+  transform: translate(-50%, -50%);
+}
+
+.zero-core img {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  object-fit: cover;
+  filter: contrast(1.08) saturate(0.92);
+}
+
+.zero-core small {
+  position: absolute;
+  bottom: -21px;
+  color: #f1f1f1;
+  font-family: var(--font-jbmono), ui-monospace, monospace;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.24em;
+}
+
+.zero-core__scan {
+  position: absolute;
+  inset: -8px;
+  z-index: 2;
+  border-top: 1px solid #ef2b25;
+  border-radius: 50%;
+  animation: zero-spin 3.8s linear infinite;
+  pointer-events: none;
+}
+
+.zero-project-node {
+  position: absolute;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  background: rgba(11, 13, 17, 0.9);
+  padding: 7px 9px;
+  color: #949aa6;
+  font-family: var(--font-jbmono), ui-monospace, monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  transition: border-color 160ms ease, color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.zero-project-node i {
+  width: 5px;
+  height: 5px;
+  background: #ef2b25;
+  box-shadow: 0 0 9px rgba(239, 43, 37, 0.75);
+}
+
+.zero-project-node:hover {
+  border-color: rgba(239, 43, 37, 0.65);
+  background: rgba(239, 43, 37, 0.08);
+  color: white;
+  transform: translateY(-2px);
+}
+
+.zero-project-node:disabled,
+.zero-launchpad__routes button:disabled {
+  cursor: wait;
+  opacity: 0.45;
+}
+
+.zero-node--sutra { left: 7%; top: 25px; }
+.zero-node--vidchain { right: 4%; top: 25px; }
+.zero-node--agrihive { left: 3%; bottom: 23px; }
+.zero-node--vyoma { right: 9%; bottom: 23px; }
+
+.zero-launchpad__intro {
+  margin: -2px auto 12px;
+  text-align: center;
+}
+
+.zero-launchpad__eyebrow {
+  color: #ef2b25;
+  font-family: var(--font-jbmono), ui-monospace, monospace;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.zero-launchpad__intro h2 {
+  margin: 7px 0 2px;
+  color: #f5f5f2;
+  font-family: var(--font-outfit), sans-serif;
+  font-size: 27px;
+  font-weight: 650;
+  letter-spacing: -0.045em;
+  line-height: 1;
+}
+
+.zero-launchpad__intro p {
+  margin: 0;
+  color: #818793;
+  font-size: 11px;
+}
+
+.zero-route-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+  color: #ef2b25;
+  font-family: var(--font-jbmono), ui-monospace, monospace;
+  font-size: 7px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.zero-route-select span:last-child {
+  color: #626873;
+}
+
+.zero-launchpad__routes {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2px;
+  padding-left: 7px;
+}
+
+.zero-launchpad__routes::before {
+  content: "";
+  position: absolute;
+  left: 1px;
+  top: 8px;
+  bottom: 8px;
+  width: 1px;
+  background: linear-gradient(180deg, transparent, rgba(239, 43, 37, 0.85) 15%, rgba(239, 43, 37, 0.22) 85%, transparent);
+  box-shadow: 0 0 10px rgba(239, 43, 37, 0.2);
+}
+
+.zero-launchpad__routes button {
+  position: relative;
+  display: grid;
+  grid-template-columns: 78px 38px minmax(0, 1fr) 78px;
+  gap: 11px;
+  align-items: center;
+  min-height: 58px;
+  overflow: hidden;
+  border: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.008) 74%, transparent);
+  padding: 8px 15px 8px 11px;
+  color: #8b919d;
+  text-align: left;
+  cursor: pointer;
+  clip-path: polygon(0 0, calc(100% - 13px) 0, 100% 13px, 100% 100%, 0 100%);
+  transition: color 180ms ease, transform 180ms ease;
+}
+
+.zero-launchpad__routes button:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.zero-launchpad__routes button::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(96deg, rgba(172, 18, 24, 0.96), rgba(239, 43, 37, 0.72) 52%, rgba(120, 12, 17, 0.32));
+  transform: translateX(-102%);
+  transition: transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.zero-launchpad__routes button > span {
+  position: relative;
+  z-index: 1;
+}
+
+.zero-launchpad__routes button::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border: 1px solid #ef2b25;
+  background: #0b0d11;
+  transform: translate(-11px, -50%) rotate(45deg);
+  transition: background 160ms ease, box-shadow 160ms ease;
+}
+
+.zero-launchpad__routes button:hover,
+.zero-launchpad__routes button:focus-visible {
+  color: white;
+  outline: none;
+  transform: translateX(4px);
+}
+
+.zero-launchpad__routes button:hover::before,
+.zero-launchpad__routes button:focus-visible::before {
+  transform: translateX(0);
+}
+
+.zero-launchpad__routes button:hover::after,
+.zero-launchpad__routes button:focus-visible::after {
+  background: white;
+  box-shadow: 0 0 10px rgba(239, 43, 37, 0.8);
+}
+
+.zero-route__index {
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  min-width: 0;
+  color: #ef2b25;
+  font-family: var(--font-jbmono), ui-monospace, monospace;
+}
+
+.zero-route__index b {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
+.zero-route__index small {
+  overflow: hidden;
+  color: #676d78;
+  font-size: 6px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 160ms ease;
+}
+
+.zero-route__icon {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border: 1px solid rgba(239, 43, 37, 0.46);
+  color: #ef2b25;
+  transform: rotate(45deg);
+  transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.zero-route__icon svg {
+  transform: rotate(-45deg);
+}
+
+.zero-route__copy {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.zero-route__copy strong {
+  color: #f3f3f0;
+  font-size: 13px;
+  font-weight: 680;
+  letter-spacing: -0.015em;
+}
+
+.zero-route__copy small {
+  overflow: hidden;
+  color: #737985;
+  font-size: 8px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: color 160ms ease;
+}
+
+.zero-route__action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  color: #5d636e;
+  font-family: var(--font-jbmono), ui-monospace, monospace;
+  text-transform: uppercase;
+}
+
+.zero-route__action small {
+  font-size: 6px;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+}
+
+.zero-route__arrow {
+  transition: color 160ms ease, transform 160ms ease;
+}
+
+.zero-launchpad__routes button:hover .zero-route__index,
+.zero-launchpad__routes button:focus-visible .zero-route__index,
+.zero-launchpad__routes button:hover .zero-route__index small,
+.zero-launchpad__routes button:focus-visible .zero-route__index small,
+.zero-launchpad__routes button:hover .zero-route__copy small,
+.zero-launchpad__routes button:focus-visible .zero-route__copy small,
+.zero-launchpad__routes button:hover .zero-route__action,
+.zero-launchpad__routes button:focus-visible .zero-route__action {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.zero-launchpad__routes button:hover .zero-route__icon,
+.zero-launchpad__routes button:focus-visible .zero-route__icon {
+  border-color: white;
+  background: white;
+  color: #c0171e;
+}
+
+.zero-launchpad__routes button:hover .zero-route__arrow,
+.zero-launchpad__routes button:focus-visible .zero-route__arrow {
+  color: white;
+  transform: translate(2px, -2px);
+}
+
+.zero-launchpad__foot {
+  margin-top: 11px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 7px;
+}
+
+.zero-launchpad__foot > span:last-child {
+  color: #54e88c;
+}
+
+@keyframes zero-orbit {
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+@keyframes zero-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes zero-signal {
+  0%, 18% { transform: translateX(0); opacity: 0; }
+  35% { opacity: 1; }
+  72%, 100% { transform: translateX(180px); opacity: 0; }
+}
+
+@keyframes zero-chat-hint-in {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@media (max-width: 639px) {
+  .zero-launchpad {
+    min-height: 100%;
+    padding: 12px 12px 10px;
+  }
+
+  .zero-launchpad__graph {
+    height: 190px;
+  }
+
+  .zero-graph-line {
+    width: 125px;
+  }
+
+  .zero-node--sutra { left: 1%; }
+  .zero-node--vidchain { right: 0; }
+  .zero-node--agrihive { left: 0; }
+  .zero-node--vyoma { right: 2%; }
+
+  .zero-launchpad__routes button {
+    grid-template-columns: 64px 34px minmax(0, 1fr) 24px;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .zero-route__action small {
+    display: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .zero-launchpad__status > span:last-child,
+  .zero-route__copy small,
+  .zero-route__index small,
+  .zero-route-select span:last-child {
+    display: none;
+  }
+
+  .zero-launchpad__routes button {
+    grid-template-columns: 32px 32px minmax(0, 1fr) 18px;
+    gap: 7px;
+    min-height: 58px;
+  }
+
+  .zero-launchpad__intro {
+    margin-bottom: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .zero-chat-hint {
+    animation: none;
+  }
+
+  .zero-graph-ring--outer,
+  .zero-core__scan,
+  .zero-graph-line::after {
+    animation: none;
+  }
 }
 
