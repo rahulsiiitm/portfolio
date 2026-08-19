@@ -75,7 +75,8 @@ export default function ChatWidget() {
             whileHover={{ scale: 1.04, boxShadow: "0 0 20px rgba(255,0,0,0.55)" }}
             whileTap={{ scale: 0.95 }}
             onClick={toggle}
-            aria-label="Toggle Chat"
+            aria-label={isOpen ? "Close chat" : "Open chat"}
+            aria-expanded={isOpen}
           >
             <div className="absolute inset-0 bg-racing-red opacity-0 group-hover:opacity-20 transition-opacity rounded-full overflow-hidden pointer-events-none" />
             <Image src="/mask-circle.png" alt="Chat" fill sizes="64px" className="object-cover rounded-full" />

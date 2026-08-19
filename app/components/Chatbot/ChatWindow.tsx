@@ -30,6 +30,38 @@ type ChatSession = {
   expiresAt: number;
 };
 
+function readStoredSession(): ChatSession | null {
+  try {
+    const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw) as Partial<ChatSession>;
+    if (parsed.id && parsed.token && parsed.expiresAt && Date.now() < parsed.expiresAt) {
+      return parsed as ChatSession;
+    }
+  } catch {
+    // Storage can be unavailable in privacy modes. Chat should still work in memory.
+  }
+  return null;
+}
+
+function storeSession(session: ChatSession) {
+  try {
+    localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+  } catch {
+    // A valid backend session does not depend on browser persistence.
+  }
+}
+
+function clearStoredSession() {
+  try {
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+    localStorage.removeItem("zero_chat_session_id");
+  } catch {
+    // Ignore unavailable browser storage.
+  }
+}
+
 async function createSession(baseUrl: string): Promise<ChatSession> {
   const response = await fetch(`${baseUrl}/api/chat/session`, { method: "POST" });
   if (!response.ok) throw new Error("Zero could not start a secure chat session.");
@@ -44,25 +76,15 @@ async function createSession(baseUrl: string): Promise<ChatSession> {
     token: data.session_token,
     expiresAt: data.expires_at ? data.expires_at * 1000 : Date.now() + SESSION_TTL_MS,
   };
-  localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(session));
+  storeSession(session);
   return session;
 }
 
 async function getOrCreateSession(baseUrl: string): Promise<ChatSession> {
-  const raw = localStorage.getItem(SESSION_STORAGE_KEY);
-  if (raw) {
-    try {
-      const parsed = JSON.parse(raw) as Partial<ChatSession>;
-      if (parsed.id && parsed.token && parsed.expiresAt && Date.now() < parsed.expiresAt) {
-        return parsed as ChatSession;
-      }
-    } catch {
-      // Ignore malformed/legacy state and rotate the session below.
-    }
-  }
+  const storedSession = readStoredSession();
+  if (storedSession) return storedSession;
 
-  // Migrate away from the legacy indefinite session key.
-  localStorage.removeItem("zero_chat_session_id");
+  clearStoredSession();
   return createSession(baseUrl);
 }
 
@@ -211,18 +233,30 @@ export default function ChatWindow({
       setHistoryLoading(true);
       setChatError("");
       try {
-        const session = await getOrCreateSession(baseUrl);
+        let session = await getOrCreateSession(baseUrl);
         if (!active) return;
-        setSessionId(session.id);
-        setSessionToken(session.token);
 
-        const response = await fetch(`${baseUrl}/api/chat/history/${session.id}`, {
+        let response = await fetch(`${baseUrl}/api/chat/history/${session.id}`, {
           headers: { "X-Session-Token": session.token },
         });
+
+        // The backend may invalidate a session before its client-side TTL expires.
+        // Rotate it once instead of leaving the input bound to unusable credentials.
+        if ([401, 403, 404].includes(response.status)) {
+          clearStoredSession();
+          session = await createSession(baseUrl);
+          if (!active) return;
+          response = await fetch(`${baseUrl}/api/chat/history/${session.id}`, {
+            headers: { "X-Session-Token": session.token },
+          });
+        }
+
         if (!response.ok) throw new Error(`History request failed: ${response.status}`);
-        const data = await response.json();
+        const data = await response.json() as { messages?: Array<{ role: string; content?: string }> };
         if (!active || conversationTouched.current) return;
-        if (data.messages?.length > 0) {
+        setSessionId(session.id);
+        setSessionToken(session.token);
+        if (Array.isArray(data.messages) && data.messages.length > 0) {
           const formatted: UIMessage[] = data.messages.map(
             (m: { role: string; content?: string }, i: number) => ({
               id: `history-${i}`,
@@ -439,12 +473,13 @@ export default function ChatWindow({
               onClick={() => void refreshChat()}
               disabled={historyLoading || isTyping}
               title="Start a fresh chat"
+              aria-label="Start a fresh chat"
               className="relative z-10 p-2 border border-zinc-300/80 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-950 hover:border-zinc-900 bg-white/70 disabled:cursor-wait disabled:opacity-50"
             >
               <RotateCcw size={15} />
             </motion.button>
           )}
-          <button onClick={onClose} className="relative z-10 p-2 border border-zinc-300/80 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-950 hover:border-zinc-900 bg-white/70">
+          <button onClick={onClose} aria-label="Close chat" className="relative z-10 p-2 border border-zinc-300/80 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-950 hover:border-zinc-900 bg-white/70">
             <Minus size={18} />
           </button>
         </div>
@@ -538,6 +573,7 @@ export default function ChatWindow({
 
           <motion.button
             type="submit"
+            aria-label="Send message"
             disabled={!input.trim() || isTyping || historyLoading || !sessionId || !sessionToken}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}

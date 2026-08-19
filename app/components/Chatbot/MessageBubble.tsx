@@ -209,6 +209,7 @@ export default function MessageBubble({
 }) {
   const isUser = message.role === "user";
   const [copied, setCopied] = useState(false);
+  const [timeString] = useState(() => new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
 
   const fullText = message.parts
     .filter((p) => p.type === "text")
@@ -223,9 +224,6 @@ export default function MessageBubble({
       setTimeout(() => setCopied(false), 1800);
     });
   };
-
-  // Avoid hydration mismatch by rendering time only on client
-  const timeString = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
   return (
     <div className={`flex w-full items-start gap-2.5 group ${isUser ? "justify-end" : "justify-start"}`}>
