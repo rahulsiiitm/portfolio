@@ -4,9 +4,8 @@ import { useRef, useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useChat } from "@ai-sdk/react";
 import { TextStreamChatTransport, type UIMessage } from "ai";
-import { SendHorizontal, Minus, RotateCcw, ChevronDown, Bug } from "lucide-react";
+import { SendHorizontal, Minus, User, Bot, Cpu, RotateCcw, ChevronDown, Bug, Sparkles } from "lucide-react";
 import MessageBubble from "@/app/components/Chatbot/MessageBubble";
-import ZeroLaunchpad from "@/app/components/Chatbot/ZeroLaunchpad";
 import { sfx } from "./sound";
 import { Outfit, JetBrains_Mono } from "next/font/google";
 import Image from "next/image";
@@ -17,7 +16,13 @@ const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 const SESSION_STORAGE_KEY = "zero_chat_session";
 const MAX_INPUT_CHARS = 4000;
 
-const INITIAL_MESSAGES: UIMessage[] = [];
+const INITIAL_MESSAGES: UIMessage[] = [
+  {
+    id: "1",
+    role: "assistant",
+    parts: [{ type: "text", text: "Hey - I'm Zero, Rahul's AI assistant. Ask me about Rahul, his projects, experience, or technical skills." }],
+  },
+];
 
 type ChatSession = {
   id: string;
@@ -266,11 +271,9 @@ export default function ChatWindow({
   const showThinker = isTyping && !latestAssistantText;
 
   useEffect(() => {
-    const focusTimer = setTimeout(() => {
-      if (window.innerWidth >= 640 && messages.length > 0) textareaRef.current?.focus();
-    }, 100);
+    const focusTimer = setTimeout(() => textareaRef.current?.focus(), 100);
     return () => clearTimeout(focusTimer);
-  }, [messages.length]);
+  }, []);
 
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
@@ -387,32 +390,29 @@ export default function ChatWindow({
     return () => el.removeEventListener("wheel", onWheel);
   }, []);
 
-  const handleLaunchIntent = (text: string) => {
+  const suggestions = [
+    { label: "Who is Rahul?", icon: <User size={13} className="text-racing-red shrink-0" /> },
+    { label: "His projects", icon: <Bot size={13} className="text-racing-red shrink-0" /> },
+    { label: "Work experience", icon: <Cpu size={13} className="text-racing-red shrink-0" /> },
+    { label: "Skills & technologies", icon: <Sparkles size={13} className="text-racing-red shrink-0" /> },
+  ];
+
+  const handleSuggestionClick = (text: string) => {
     if (!sessionId || !sessionToken || historyLoading || isTyping) return;
     sfx.send();
     customSendMessage(text);
   };
 
-  const handleProjectIntent = (project: string) => {
-    handleLaunchIntent(`Give me a concise technical deep dive into ${project}. Show the problem, architecture, Rahul's role, strongest evidence, and the most important engineering trade-off.`);
-  };
-
-  const handleExplore = () => {
-    textareaRef.current?.focus();
-  };
-
-  const showLaunchpad = messages.length === 0 && !isTyping;
-
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24, scale: 0.94 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: 24, scale: 0.96 }}
-      transition={{ duration: 0.26, ease: [0.2, 0.8, 0.2, 1] }}
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 30 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
       style={{ height: viewportHeight ? `${viewportHeight}px` : undefined }}
-      className={`chat-hud-shell fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[620px] h-[100dvh] sm:h-[calc(100dvh-192px)] max-h-[100dvh] sm:max-h-[720px] bg-[#f4f4f4] sm:border sm:border-red-500/55 sm:rounded-[15px] flex flex-col overflow-hidden z-[200] origin-bottom sm:origin-center sm:shadow-[0_22px_70px_rgba(0,0,0,0.62),0_0_32px_rgba(221,32,39,0.18)] ${outfit.className} ${outfit.variable} ${jbMono.variable}`}
+      className={`chat-hud-shell fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[430px] h-[100dvh] sm:h-[580px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-[#08090c] sm:border sm:border-red-500/55 sm:rounded-[15px] flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_22px_70px_rgba(0,0,0,0.62),0_0_32px_rgba(221,32,39,0.18)] ${outfit.className} ${outfit.variable} ${jbMono.variable}`}
     >
-      <div className="relative bg-[#f4f4f4] px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:pt-3 flex items-center justify-between border-b border-red-500/30 shrink-0 overflow-hidden">
+      <div className="relative bg-[#f4f4f4] px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:pt-3 flex items-center justify-between border-b border-red-500/25 shrink-0 overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-racing-red to-transparent" />
         <div className="absolute right-[-34px] top-0 h-full w-28 -skew-x-[20deg] bg-gradient-to-l from-red-700/90 to-racing-red/15" />
         <div className="flex items-center gap-3">
@@ -423,7 +423,7 @@ export default function ChatWindow({
             <div className="flex items-center gap-2 mt-1">
               <h3 className="font-ammonite text-racing-red text-xl leading-none tracking-wide lowercase">zero</h3>
               <span className={`w-1.5 h-1.5 rounded-full ${showThinker ? "bg-racing-red" : serverState === "online" ? "bg-emerald-500" : serverState === "checking" ? "bg-zinc-400" : "bg-zinc-600"} animate-pulse`} />
-              <span className="text-[9px] font-semibold text-zinc-600 tracking-widest uppercase">
+              <span className="text-[9px] font-semibold text-zinc-400 tracking-widest uppercase">
                 {showThinker ? "thinking" : serverState}
               </span>
             </div>
@@ -432,43 +432,32 @@ export default function ChatWindow({
         </div>
 
         <div className="flex items-center gap-1">
-          {messages.length > 0 && (
+          {messages.length > 1 && (
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => void refreshChat()}
               disabled={historyLoading || isTyping}
               title="Start a fresh chat"
-              className="relative z-10 p-2 border border-zinc-300/80 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-950 hover:border-racing-red bg-white/75 disabled:cursor-wait disabled:opacity-50"
+              className="relative z-10 p-2 border border-zinc-300/80 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-950 hover:border-zinc-900 bg-white/70 disabled:cursor-wait disabled:opacity-50"
             >
               <RotateCcw size={15} />
             </motion.button>
           )}
-          <button onClick={onClose} className="relative z-10 p-2 border border-zinc-300/80 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-950 hover:border-racing-red bg-white/75">
+          <button onClick={onClose} className="relative z-10 p-2 border border-zinc-300/80 rounded-[7px] transition-colors text-zinc-500 hover:text-zinc-950 hover:border-zinc-900 bg-white/70">
             <Minus size={18} />
           </button>
         </div>
       </div>
 
-      <div className="chat-spidey-grid relative z-10 -mt-1 flex-1 overflow-hidden min-h-0 rounded-t-[15px] bg-[#0b0d11] border-t border-white/10">
+      <div className="chat-spidey-grid flex-1 relative overflow-hidden min-h-0 bg-[#0b0d11] border-t border-white/5">
 
-        <div ref={scrollContainerRef} onScroll={handleScroll} className={`chat-scroll-area h-full overflow-y-auto overscroll-contain custom-scrollbar bg-transparent relative ${showLaunchpad ? "p-0" : "px-3.5 sm:px-4 pt-3.5 pb-2"}`}>
+        <div ref={scrollContainerRef} onScroll={handleScroll} className="chat-scroll-area h-full overflow-y-auto overscroll-contain px-3.5 sm:px-4 pt-3.5 pb-2 custom-scrollbar bg-transparent relative">
           <div className="relative z-10 space-y-2.5">
             {chatError && (
-              <div
-                role="alert"
-                className={`rounded-[8px] border border-red-500/35 bg-red-500/10 px-3 py-2 text-[11px] leading-5 text-red-200 ${showLaunchpad ? "mx-3.5 mt-3.5 sm:mx-4" : ""}`}
-              >
+              <div role="alert" className="rounded-[8px] border border-red-500/35 bg-red-500/10 px-3 py-2 text-[11px] leading-5 text-red-200">
                 {chatError}
               </div>
-            )}
-            {showLaunchpad && (
-              <ZeroLaunchpad
-                disabled={!sessionId || !sessionToken || historyLoading}
-                onExplore={handleExplore}
-                onIntent={handleLaunchIntent}
-                onProject={handleProjectIntent}
-              />
             )}
             {messages.map((message, i) => (
               <motion.div key={message.id} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2, ease: "easeOut" }}>
@@ -502,6 +491,33 @@ export default function ChatWindow({
         </AnimatePresence>
       </div>
 
+      <AnimatePresence>
+        {messages.length <= 1 && (
+          <motion.div initial={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.2 }} className="px-3.5 sm:px-4 pb-2 bg-[#0d0e11] overflow-hidden">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-px w-6 bg-racing-red" />
+              <span className="text-[9px] font-bold text-zinc-500 tracking-[0.2em] uppercase">Try asking</span>
+              <div className="h-px flex-1 bg-white/5" />
+            </div>
+            <div className="grid grid-cols-2 gap-1.5">
+              {suggestions.map((s, i) => (
+                <motion.button
+                  key={i}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => handleSuggestionClick(s.label)}
+                  disabled={!sessionId || !sessionToken || historyLoading || isTyping}
+                  className="slant-action flex min-w-0 items-center gap-2 px-3 py-2 text-[11px] text-zinc-400 border border-white/10 rounded-[6px] hover:text-white hover:border-racing-red/50 transition-all bg-white/[0.035] text-left disabled:opacity-50"
+                >
+                  {s.icon}
+                  <span className="truncate">{s.label}</span>
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="relative px-3 pt-3 pb-[calc(0.5rem+env(safe-area-inset-bottom))] sm:pb-3 bg-[#090a0d] border-t border-red-500/25 before:absolute before:top-0 before:left-3 before:h-px before:w-16 before:bg-racing-red">
         <form onSubmit={handleSubmit} className="flex items-center gap-2">
           <textarea
@@ -514,7 +530,7 @@ export default function ChatWindow({
             onFocus={() => {
               if (window.innerWidth < 640) setTimeout(() => window.scrollTo(0, 0), 100);
             }}
-            placeholder={showLaunchpad ? "Or ask Zero anything..." : "Ask about Rahul..."}
+            placeholder="Ask about Rahul..."
             rows={1}
             className="flex-1 bg-[#111319] text-white border border-white/10 rounded-[8px] px-4 py-2.5 text-base sm:text-sm focus:outline-none focus:border-racing-red/70 focus:shadow-[0_0_0_1px_rgba(239,43,37,0.16)] transition-all placeholder:text-zinc-600 resize-none leading-relaxed overflow-hidden shadow-inner"
             style={{ minHeight: "40px", maxHeight: "120px" }}
@@ -534,7 +550,7 @@ export default function ChatWindow({
         <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-2 sm:mt-3 pb-1 text-[9px] sm:text-[10px] text-zinc-500 font-sans select-none">
           <div className="h-[1px] w-6 sm:w-12 bg-gradient-to-r from-transparent via-red-900/60 to-red-600/50" />
           <Bug size={14} className="text-racing-red shrink-0 stroke-[2.2]" />
-          <span className="text-zinc-500 tracking-wide font-medium">I survived my trip to Manipur!</span>
+          <span className="text-zinc-500 tracking-wide font-medium">Powered by Rahul&#39;s portfolio data</span>
           <div className="h-[1px] w-6 sm:w-12 bg-gradient-to-l from-transparent via-red-900/60 to-red-600/50" />
         </div>
       </div>
