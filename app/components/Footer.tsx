@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useSound } from "./SoundProvider";
 
 const TYPER_WORDS = ["FAST", "SCALABLE", "INTELLIGENT", "BOLD"];
 
@@ -18,45 +19,19 @@ export default function Footer() {
     const [displayText, setDisplayText] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
 
-    // --- AUDIO STATE ---
-    const audioRef = useRef<HTMLAudioElement | null>(null);
+    const { play } = useSound();
 
     useEffect(() => {
-        // 1. SETUP AUDIO
-        const audio = new Audio("/engine-start.mp3?v=rahul-engine-3");
-        audio.volume = 1;
-        audioRef.current = audio;
-
-        // GSAP ANIMATIONS
         gsap.registerPlugin(ScrollTrigger);
-
-        gsap.fromTo(footerRef.current,
-            { y: -100 },
-            { y: 0, scrollTrigger: { trigger: footerRef.current, start: "top bottom", end: "bottom bottom", scrub: true } }
-        );
-
-        const tl = gsap.timeline({
-            scrollTrigger: { trigger: footerRef.current, start: "top 60%" }
-        });
-
-        tl.fromTo(formRef.current,
-            { y: 100, opacity: 0 },
-            { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }
-        )
-            .fromTo(".form-element",
-                { x: -20, opacity: 0 },
-                { x: 0, opacity: 1, stagger: 0.1, duration: 0.5, ease: "power2.out" },
-                "-=0.4"
-            );
-
-        // 4. CLEANUP
-        return () => {
-            if (audioRef.current) {
-                audioRef.current.pause();
-                audioRef.current = null;
-            }
-        };
-
+        const context = gsap.context(() => {
+            gsap.fromTo(footerRef.current, { y: -100 }, {
+                y: 0, scrollTrigger: { trigger: footerRef.current, start: "top bottom", end: "bottom bottom", scrub: true },
+            });
+            gsap.timeline({ scrollTrigger: { trigger: footerRef.current, start: "top 60%" } })
+                .fromTo(formRef.current, { y: 100, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" })
+                .fromTo(".form-element", { x: -20, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.1, duration: 0.5, ease: "power2.out" }, "-=0.4");
+        }, footerRef);
+        return () => context.revert();
     }, []);
 
     // 5. Typer Logic
@@ -87,10 +62,7 @@ export default function Footer() {
 
     // --- PLAY SOUND FUNCTION ---
     const playEngineSound = () => {
-        if (audioRef.current) {
-            audioRef.current.currentTime = 0;
-            audioRef.current.play().catch((e) => console.log("Play blocked", e));
-        }
+        play("engine");
     };
 
     // 7. SECURE SUBMISSION LOGIC
@@ -107,65 +79,13 @@ export default function Footer() {
         };
 
         try {
-            const htmlBody = `
-              <div style="font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: 0 auto; background: #0a0a0a; color: #f5f5f5; border-radius: 8px; overflow: hidden;">
-                <div style="background: #dc2626; padding: 24px 32px; text-align: center;">
-                  <h1 style="margin: 0; font-size: 22px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; color: #fff;">
-                    📬 New Portfolio Message
-                  </h1>
-                </div>
-                <div style="padding: 32px;">
-                  <table style="width: 100%; border-collapse: collapse; margin-bottom: 28px;">
-                    <tr>
-                      <td style="padding: 10px 0; border-bottom: 1px solid #222; color: #9ca3af; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; width: 80px;">From</td>
-                      <td style="padding: 10px 0; border-bottom: 1px solid #222; font-weight: 700;">${data.name}</td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 10px 0; border-bottom: 1px solid #222; color: #9ca3af; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em;">Email</td>
-                      <td style="padding: 10px 0; border-bottom: 1px solid #222;">
-                        <a href="mailto:${data.email}" style="color: #dc2626; text-decoration: none;">${data.email}</a>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td style="padding: 16px 0 0; color: #9ca3af; font-size: 12px; text-transform: uppercase; letter-spacing: 0.1em; vertical-align: top;">Message</td>
-                      <td style="padding: 16px 0 0; line-height: 1.7; white-space: pre-wrap;">${data.message}</td>
-                    </tr>
-                  </table>
-                  <div style="text-align: center; border-top: 1px solid #222; padding-top: 28px;">
-                    <p style="color: #6b7280; font-size: 13px; margin-bottom: 20px;">
-                      They reached out via <strong style="color: #f5f5f5;">rahul.aishtrex.com</strong>. Check out the project showcase below:
-                    </p>
-                    <a href="https://rahul.aishtrex.com/projects"
-                       style="display: inline-block; background: #dc2626; color: #fff; text-decoration: none; padding: 14px 32px; font-weight: 900; font-size: 13px; letter-spacing: 0.15em; text-transform: uppercase; border-radius: 2px;">
-                      🚀 View My Projects →
-                    </a>
-                  </div>
-                </div>
-                <div style="background: #111; padding: 16px 32px; text-align: center; border-top: 1px solid #1f1f1f;">
-                  <p style="margin: 0; color: #4b5563; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;">
-                    © 2026 Rahul Sharma // Imphal, IN — Portfolio v2.0.4
-                  </p>
-                </div>
-              </div>
-            `;
-
-            const payload = {
-                access_key: process.env.NEXT_PUBLIC_WEB3FORMS_KEY || '',
-                subject: `New Message from ${data.name} — Rahul's Portfolio`,
-                name: data.name,
-                email: data.email,
-                message: data.message,
-                html: htmlBody,
-                replyto: data.email
-            };
-
-            const response = await fetch('https://api.web3forms.com/submit', {
+            const response = await fetch('/api/contact', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify(payload),
+                body: JSON.stringify({ ...data, botcheck: formData.get('botcheck') as string }),
             });
 
             let result;
@@ -301,7 +221,6 @@ export default function Footer() {
                         <button
                             type="submit"
                             disabled={isSubmitting}
-                            onMouseEnter={playEngineSound}
                             onPointerDown={playEngineSound}
                             aria-label="Submit form"
                             className="slant-action form-element mt-1 md:mt-2 py-4 md:py-5 px-5 md:px-6 bg-black text-white text-sm md:text-base font-black uppercase tracking-widest hover:bg-red-600 hover:animate-engine-start transition-colors duration-300 flex justify-between items-center group/btn cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"

@@ -125,12 +125,10 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                     className="w-full h-full object-cover object-right"
                     src={project.video}
                     title={`${project.title} Demo`}
-                    autoPlay
-                    loop
                     muted
                     controls
                     playsInline
-                    preload="metadata"
+                    preload="none"
                   />
                 ) : (
                   <iframe

@@ -339,7 +339,7 @@ export default function ControlRoomEditorial() {
       <Metric label="Active today" value={data.metrics.activeToday} icon={Activity} signal="good" />
       <Metric label="Messages today" value={data.metrics.messagesToday} icon={MessageSquare} />
       <Metric label="Mean response" value={data.metrics.avgResponseMs ? `${(data.metrics.avgResponseMs / 1000).toFixed(2)}s` : "—"} icon={Gauge} signal="hot" />
-      <Metric label="Failures" value={data.metrics.failures} icon={AlertTriangle} signal={data.metrics.failures > 0 ? "hot" : "neutral"} />
+      <Metric label="Recent failures" value={data.metrics.failures} icon={AlertTriangle} signal={data.metrics.failures > 0 ? "hot" : "neutral"} />
       <Metric label="Inbound leads" value={data.metrics.leads} icon={Mail} />
     </section>
 

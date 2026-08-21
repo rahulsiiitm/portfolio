@@ -96,6 +96,15 @@ body::-webkit-scrollbar,
     height: 2.5rem;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
 /* Full-size actions share the same angled control silhouette. */
 .slant-action {
   border-radius: 6px !important;

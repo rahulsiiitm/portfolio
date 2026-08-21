@@ -144,6 +144,22 @@ export async function supabaseData<T>(query: string, accessToken: string): Promi
   return (await response.json()) as T;
 }
 
+export async function supabaseCount(query: string, accessToken: string): Promise<number> {
+  const { url, publishableKey } = config();
+  const response = await fetch(`${url}/rest/v1/${query}`, {
+    method: "HEAD",
+    headers: {
+      apikey: publishableKey,
+      Authorization: `Bearer ${accessToken}`,
+      Prefer: "count=exact",
+    },
+    cache: "no-store",
+  });
+  if (!response.ok) throw new Error(`Supabase count request failed (${response.status}).`);
+  const total = response.headers.get("content-range")?.split("/").at(-1);
+  return total && total !== "*" ? Number(total) : 0;
+}
+
 export async function supabaseDelete(query: string, accessToken: string): Promise<void> {
   const { url, publishableKey } = config();
   const response = await fetch(`${url}/rest/v1/${query}`, {

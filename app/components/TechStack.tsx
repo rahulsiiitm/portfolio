@@ -54,23 +54,13 @@ export default function RacingStack() {
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
-
-    // Rev up animation
-    gsap.fromTo(
-      ".module-card",
-      { y: 50, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        stagger: 0.1,
-        duration: 0.6,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: containerRef.current,
-          start: "top 80%",
-        },
-      }
-    );
+    const context = gsap.context(() => {
+      gsap.fromTo(".module-card", { y: 50, opacity: 0 }, {
+        y: 0, opacity: 1, stagger: 0.1, duration: 0.6, ease: "power2.out",
+        scrollTrigger: { trigger: containerRef.current, start: "top 80%" },
+      });
+    }, containerRef);
+    return () => context.revert();
   }, []);
 
   return (

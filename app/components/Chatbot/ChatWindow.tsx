@@ -15,6 +15,18 @@ const jbMono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jbmono" })
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 const SESSION_STORAGE_KEY = "zero_chat_session";
 const MAX_INPUT_CHARS = 4000;
+const SESSION_TIMEOUT_MS = 12_000;
+const HISTORY_TIMEOUT_MS = 8_000;
+
+async function fetchWithTimeout(input: RequestInfo | URL, init: RequestInit = {}, timeoutMs = SESSION_TIMEOUT_MS) {
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } finally {
+    window.clearTimeout(timeout);
+  }
+}
 
 const INITIAL_MESSAGES: UIMessage[] = [
   {
@@ -63,7 +75,7 @@ function clearStoredSession() {
 }
 
 async function createSession(baseUrl: string): Promise<ChatSession> {
-  const response = await fetch(`${baseUrl}/api/chat/session`, { method: "POST" });
+  const response = await fetchWithTimeout(`${baseUrl}/api/chat/session`, { method: "POST" });
   if (!response.ok) throw new Error("Zero could not start a secure chat session.");
   const data = await response.json() as {
     session_id?: string;
@@ -229,16 +241,21 @@ export default function ChatWindow({
 
   useEffect(() => {
     let active = true;
+    let sessionReady = false;
     const initialize = async () => {
       setHistoryLoading(true);
       setChatError("");
       try {
         let session = await getOrCreateSession(baseUrl);
         if (!active) return;
+        setSessionId(session.id);
+        setSessionToken(session.token);
+        sessionReady = true;
+        setHistoryLoading(false);
 
-        let response = await fetch(`${baseUrl}/api/chat/history/${session.id}`, {
+        let response = await fetchWithTimeout(`${baseUrl}/api/chat/history/${session.id}`, {
           headers: { "X-Session-Token": session.token },
-        });
+        }, HISTORY_TIMEOUT_MS);
 
         // The backend may invalidate a session before its client-side TTL expires.
         // Rotate it once instead of leaving the input bound to unusable credentials.
@@ -246,16 +263,16 @@ export default function ChatWindow({
           clearStoredSession();
           session = await createSession(baseUrl);
           if (!active) return;
-          response = await fetch(`${baseUrl}/api/chat/history/${session.id}`, {
+          setSessionId(session.id);
+          setSessionToken(session.token);
+          response = await fetchWithTimeout(`${baseUrl}/api/chat/history/${session.id}`, {
             headers: { "X-Session-Token": session.token },
-          });
+          }, HISTORY_TIMEOUT_MS);
         }
 
         if (!response.ok) throw new Error(`History request failed: ${response.status}`);
         const data = await response.json() as { messages?: Array<{ role: string; content?: string }> };
         if (!active || conversationTouched.current) return;
-        setSessionId(session.id);
-        setSessionToken(session.token);
         if (Array.isArray(data.messages) && data.messages.length > 0) {
           const formatted: UIMessage[] = data.messages.map(
             (m: { role: string; content?: string }, i: number) => ({
@@ -267,7 +284,7 @@ export default function ChatWindow({
           setMessages(formatted);
         }
       } catch (error) {
-        if (active) setChatError(error instanceof Error ? error.message : "Zero failed to initialize.");
+        if (active && !sessionReady) setChatError(error instanceof Error ? error.message : "Zero failed to initialize.");
       } finally {
         if (active) setHistoryLoading(false);
       }

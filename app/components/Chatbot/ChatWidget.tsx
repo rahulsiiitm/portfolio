@@ -16,20 +16,31 @@ export default function ChatWidget() {
 
   useEffect(() => {
     let active = true;
+    let retryId: number | undefined;
     const ping = async () => {
+      if (retryId) window.clearTimeout(retryId);
+      if (active) setServerState("checking");
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3000);
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
         const url = `${baseUrl}/ready`;
         const res = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
         if (active) setServerState(res.ok ? "online" : "offline");
       } catch {
         if (active) setServerState("offline");
+      } finally {
+        if (active) retryId = window.setTimeout(ping, 30_000);
       }
     };
+    const handleVisibility = () => { if (document.visibilityState === "visible") void ping(); };
     ping();
-    return () => { active = false; };
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () => {
+      active = false;
+      if (retryId) window.clearTimeout(retryId);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, [baseUrl]);
 
   const toggle = () => {

@@ -1,5 +1,5 @@
 "use client";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useRouter } from 'next/navigation';
@@ -59,6 +59,8 @@ export default function Projects() {
   const progressBarRef = useRef<HTMLDivElement>(null);
   const speedDisplayRef = useRef<HTMLSpanElement>(null);
   const f1ImageRef = useRef<HTMLDivElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
   useLayoutEffect(() => {
@@ -71,6 +73,10 @@ export default function Projects() {
       const viewportWidth = window.innerWidth;
       const isMobile = viewportWidth < 768;
       const cardElements = gsap.utils.toArray<HTMLElement>(".project-card");
+      if (isMobile) {
+        gsap.set(trackRef.current, { clearProps: "transform" });
+        return;
+      }
       const resetCardTilt = () => {
         if (isMobile) return;
         gsap.killTweensOf(cardElements, "skewX");
@@ -169,6 +175,31 @@ export default function Projects() {
 
   const [inspectProject, setInspectProject] = useState<Project | null>(null);
 
+  useEffect(() => {
+    if (!inspectProject) return;
+    const previousOverflow = document.body.style.overflow;
+    const previouslyFocused = document.activeElement as HTMLElement | null;
+    document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setInspectProject(null);
+      if (event.key === "Tab") {
+        const focusable = dialogRef.current?.querySelectorAll<HTMLElement>('button, a[href], input, textarea, select, [tabindex]:not([tabindex="-1"])');
+        if (!focusable?.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+      }
+    };
+    document.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", closeOnEscape);
+      previouslyFocused?.focus();
+    };
+  }, [inspectProject]);
+
   const handleProjectClick = (project: Project) => {
     if (project.slug) router.push(`/projects/${project.slug}`);
   };
@@ -182,7 +213,7 @@ export default function Projects() {
     <section
       id="projects"
       ref={containerRef}
-      className="relative h-[100svh] min-h-[560px] bg-black text-white overflow-hidden"
+      className="relative h-[100svh] min-h-[560px] bg-black text-white overflow-x-auto overflow-y-hidden md:overflow-hidden"
     >
       {/* Background — static on mobile for perf */}
       <div
@@ -365,8 +396,11 @@ export default function Projects() {
 
       {/* --- TELEMETRY OVERLAY MODAL --- */}
       {inspectProject && (
-        <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 md:p-10 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
-          <div className="relative w-full max-w-4xl bg-zinc-900 border border-white/20 shadow-2xl overflow-hidden rounded-sm flex flex-col md:flex-row h-[80vh] md:h-auto max-h-[90vh] pointer-events-auto">
+        <div
+          className="fixed inset-0 z-[2000] flex items-center justify-center p-4 md:p-10 bg-black/90 backdrop-blur-md animate-in fade-in duration-300"
+          onMouseDown={(event) => { if (event.target === event.currentTarget) setInspectProject(null); }}
+        >
+          <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="project-dialog-title" className="relative w-full max-w-4xl bg-zinc-900 border border-white/20 shadow-2xl overflow-hidden rounded-sm flex flex-col md:flex-row h-[80vh] md:h-auto max-h-[90vh] pointer-events-auto">
 
             <div className="absolute top-0 left-0 w-full h-1 bg-red-600 z-30"></div>
 
@@ -383,7 +417,7 @@ export default function Projects() {
               <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 to-transparent"></div>
               <div className="absolute bottom-6 left-6">
                 <span className="text-[10px] font-mono font-bold text-red-500 uppercase tracking-widest mb-2 block">TELEMETRY_STREAM</span>
-                <h4 className="text-3xl font-black italic text-white uppercase leading-none">{inspectProject.title}</h4>
+                <h4 id="project-dialog-title" className="text-3xl font-black italic text-white uppercase leading-none">{inspectProject.title}</h4>
               </div>
             </div>
 
@@ -394,7 +428,9 @@ export default function Projects() {
                   <p className="text-sm font-medium text-white/80">{inspectProject.category}</p>
                 </div>
                 <button
+                  ref={closeButtonRef}
                   onClick={() => setInspectProject(null)}
+                  aria-label="Close project details"
                   className="slant-action px-3 py-2 border border-white/10 text-zinc-500 hover:text-white font-mono text-xs uppercase tracking-widest flex items-center gap-2"
                 >
                   [ CLOSE_X ]

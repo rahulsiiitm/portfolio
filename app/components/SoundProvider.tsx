@@ -12,11 +12,12 @@ export function SoundProvider({ children }: { children: React.ReactNode }) {
 
   const play = useCallback((name: SoundName) => {
     if (name !== "engine") return;
+    if (activeEngineRef.current && !activeEngineRef.current.paused) return;
 
-    activeEngineRef.current?.pause();
-    const engine = new Audio(ENGINE_SOURCE);
-    engine.preload = "auto";
-    engine.volume = 1;
+    const engine = activeEngineRef.current ?? new Audio(ENGINE_SOURCE);
+    engine.preload = "metadata";
+    engine.volume = 0.45;
+    engine.currentTime = 0;
     activeEngineRef.current = engine;
     engine.addEventListener("ended", () => {
       if (activeEngineRef.current === engine) activeEngineRef.current = null;

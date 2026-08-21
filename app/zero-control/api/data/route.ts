@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { requireAdminSession, supabaseData } from "../../_lib/server";
+import { requireAdminSession, supabaseCount, supabaseData } from "../../_lib/server";
 
 type SessionRow = {
   session_id: string;
@@ -10,10 +10,6 @@ type SessionRow = {
   created_at: string;
   last_active_at: string;
   message_count: number;
-};
-
-type MessageMetricRow = {
-  created_at: string;
 };
 
 type EventRow = {
@@ -47,13 +43,9 @@ export async function GET() {
     todayStart.setHours(0, 0, 0, 0);
     const todayIso = encodeURIComponent(todayStart.toISOString());
 
-    const [sessions, messageMetrics, events, leads] = await Promise.all([
+    const [sessions, events, leads, totalSessions, activeToday, messagesToday, totalLeads] = await Promise.all([
       supabaseData<SessionRow[]>(
         "zero_sessions?select=session_id,visitor_hash,user_agent,referrer,created_at,last_active_at,message_count&order=last_active_at.desc&limit=75",
-        admin.accessToken,
-      ),
-      supabaseData<MessageMetricRow[]>(
-        `zero_messages?select=created_at&created_at=gte.${todayIso}&order=created_at.desc&limit=1000`,
         admin.accessToken,
       ),
       supabaseData<EventRow[]>(
@@ -64,9 +56,11 @@ export async function GET() {
         "zero_leads?select=id,session_id,email,message,status,created_at&order=created_at.desc&limit=50",
         admin.accessToken,
       ),
+      supabaseCount("zero_sessions?select=session_id", admin.accessToken),
+      supabaseCount(`zero_sessions?select=session_id&last_active_at=gte.${todayIso}`, admin.accessToken),
+      supabaseCount(`zero_messages?select=id&created_at=gte.${todayIso}`, admin.accessToken),
+      supabaseCount("zero_leads?select=id", admin.accessToken),
     ]);
-
-    const todayMs = todayStart.getTime();
 
     const responseEvents = events.filter((event) => event.event_type === "response_complete");
     const latencies = responseEvents
@@ -82,14 +76,14 @@ export async function GET() {
 
     const failureTypes = new Set(["provider_failure", "stream_interrupted", "all_providers_unavailable"]);
     const metrics = {
-      sessions: sessions.length,
-      activeToday: sessions.filter((session) => new Date(session.last_active_at).getTime() >= todayMs).length,
-      messagesToday: messageMetrics.filter((message) => new Date(message.created_at).getTime() >= todayMs).length,
+      sessions: totalSessions,
+      activeToday,
+      messagesToday,
       avgResponseMs: latencies.length
         ? Math.round(latencies.reduce((sum, value) => sum + value, 0) / latencies.length)
         : null,
       failures: events.filter((event) => failureTypes.has(event.event_type)).length,
-      leads: leads.length,
+      leads: totalLeads,
       providerUsage,
     };
 
