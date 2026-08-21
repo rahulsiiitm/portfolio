@@ -1,6 +1,5 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Manrope } from "next/font/google";
-import localFont from "next/font/local";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -10,20 +9,12 @@ import SiteChrome from "./components/SiteChrome";
 
 const manrope = Manrope({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
 const interHeadings = Inter({
   subsets: ["latin"],
-  weight: ["600", "700", "800", "900"],
   variable: "--font-inter-headings",
-  display: "swap",
-});
-
-const ammonite = localFont({
-  src: "./fonts/Ammonite.otf",
-  variable: "--font-ammonite",
   display: "swap",
 });
 
@@ -87,7 +78,7 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${manrope.className} ${interHeadings.variable} ${ammonite.variable}`}>
+      <body className={`${manrope.className} ${interHeadings.variable}`}>
         {GA_MEASUREMENT_ID && (
           <>
             <Script

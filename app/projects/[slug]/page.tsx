@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink, Code2, Play, Terminal } from "lucide-react";
 import projectsData from "../../../data/projects.json";
+import { ammonite } from "../../fonts";
 
 const BASE_URL = "https://rahul.aishtrex.com";
 
@@ -49,7 +50,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
   if (!project) notFound();
 
   return (
-    <main className="min-h-screen bg-zinc-50 text-zinc-900 pt-24 pb-20 px-4 md:px-8 lg:px-12 font-sans selection:bg-red-500 selection:text-white relative overflow-hidden">
+    <main className={`min-h-screen bg-zinc-50 text-zinc-900 pt-24 pb-20 px-4 md:px-8 lg:px-12 font-sans selection:bg-red-500 selection:text-white relative overflow-hidden ${ammonite.variable}`}>
 
       {/* --- TILTED 3D GRID BACKGROUND --- */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex justify-center perspective-[2000px]">
@@ -129,6 +130,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                     muted
                     controls
                     playsInline
+                    preload="metadata"
                   />
                 ) : (
                   <iframe

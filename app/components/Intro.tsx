@@ -17,28 +17,29 @@ export default function Intro() {
 
     useEffect(() => {
         gsap.registerPlugin(ScrollTrigger);
+        const context = gsap.context(() => {
+            const tl = gsap.timeline({
+                scrollTrigger: {
+                    trigger: container.current,
+                    start: "top 70%",
+                    end: "bottom center",
+                    toggleActions: "play none none reverse",
+                },
+            });
 
-        const tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: container.current,
-                start: "top 70%",
-                end: "bottom center",
-                toggleActions: "play none none reverse",
-            },
-        });
+            tl.fromTo(imageRef.current,
+                { scale: 0.8, opacity: 0 },
+                { scale: 1, opacity: 1, duration: 1.2, ease: "power3.out" }
+            );
 
-        // 1. Image Reveal (Scale Up + Fade)
-        tl.fromTo(imageRef.current,
-            { scale: 0.8, opacity: 0 },
-            { scale: 1, opacity: 1, duration: 1.2, ease: "power3.out" }
-        );
+            tl.fromTo(".intro-line",
+                { y: 50, opacity: 0 },
+                { y: 0, opacity: 1, stagger: 0.1, duration: 0.8, ease: "power4.out" },
+                "-=1.0"
+            );
+        }, container);
 
-        // 2. Text Reveal (Staggered)
-        tl.fromTo(".intro-line",
-            { y: 50, opacity: 0 },
-            { y: 0, opacity: 1, stagger: 0.1, duration: 0.8, ease: "power4.out" },
-            "-=1.0"
-        );
+        return () => context.revert();
 
     }, []);
 
@@ -91,7 +92,6 @@ export default function Intro() {
                             alt="Rahul Sharma - Full Stack & AI Engineer"
                             fill
                             sizes="(max-width: 768px) 100vw, 40vw"
-                            priority
                             className="object-cover hover:grayscale-0 transition-all duration-700"
                         />
 

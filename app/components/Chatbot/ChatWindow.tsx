@@ -455,7 +455,7 @@ export default function ChatWindow({
           </div>
           <div>
             <div className="flex items-center gap-2 mt-1">
-              <h3 className="font-ammonite text-racing-red text-xl leading-none tracking-wide lowercase">zero</h3>
+              <h3 className="text-racing-red text-xl font-black italic leading-none tracking-wide lowercase">zero</h3>
               <span className={`w-1.5 h-1.5 rounded-full ${showThinker ? "bg-racing-red" : serverState === "online" ? "bg-emerald-500" : serverState === "checking" ? "bg-zinc-400" : "bg-zinc-600"} animate-pulse`} />
               <span className="text-[9px] font-semibold text-zinc-400 tracking-widest uppercase">
                 {showThinker ? "thinking" : serverState}

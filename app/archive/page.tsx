@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { ArrowLeft, ArrowUpRight, Cpu, Globe, Lock, Terminal } from "lucide-react";
 import projectsData from "../../data/projects.json";
+import { ammonite } from "../fonts";
 
 export default function ArchivePage() {
   return (
-    <main className="min-h-screen bg-zinc-50 text-zinc-900 pt-32 pb-20 px-4 md:px-8 lg:px-16 font-sans relative overflow-hidden">
+    <main className={`min-h-screen bg-zinc-50 text-zinc-900 pt-32 pb-20 px-4 md:px-8 lg:px-16 font-sans relative overflow-hidden ${ammonite.variable}`}>
 
       {/* --- TILTED 3D GRID BACKGROUND (Matches Case Study) --- */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden flex justify-center perspective-[2000px]">

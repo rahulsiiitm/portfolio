@@ -2,12 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import ChatWindow from "./ChatWindow";
-import { Caveat } from "next/font/google";
+import dynamic from "next/dynamic";
 import { sfx } from "./sound";
 import Image from "next/image";
 
-const caveat = Caveat({ subsets: ["latin"], weight: ["400", "500", "700"] });
+const ChatWindow = dynamic(() => import("./ChatWindow"), { ssr: false });
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -53,7 +52,7 @@ export default function ChatWidget() {
             transition={{ delay: 0.5, duration: 0.5 }}
             className="hidden lg:flex items-center gap-2 mr-4 pointer-events-none"
           >
-            <div className={`text-zinc-300 text-xl tracking-wide whitespace-nowrap flex flex-col items-center leading-tight ${caveat.className}`}>
+            <div className="text-zinc-300 text-sm font-medium tracking-wide whitespace-nowrap flex flex-col items-center leading-tight">
               <span>Tap to chat</span>
               <span>with ZERO</span>
             </div>
