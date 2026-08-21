@@ -1,15 +1,18 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
+import { Caveat } from "next/font/google";
 import { sfx } from "./sound";
 import Image from "next/image";
 
 const ChatWindow = dynamic(() => import("./ChatWindow"), { ssr: false });
+const caveat = Caveat({ subsets: ["latin"], weight: ["400", "500", "700"], display: "swap" });
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
+  const [hasOpened, setHasOpened] = useState(false);
   const [serverState, setServerState] = useState<"checking" | "online" | "offline">("checking");
   const backendUrl = process.env.NEXT_PUBLIC_CHAT_API_URL || "http://localhost:8000/api/chat";
   const baseUrl = backendUrl.replace(/\/api\/chat\/?$/, "");
@@ -45,14 +48,21 @@ export default function ChatWidget() {
 
   const toggle = () => {
     if (!isOpen) sfx.open(); else sfx.close();
-    setIsOpen(!isOpen);
+    if (!isOpen) setHasOpened(true);
+    setIsOpen((open) => !open);
   };
 
   const statusColor = serverState === "online" ? "bg-emerald-500" : serverState === "checking" ? "bg-zinc-400" : "bg-zinc-600";
 
   return (
     <>
-      <AnimatePresence>{isOpen && <ChatWindow serverState={serverState} onClose={() => { sfx.close(); setIsOpen(false); }} />}</AnimatePresence>
+      {hasOpened && (
+        <ChatWindow
+          isOpen={isOpen}
+          serverState={serverState}
+          onClose={() => { sfx.close(); setIsOpen(false); }}
+        />
+      )}
 
       <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex items-center justify-end pointer-events-none">
         {!isOpen && (
@@ -63,7 +73,7 @@ export default function ChatWidget() {
             transition={{ delay: 0.5, duration: 0.5 }}
             className="hidden lg:flex items-center gap-2 mr-4 pointer-events-none"
           >
-            <div className="text-zinc-300 text-sm font-medium tracking-wide whitespace-nowrap flex flex-col items-center leading-tight">
+            <div className={`text-zinc-300 text-xl tracking-wide whitespace-nowrap flex flex-col items-center leading-tight ${caveat.className}`}>
               <span>Tap to chat</span>
               <span>with ZERO</span>
             </div>

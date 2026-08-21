@@ -184,9 +184,11 @@ function SpideyThinker() {
   );
 }
 export default function ChatWindow({
+  isOpen,
   onClose,
   serverState,
 }: {
+  isOpen: boolean;
   onClose: () => void;
   serverState: "checking" | "online" | "offline";
 }) {
@@ -322,11 +324,13 @@ export default function ChatWindow({
   const showThinker = isTyping && !latestAssistantText;
 
   useEffect(() => {
+    if (!isOpen) return;
     const focusTimer = setTimeout(() => textareaRef.current?.focus(), 100);
     return () => clearTimeout(focusTimer);
-  }, []);
+  }, [isOpen]);
 
   useEffect(() => {
+    if (!isOpen) return;
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
@@ -340,7 +344,7 @@ export default function ChatWindow({
       document.body.style.overflow = originalOverflow;
       document.removeEventListener("touchmove", preventTouchMove);
     };
-  }, []);
+  }, [isOpen]);
 
   const prevStatus = useRef(status);
   useEffect(() => {
@@ -457,11 +461,11 @@ export default function ChatWindow({
   return (
     <motion.div
       initial={{ opacity: 0, y: 30 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 30 }}
+      animate={isOpen ? { opacity: 1, y: 0, visibility: "visible" } : { opacity: 0, y: 30, visibility: "hidden" }}
       transition={{ duration: 0.2, ease: "easeOut" }}
+      aria-hidden={!isOpen}
       style={{ height: viewportHeight ? `${viewportHeight}px` : undefined }}
-      className={`chat-hud-shell fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[430px] h-[100dvh] sm:h-[580px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-[#08090c] sm:border sm:border-red-500/55 sm:rounded-[15px] flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_22px_70px_rgba(0,0,0,0.62),0_0_32px_rgba(221,32,39,0.18)] ${outfit.className} ${outfit.variable} ${jbMono.variable}`}
+      className={`chat-hud-shell fixed inset-0 sm:inset-auto sm:bottom-24 sm:right-6 w-full sm:w-[430px] h-[100dvh] sm:h-[580px] max-h-[100dvh] sm:max-h-[calc(100dvh-120px)] bg-[#08090c] sm:border sm:border-red-500/55 sm:rounded-[15px] flex flex-col overflow-hidden z-[100] origin-bottom sm:origin-center sm:shadow-[0_22px_70px_rgba(0,0,0,0.62),0_0_32px_rgba(221,32,39,0.18)] ${isOpen ? "pointer-events-auto" : "pointer-events-none"} ${outfit.className} ${outfit.variable} ${jbMono.variable}`}
     >
       <div className="relative bg-[#f4f4f4] px-4 py-3 pt-[calc(0.75rem+env(safe-area-inset-top))] sm:pt-3 flex items-center justify-between border-b border-red-500/25 shrink-0 overflow-hidden">
         <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-racing-red to-transparent" />
@@ -603,7 +607,7 @@ export default function ChatWindow({
         <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-2 sm:mt-3 pb-1 text-[9px] sm:text-[10px] text-zinc-500 font-sans select-none">
           <div className="h-[1px] w-6 sm:w-12 bg-gradient-to-r from-transparent via-red-900/60 to-red-600/50" />
           <Bug size={14} className="text-racing-red shrink-0 stroke-[2.2]" />
-          <span className="text-zinc-500 tracking-wide font-medium">Powered by Rahul&#39;s portfolio data</span>
+          <span className="text-zinc-500 tracking-wide font-medium">I survived my trip to Manipur!</span>
           <div className="h-[1px] w-6 sm:w-12 bg-gradient-to-l from-transparent via-red-900/60 to-red-600/50" />
         </div>
       </div>
