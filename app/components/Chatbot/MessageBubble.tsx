@@ -38,14 +38,30 @@ function renderInline(text: string, keyPrefix: string) {
   });
 }
 
+function normalizeListMarkers(text: string) {
+  let insideFence = false;
+  return text
+    .replace(/\r\n/g, "\n")
+    .split("\n")
+    .map((line) => {
+      if (/^\s*```/.test(line)) {
+        insideFence = !insideFence;
+        return line;
+      }
+      if (insideFence) return line;
+      return line.replace(/([^\n])\s+▸\s+/g, "$1\n▸ ");
+    })
+    .join("\n");
+}
+
 function renderFormatted(text: string) {
-  const lines = text.replace(/\r\n/g, "\n").split("\n");
+  const lines = normalizeListMarkers(text).split("\n");
   const blocks: ReactNode[] = [];
   let index = 0;
 
   const startsBlock = (line: string) => {
     const value = line.trim();
-    return !value || /^```/.test(value) || /^#{1,6}\s+/.test(value) || /^---+$/.test(value) || /^>\s?/.test(value) || /^[-*]\s+/.test(value) || /^\d+[.)]\s+/.test(value);
+    return !value || /^```/.test(value) || /^#{1,6}\s+/.test(value) || /^---+$/.test(value) || /^>\s?/.test(value) || /^(?:[-*]|▸)\s+/.test(value) || /^\d+[.)]\s+/.test(value);
   };
 
   while (index < lines.length) {
@@ -112,17 +128,17 @@ function renderFormatted(text: string) {
       continue;
     }
 
-    if (/^[-*]\s+/.test(trimmed)) {
+    if (/^(?:[-*]|▸)\s+/.test(trimmed)) {
       const items: string[] = [];
-      while (index < lines.length && /^[-*]\s+/.test(lines[index].trim())) {
-        items.push(lines[index].trim().replace(/^[-*]\s+/, ""));
+      while (index < lines.length && /^(?:[-*]|▸)\s+/.test(lines[index].trim())) {
+        items.push(lines[index].trim().replace(/^(?:[-*]|▸)\s+/, ""));
         index += 1;
       }
       blocks.push(
-        <ul key={`list-${index}`} className="space-y-1.5">
+        <ul key={`list-${index}`} className="space-y-2">
           {items.map((item, itemIndex) => (
-            <li key={itemIndex} className="flex gap-2 text-[13px] leading-5 text-zinc-200">
-              <span className="mt-[7px] h-1 w-1 shrink-0 rotate-45 bg-racing-red" />
+            <li key={itemIndex} className="flex gap-2.5 rounded-r-[6px] border-l border-red-500/55 bg-white/[0.025] px-2.5 py-2 text-[13px] leading-[1.55] text-zinc-200">
+              <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rotate-45 bg-racing-red shadow-[0_0_6px_rgba(239,43,37,0.65)]" />
               <span className="min-w-0 break-words">{renderInline(item, `list-${index}-${itemIndex}`)}</span>
             </li>
           ))}
