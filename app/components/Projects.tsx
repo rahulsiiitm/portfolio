@@ -63,6 +63,15 @@ export default function Projects() {
   const dialogRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
+  const updateMobileProgress = () => {
+    const container = containerRef.current;
+    const progressBar = progressBarRef.current;
+    if (!container || !progressBar || window.innerWidth >= 768) return;
+    const scrollableWidth = container.scrollWidth - container.clientWidth;
+    const progress = scrollableWidth > 0 ? container.scrollLeft / scrollableWidth : 0;
+    progressBar.style.width = `${Math.min(1, Math.max(0, progress)) * 100}%`;
+  };
+
   useLayoutEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
@@ -213,18 +222,19 @@ export default function Projects() {
     <section
       id="projects"
       ref={containerRef}
-      className="relative h-[100svh] min-h-[560px] bg-black text-white overflow-x-auto overflow-y-hidden md:overflow-hidden"
+      onScroll={updateMobileProgress}
+      className="relative h-[100svh] min-h-[560px] bg-black text-white overflow-x-auto overflow-y-hidden overscroll-x-contain snap-x snap-mandatory md:overflow-hidden md:snap-none"
     >
-      {/* Background — static on mobile for perf */}
+      {/* Desktop backdrop stays viewport-sized while GSAP moves the track. */}
       <div
         ref={f1ImageRef}
-        className="absolute top-0 -left-[10%] w-[120%] h-full z-0 pointer-events-none"
+        className="hidden md:block absolute top-0 -left-[10%] w-[120%] h-full z-0 pointer-events-none"
         style={{ willChange: "transform" }}
       >
         <Image src="/bg2.jpg" alt="" fill priority={false} sizes="120vw" className="object-cover object-center" />
       </div>
-      <div className="absolute inset-0 bg-black/50 z-0 pointer-events-none" />
-      <div className="absolute inset-0 z-0 bg-grid-pattern opacity-10 pointer-events-none" style={{ filter: 'invert(1)' }} />
+      <div className="hidden md:block absolute inset-0 bg-black/50 z-0 pointer-events-none" />
+      <div className="hidden md:block absolute inset-0 z-0 bg-grid-pattern opacity-10 pointer-events-none" style={{ filter: 'invert(1)' }} />
 
       {/* HUD Header */}
       <div className="absolute top-16 sm:top-20 md:top-24 left-0 px-4 sm:px-8 md:px-12 z-20 pointer-events-none">
@@ -267,13 +277,20 @@ export default function Projects() {
       {/* Horizontal Track */}
       <div
         ref={trackRef}
-        className="flex h-full items-end pl-4 sm:pl-8 md:pl-12 pb-10 sm:pb-12 md:pb-16"
+        className="relative isolate flex h-full items-end pl-4 sm:pl-8 md:pl-12 pb-10 sm:pb-12 md:pb-16"
         style={{ width: "fit-content", willChange: "transform" }}
       >
+        {/* Mobile uses native horizontal scrolling, so its backdrop must match the full track width. */}
+        <div className="absolute inset-0 -z-10 md:hidden pointer-events-none overflow-hidden">
+          <Image src="/bg2.jpg" alt="" fill priority={false} sizes="500vw" className="object-cover object-center" />
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 bg-grid-pattern opacity-10" style={{ filter: 'invert(1)' }} />
+        </div>
+
         {projects.map((project) => (
           <div
             key={project.id}
-            className="project-card relative flex-shrink-0 mr-4 sm:mr-8 md:mr-16 border border-white/10 bg-zinc-900/80 group origin-bottom-left overflow-hidden shadow-2xl
+            className="project-card relative flex-shrink-0 snap-start mr-4 sm:mr-8 md:mr-16 border border-white/10 bg-zinc-900/80 group origin-bottom-left overflow-hidden shadow-2xl
               w-[80vw] sm:w-[70vw] md:w-[58vw]
               h-[58vh] sm:h-[62vh] md:h-[64vh]
               flex flex-col md:flex-row"
@@ -362,7 +379,7 @@ export default function Projects() {
         ))}
 
         {/* Archive Bridge Card */}
-        <div className="project-card relative flex-shrink-0 mr-4 sm:mr-8 md:mr-16 border-2 border-dashed border-white/10 bg-zinc-950/40 group origin-bottom-left will-change-transform hover:border-red-600/50 transition-[border-color] duration-500
+        <div className="project-card relative flex-shrink-0 snap-start mr-4 sm:mr-8 md:mr-16 border-2 border-dashed border-white/10 bg-zinc-950/40 group origin-bottom-left will-change-transform hover:border-red-600/50 transition-[border-color] duration-500
           w-[80vw] sm:w-[42vw] md:w-[32vw]
           h-[58vh] sm:h-[62vh] md:h-[64vh]
           flex flex-col items-center justify-center"

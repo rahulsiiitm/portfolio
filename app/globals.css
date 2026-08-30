@@ -97,6 +97,12 @@ body::-webkit-scrollbar,
   }
 }
 
+html,
+body {
+  max-width: 100%;
+  overflow-x: clip;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto !important; }
   *, *::before, *::after {
