@@ -1,15 +1,14 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useSound } from "./SoundProvider";
+import { useGsapWhenVisible } from "./useGsapWhenVisible";
 
 const TYPER_WORDS = ["FAST", "SCALABLE", "INTELLIGENT", "BOLD"];
 
 export default function Footer() {
-    const footerRef = useRef(null);
-    const formRef = useRef(null);
-    const wheelRef = useRef(null);
+    const footerRef = useRef<HTMLElement>(null);
+    const formRef = useRef<HTMLDivElement>(null);
+    const wheelRef = useRef<HTMLDivElement>(null);
 
     const [result, setResult] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -18,11 +17,11 @@ export default function Footer() {
     const [currentWordIndex, setCurrentWordIndex] = useState(0);
     const [displayText, setDisplayText] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
+    const [isVisible, setIsVisible] = useState(false);
 
     const { play } = useSound();
 
-    useEffect(() => {
-        gsap.registerPlugin(ScrollTrigger);
+    useGsapWhenVisible(footerRef, (gsap) => {
         const context = gsap.context(() => {
             gsap.fromTo(footerRef.current, { y: -100 }, {
                 y: 0, scrollTrigger: { trigger: footerRef.current, start: "top bottom", end: "bottom bottom", scrub: true },
@@ -32,10 +31,19 @@ export default function Footer() {
                 .fromTo(".form-element", { x: -20, opacity: 0 }, { x: 0, opacity: 1, stagger: 0.1, duration: 0.5, ease: "power2.out" }, "-=0.4");
         }, footerRef);
         return () => context.revert();
+    });
+
+    useEffect(() => {
+        const footer = footerRef.current;
+        if (!footer) return;
+        const observer = new IntersectionObserver(([entry]) => setIsVisible(entry.isIntersecting), { rootMargin: "200px 0px" });
+        observer.observe(footer);
+        return () => observer.disconnect();
     }, []);
 
     // 5. Typer Logic
     useEffect(() => {
+        if (!isVisible) return;
         const handleTyping = () => {
             const fullWord = TYPER_WORDS[currentWordIndex];
             if (isDeleting) {
@@ -53,11 +61,14 @@ export default function Footer() {
         };
         const timer = setTimeout(handleTyping, isDeleting ? 50 : 150);
         return () => clearTimeout(timer);
-    }, [displayText, isDeleting, currentWordIndex]);
+    }, [displayText, isDeleting, currentWordIndex, isVisible]);
 
     // 6. Wheel Spin
     const handleMouseEnter = () => {
-        gsap.fromTo(wheelRef.current, { rotation: -6, scale: 0.96 }, { rotation: 0, scale: 1, duration: 1.25, ease: "power3.out", overwrite: true });
+        wheelRef.current?.animate(
+            [{ transform: "rotate(-6deg) scale(0.96)" }, { transform: "rotate(0deg) scale(1)" }],
+            { duration: 1250, easing: "cubic-bezier(0.22, 1, 0.36, 1)" },
+        );
     };
 
     // --- PLAY SOUND FUNCTION ---

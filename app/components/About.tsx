@@ -1,8 +1,7 @@
 "use client";
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef } from "react";
 import { useSound } from "./SoundProvider";
+import { useGsapWhenVisible } from "./useGsapWhenVisible";
 
 export default function About() {
     const container = useRef(null);
@@ -13,10 +12,8 @@ export default function About() {
     const sidebarRef = useRef(null);
     const { play } = useSound();
 
-    useEffect(() => {
+    useGsapWhenVisible(container, (gsap) => {
         const isMobile = window.innerWidth < 768;
-
-        gsap.registerPlugin(ScrollTrigger);
 
         const ctx = gsap.context(() => {
             // 1. RED LINE (Progress Bar)
@@ -99,10 +96,8 @@ export default function About() {
 
         }, container);
 
-        return () => {
-            ctx.revert();
-        };
-    }, []);
+        return () => ctx.revert();
+    }, "-1px 0px");
 
     return (
         <section ref={container} id="about" className="relative w-full bg-off-white text-carbon-black border-b border-black/10 overflow-hidden">

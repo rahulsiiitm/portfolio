@@ -1,8 +1,7 @@
 "use client";
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef } from "react";
 import Image from 'next/image';
+import { useGsapWhenVisible } from "./useGsapWhenVisible";
 
 interface StatItemProps {
     number: string;
@@ -15,8 +14,7 @@ export default function Intro() {
     const textRef = useRef(null);
     const imageRef = useRef(null);
 
-    useEffect(() => {
-        gsap.registerPlugin(ScrollTrigger);
+    useGsapWhenVisible(container, (gsap) => {
         const context = gsap.context(() => {
             const tl = gsap.timeline({
                 scrollTrigger: {
@@ -41,7 +39,7 @@ export default function Intro() {
 
         return () => context.revert();
 
-    }, []);
+    });
 
     return (
         <section

@@ -1,13 +1,12 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useState, useRef } from "react";
 import {
   Cpu,
   Layers,
   PenTool,
   Terminal,
 } from "lucide-react";
+import { useGsapWhenVisible } from "./useGsapWhenVisible";
 
 const stack = [
   {
@@ -52,8 +51,7 @@ export default function RacingStack() {
   const [activeIndex, setActiveIndex] = useState(0);
   const containerRef = useRef(null);
 
-  useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
+  useGsapWhenVisible(containerRef, (gsap) => {
     const context = gsap.context(() => {
       gsap.fromTo(".module-card", { y: 50, opacity: 0 }, {
         y: 0, opacity: 1, stagger: 0.1, duration: 0.6, ease: "power2.out",
@@ -61,7 +59,7 @@ export default function RacingStack() {
       });
     }, containerRef);
     return () => context.revert();
-  }, []);
+  });
 
   return (
     <section id="tech" ref={containerRef} className="relative bg-zinc-950 text-white min-h-screen py-14 sm:py-16 md:py-20 px-4 sm:px-6 md:px-12 flex flex-col justify-center overflow-hidden">

@@ -1,10 +1,9 @@
 "use client";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from 'next/navigation';
 import { ArrowRight, ChevronRight, Layers } from "lucide-react";
 import Image from "next/image";
+import { useGsapWhenVisible } from "./useGsapWhenVisible";
 
 type ProjectLinks = { github?: string; demo?: string; website?: string; download?: string; pypi?: string; } | null;
 
@@ -72,9 +71,7 @@ export default function Projects() {
     progressBar.style.width = `${Math.min(1, Math.max(0, progress)) * 100}%`;
   };
 
-  useLayoutEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-
+  useGsapWhenVisible(containerRef, (gsap) => {
     const ctx = gsap.context(() => {
       if (!trackRef.current || !containerRef.current || !progressBarRef.current) return;
 
@@ -180,7 +177,7 @@ export default function Projects() {
     }, containerRef);
 
     return () => ctx.revert();
-  }, []);
+  });
 
   const [inspectProject, setInspectProject] = useState<Project | null>(null);
 

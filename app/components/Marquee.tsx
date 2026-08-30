@@ -1,7 +1,6 @@
 "use client";
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef } from "react";
+import { useGsapWhenVisible } from "./useGsapWhenVisible";
 
 export default function TelemetryMarquee() {
     const containerRef = useRef<HTMLDivElement>(null);
@@ -16,8 +15,7 @@ export default function TelemetryMarquee() {
     const ledsRef = useRef<(HTMLDivElement | null)[]>([]);
 
     const xPercent = useRef(0);
-    useEffect(() => {
-        gsap.registerPlugin(ScrollTrigger);
+    useGsapWhenVisible(containerRef, (gsap, ScrollTrigger) => {
         const direction = -1;
 
         // 1. Scrolling Text Ticker
@@ -162,7 +160,7 @@ export default function TelemetryMarquee() {
             visibilityObserver.disconnect();
             trigger.kill();
         };
-    }, []);
+    });
 
     const techItems = [
         "sys_status: active",
