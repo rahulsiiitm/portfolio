@@ -42,39 +42,45 @@ export default function TelemetryMarquee() {
         let lastX = 0;
         let lastY = 0;
         let lastTime = Date.now();
+        let mouseFrameId = 0;
         const gForceDot = gForceDotRef.current;
 
         const handleMouseMove = (e: MouseEvent) => {
-            if (!isActive) return;
+            if (!isActive || mouseFrameId) return;
 
-            const now = Date.now();
-            const dt = now - lastTime || 1;
-            const vx = (e.clientX - lastX) / dt;
-            const vy = (e.clientY - lastY) / dt;
+            mouseFrameId = window.requestAnimationFrame(() => {
+                mouseFrameId = 0;
+                const now = Date.now();
+                const dt = now - lastTime || 1;
+                const vx = (e.clientX - lastX) / dt;
+                const vy = (e.clientY - lastY) / dt;
 
-            const targetX = gsap.utils.clamp(-20, 20, -vx * 10);
-            const targetY = gsap.utils.clamp(-20, 20, -vy * 10);
+                const targetX = gsap.utils.clamp(-20, 20, -vx * 10);
+                const targetY = gsap.utils.clamp(-20, 20, -vy * 10);
 
-            if (gForceDot) {
-                gsap.to(gForceDot, {
-                    x: targetX,
-                    y: targetY,
-                    duration: 0.2,
-                    ease: "power2.out",
-                    onComplete: () => {
-                        gsap.to(gForceDot, {
-                            x: 0,
-                            y: 0,
-                            duration: 0.5,
-                            ease: "elastic.out(1, 0.4)"
-                        });
-                    }
-                });
-            }
+                if (gForceDot) {
+                    gsap.to(gForceDot, {
+                        x: targetX,
+                        y: targetY,
+                        duration: 0.2,
+                        ease: "power2.out",
+                        overwrite: "auto",
+                        onComplete: () => {
+                            gsap.to(gForceDot, {
+                                x: 0,
+                                y: 0,
+                                duration: 0.5,
+                                ease: "elastic.out(1, 0.4)",
+                                overwrite: "auto"
+                            });
+                        }
+                    });
+                }
 
-            lastX = e.clientX;
-            lastY = e.clientY;
-            lastTime = now;
+                lastX = e.clientX;
+                lastY = e.clientY;
+                lastTime = now;
+            });
         };
 
         window.addEventListener("mousemove", handleMouseMove, { passive: true });
@@ -97,6 +103,8 @@ export default function TelemetryMarquee() {
             start: "top top",
             end: "bottom bottom",
             onUpdate: (self) => {
+                if (!isActive) return;
+
                 const progress = self.progress;
                 const velocity = Math.abs(self.getVelocity());
                 
@@ -156,6 +164,7 @@ export default function TelemetryMarquee() {
 
         return () => {
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            if (mouseFrameId) cancelAnimationFrame(mouseFrameId);
             window.removeEventListener("mousemove", handleMouseMove);
             visibilityObserver.disconnect();
             trigger.kill();

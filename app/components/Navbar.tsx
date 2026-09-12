@@ -30,6 +30,9 @@ export default function Navbar() {
   const lenis = useLenis();
 
   useEffect(() => {
+    let ticking = false;
+    let frameId = 0;
+
     const checkBackground = () => {
       const element = document.elementFromPoint(window.innerWidth / 2, 40);
       let current = element as HTMLElement | null;
@@ -44,9 +47,23 @@ export default function Navbar() {
       }
       setIsDarkText(false);
     };
-    window.addEventListener("scroll", checkBackground, { passive: true });
+
+    const onScroll = () => {
+      if (!ticking) {
+        frameId = window.requestAnimationFrame(() => {
+          checkBackground();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
     checkBackground();
-    return () => window.removeEventListener("scroll", checkBackground);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      if (frameId) window.cancelAnimationFrame(frameId);
+    };
   }, []);
 
   useEffect(() => {

@@ -21,7 +21,7 @@ const projects: Project[] = [
     description: "Production RAG-based knowledge assistant for IIT Roorkee's Academic Affairs. Features Qdrant native hybrid search with server-side RRF, TEI embedding offload, and a hardened zero-downtime CI/CD deployment.",
     year: "2026",
     colorClass: "bg-zinc-900",
-    bgImage: "/projects/sutra.jpg",
+    bgImage: "/projects/sutra.webp",
     slug: "sutra",
     links: { demo: "soon" }
   },
@@ -32,7 +32,7 @@ const projects: Project[] = [
     description: "Multimodal RAG framework for forensic video intelligence. Built the IRIS engine to enable cross-video entity tracking and natural language forensic queries at the edge.",
     year: "2026",
     colorClass: "bg-zinc-900",
-    bgImage: "/projects/image.png",
+    bgImage: "/projects/vidchain.webp",
     slug: "vidchain",
     links: { github: "https://github.com/rahulsiiitm/videochain-python", pypi: "https://pypi.org/project/VidChain/" }
   },
@@ -43,7 +43,7 @@ const projects: Project[] = [
     description: "Multilingual AI farming assistant achieving 92% disease detection accuracy. Engineered with TensorFlow, Gemini API, and an offline-first Firebase architecture for rural accessibility.",
     year: "2025",
     colorClass: "bg-zinc-900",
-    bgImage: "/projects/agri.png",
+    bgImage: "/projects/AgriHive.webp",
     slug: "agrihive",
     links: { github: "https://github.com/rahulsiiitm/AgriHive-Frontend", demo: "https://agrihive-c8f6b.web.app/" }
   }
@@ -279,7 +279,7 @@ export default function Projects() {
       >
         {/* Mobile uses native horizontal scrolling, so its backdrop must match the full track width. */}
         <div className="absolute inset-0 -z-10 md:hidden pointer-events-none overflow-hidden">
-          <Image src="/bg2.jpg" alt="" fill priority={false} sizes="500vw" className="object-cover object-center" />
+          <Image src="/bg2.jpg" alt="" fill priority={false} sizes="100vw" className="object-cover object-center" />
           <div className="absolute inset-0 bg-black/50" />
           <div className="absolute inset-0 bg-grid-pattern opacity-10" style={{ filter: 'invert(1)' }} />
         </div>

@@ -7,7 +7,7 @@ import { sfx } from "./sound";
 import Image from "next/image";
 
 const ChatWindow = dynamic(() => import("./ChatWindow"), { ssr: false });
-const caveat = Caveat({ subsets: ["latin"], weight: ["400", "500", "700"], display: "swap" });
+const caveat = Caveat({ subsets: ["latin"], weight: ["600"], display: "swap" });
 
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
@@ -24,7 +24,7 @@ export default function ChatWidget() {
       if (active) setServerState("checking");
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
         const url = `${baseUrl}/ready`;
         const res = await fetch(url, { signal: controller.signal });
         clearTimeout(timeoutId);
@@ -32,7 +32,7 @@ export default function ChatWidget() {
       } catch {
         if (active) setServerState("offline");
       } finally {
-        if (active) retryId = window.setTimeout(ping, 30_000);
+        if (active) retryId = window.setTimeout(ping, 60_000);
       }
     };
     const handleVisibility = () => { if (document.visibilityState === "visible") void ping(); };
