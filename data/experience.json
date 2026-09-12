@@ -1,6 +1,15 @@
 [
   {
     "id": "01",
+    "period": "SEPT 2026 - PRESENT",
+    "role": "AI Prototyping Intern",
+    "company": "Magic Hour (YC W24)",
+    "location": "Remote",
+    "desc": "Prototyping generative AI video workflows and creative pipelines. Engineering intelligent video subtitling systems, automated planning, and multi-modal developer tooling.",
+    "tags": ["Generative AI", "Python", "Video AI", "LLMs", "Pipelines"]
+  },
+  {
+    "id": "02",
     "period": "JUN - JUL 2026",
     "role": "Applied AI Intern",
     "company": "IIT Roorkee",
@@ -9,7 +18,7 @@
     "tags": ["RAG", "FastAPI", "Qdrant", "TEI", "Docker"]
   },
   {
-    "id": "02",
+    "id": "03",
     "period": "JUN - AUG 2025",
     "role": "UI/UX Intern",
     "company": "AliveHire",
@@ -18,7 +27,7 @@
     "tags": ["Figma", "Prototyping", "UX Research"]
   },
   {
-    "id": "03",
+    "id": "04",
     "period": "2023 - PRESENT",
     "role": "AI & App Developer",
     "company": "Freelance / Academic",
