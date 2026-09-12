@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLenis } from "lenis/react";
 import { ArrowDownRight, ChevronDown, Code2, Github, Linkedin, Mail } from "lucide-react";
 
 const menuLinks = [
@@ -26,6 +27,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isDarkText, setIsDarkText] = useState(false);
   const pathname = usePathname();
+  const lenis = useLenis();
 
   useEffect(() => {
     const checkBackground = () => {
@@ -65,10 +67,18 @@ export default function Navbar() {
     setIsOpen(false);
     if (href.startsWith("#")) {
       event.preventDefault();
-      document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (lenis) {
+        lenis.scrollTo(href);
+      } else {
+        document.querySelector(href)?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     } else if (href === "/" && pathname === "/") {
       event.preventDefault();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      if (lenis) {
+        lenis.scrollTo(0);
+      } else {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     }
   };
 

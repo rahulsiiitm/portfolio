@@ -101,7 +101,6 @@ html,
 body {
   max-width: 100%;
   overflow-x: clip;
-  scroll-behavior: smooth;
 }
 
 @keyframes zero-chat-hint-in {

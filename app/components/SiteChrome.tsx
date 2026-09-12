@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import SmoothScrolling from "./SmoothScrolling";
 import Navbar from "./Navbar";
 import { SoundProvider } from "./SoundProvider";
 
@@ -11,6 +12,7 @@ const ChatWidget = dynamic(() => import("./Chatbot/ChatWidget"), { ssr: false })
 export default function SiteChrome({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isControlRoom = pathname.startsWith("/zero-control");
+  const isHome = pathname === "/";
   const [showChat, setShowChat] = useState(false);
 
   useEffect(() => {
@@ -35,7 +37,7 @@ export default function SiteChrome({ children }: { children: React.ReactNode }) 
 
   return (
     <SoundProvider>
-      {content}
+      {isHome ? <SmoothScrolling>{content}</SmoothScrolling> : content}
       {showChat && <ChatWidget />}
     </SoundProvider>
   );
