@@ -5,7 +5,7 @@ import { ArrowRight, ChevronRight, Layers } from "lucide-react";
 import Image from "next/image";
 import { useGsapWhenVisible } from "./useGsapWhenVisible";
 
-type ProjectLinks = { github?: string; demo?: string; website?: string; download?: string; pypi?: string; } | null;
+type ProjectLinks = { github?: string; demo?: string; backend?: string; website?: string; download?: string; pypi?: string; } | null;
 
 type Project = {
   id: string; title: string; category: string; description: string; year: string;
@@ -23,7 +23,7 @@ const projects: Project[] = [
     colorClass: "bg-zinc-900",
     bgImage: "/projects/sutra.webp",
     slug: "sutra",
-    links: { demo: "soon" }
+    links: { backend: "https://sutra.iitr.ac.in" }
   },
   {
     id: "02",
