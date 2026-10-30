@@ -203,6 +203,14 @@ export default async function ProjectDetail({ params }: { params: Promise<{ slug
                     PyPI Package
                   </a>
                 )}
+                {"backend" in project.links && project.links.backend && (
+                  <a href={project.links.backend} target="_blank" rel="noopener noreferrer"
+                    aria-label="View SUTRA backend API (opens in a new tab)"
+                    className="slant-action flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-600 text-white rounded-md text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-red-700 transition-colors shadow-sm">
+                    <Terminal size={14} />
+                    View Backend API
+                  </a>
+                )}
                 {project.links.demo === 'soon' ? (
                   <span className="slant-action flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-zinc-200 text-zinc-500 cursor-not-allowed rounded-md text-[10px] font-bold uppercase tracking-[0.2em] shadow-sm">
                     <Play size={14} />
